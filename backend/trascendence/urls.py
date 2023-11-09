@@ -16,12 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from trascendence.api.views.UserView import UserView
-
+from trascendence.api import urls
 
 urlpatterns = [
-    path('users', UserView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),
     path('admin/', admin.site.urls),
+    path('api/', include(urls))
 ]
