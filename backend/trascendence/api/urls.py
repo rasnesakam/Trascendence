@@ -6,5 +6,6 @@ from trascendence.api.views import Hello
 urlpatterns = [
     path('users', UserView.as_view()),
     path('auth',AuthView.auth),
+    path('auth/sign-in',AuthView.sign_in),
     path("hello",Hello.hi)
 ]
