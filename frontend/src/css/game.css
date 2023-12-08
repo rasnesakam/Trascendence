@@ -1,0 +1,185 @@
+.game-header {
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.game-header .player {
+    display: flex;
+    align-items: center;
+}
+
+.game-header .player img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.game-container {
+    background-color: black;
+    height: 600px;
+    position: relative;
+}
+
+.player-bar {
+    background-color: orange;
+    width: 20px;
+    height: 100px;
+    position: absolute;
+}
+
+.player-bar:first-child {
+    left: 0;
+}
+
+.player-bar-2 {
+    right: 0;
+}
+
+.ball {
+    background-color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.middle-line {
+    position: absolute;
+    left: 50%;
+    height: 100%;
+    border-left: 4px dashed white;
+}
+
+.rush-size {
+    width: 100px;
+    height: 100px;
+}
+
+.score-board {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+}
+
+.scoreboard {
+    background: black;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.scoreboard__container {
+    padding-bottom: 10px;
+}
+
+.scoreboard__result {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scoreboard__result-home,
+.scoreboard__result-away,
+.scoreboard__result-separator {
+    color: white;
+    font-size: 26px;
+}
+
+.scoreboard__result-separator {
+    margin: 0 20px;
+}
+
+.scoreboard__badge {
+    margin: 0 8px;
+    width: 40px;
+    height: 40px;
+}
+
+.scoreboard__badge img {
+    height: 100%;
+}
+
+.scoreboard__teams {
+    display: flex;
+    justify-content: center;
+}
+
+.scoreboard__team {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+}
+
+.scoreboard__team--align-right {
+    flex-direction: row-reverse;
+}
+
+.scoreboard__team--align-right .scoreboard__name {
+    text-align: right;
+}
+
+.scoreboard__team--align-left .scoreboard__name {
+    text-align: left;
+}
+
+.scoreboard__name {
+    display: block;
+    color: white;
+    width: 100px;
+    margin: 0 10px;
+}
+
+.scoreboard__nav {
+    border-top: 1px solid #cccccc;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    margin: 0;
+}
+
+.scoreboard__nav-el {
+    list-style: none;
+}
+
+.scoreboard__nav-el.is-active a {
+    color: #ff6347;
+    position: relative;
+}
+
+.scoreboard__nav-el.is-active a:after {
+    display: block;
+    height: 2px;
+    width: 100%;
+    content: "";
+    background: #ff6347;
+    border-top-left-radius: 2.5px;
+    border-top-right-radius: 2.5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.scoreboard__nav-el a {
+    padding: 15px 10px;
+    color: #999999;
+    text-decoration: none;
+    display: block;
+    line-height: 0;
+}
+
+.scoreboard__basics {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
