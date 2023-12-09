@@ -1,0 +1,21 @@
+.text-loser-head
+{
+	color: red;
+}
+
+.profile-photo-render
+{
+	border-radius: 100%;
+	width: 180px;
+	height: 200px;
+	transform: translate(0%, 40%);
+}
+
+.flower-photo-render
+{
+	position: absolute;
+	width: 380px;
+	height: 400px;
+	transform: translate(20%, 38%);
+
+}
