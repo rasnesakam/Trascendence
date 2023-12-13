@@ -1,30 +1,37 @@
+import urllib.request
+import json
+from urllib.error import URLError
 from urllib.request import Request
+from django.http import HttpRequest
+from django.http import HttpResponse
 
-import jose.exceptions
-from jose import jwt
-from rest_framework.response import Response
-from django.conf import settings
 
-def authorize(get_response):
-    def middleware(request: Request):
-        if "Authorization" not in request.headers:
-            return Response(
-                {"message": "Token must be provide in Authorization header"},
-                status=401)
-        header_auth_params = request.headers["Authorization"].split()
-        auth_type = header_auth_params[0]
-        token = header_auth_params[1]
-        if auth_type != "Bearer":
-            return Response(
-                {"message": "Authorization header should be Bearer."},
-                status=401)
+def get_token(request: HttpRequest) -> str | None:
+    authorization: str | None = request.headers.get("Authorization")
+    if authorization is None:
+        return None
+    if not authorization.startswith("Bearer "):
+        return None
+    return authorization[len("Bearer "):]
+
+
+def authorize(request_view):
+    def middleware(request: HttpRequest):
+        token = get_token(request)
+        if token is None:
+            return HttpResponse(json.dumps({"message": "this content is not allowed"}), content_type="application/json",
+                                status=401)
+        token_verifier_uri = "https://api.intra.42.fr/oauth/token/info"
+        token_verifier_headers = {
+            "Authorization": f"Bearer {token}"
+        }
+        token_request = Request(token_verifier_uri, headers=token_verifier_headers, method="GET")
         try:
-            print(settings.SECRET_KEY)
-            decoded = jwt.decode(token, settings.SECRET_KEY, options={"verify_signature": True})
-            response = get_response(request)
-            return response
-        except jose.exceptions.JWTError as error:
-            return Response(
-                {"message": "Token is unauthorized. Try different token"},
-                status=401)
+            response = urllib.request.urlopen(token_request)
+            if response.status == 200:
+                return request_view(request)
+        except URLError as e:
+            return HttpResponse(json.dumps({"message": "Token couldn't verified"}), content_type="application/json",
+                                status=401)
+
     return middleware
