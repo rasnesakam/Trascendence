@@ -1,3 +1,10 @@
-GET http://localhost:8000/api/auth HTTP/1.1
+POST http://localhost:8000/api/auth/sign-up HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.R4-o0HTeyOP6GoZoTHA-DwGhFfW3JVOgJdFxYQNSar4
+Authorization: Bearer f8a04ae7e2831cb885ed13ece5ce6f7f1e81d4516d485cd0f11316e78a3faf23
+
+{
+  "intraId": 102557,
+  "username": "emakas",
+  "email": "emakas@student.42istanbul.com.tr",
+  "avatarURI": "https://cdn.intra.42.fr/users/5ee05c7679ea721bc3c08c5b62c63001/emakas.jpg"
+}
