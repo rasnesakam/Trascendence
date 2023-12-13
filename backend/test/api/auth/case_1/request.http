@@ -1,6 +1,6 @@
 POST http://localhost:8000/api/auth/sign-up HTTP/1.1
 content-type: application/json
-Authorization: Bearer f8a04ae7e2831cb885ed13ece5ce6f7f1e81d4516d485cd0f11316e78a3faf23
+Authorization: Bearer 2427522bf1108865721ef14f098be3332cbc071cc4df2ca9f391cf6ae5b6ec8a
 
 {
   "intraId": 102557,

@@ -1,5 +1,5 @@
 POST http://localhost:8000/api/auth/sign-in HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.R4-o0HTeyOP6GoZoTHA-DwGhFfW3JVOgJdFxYQNSar4
+Authorization: Bearer 2427522bf1108865721ef14f098be3332cbc071cc4df2ca9f391cf6ae5b6ec8a
 
-{"id": "ensar"}
+{"intraId": 102557}
