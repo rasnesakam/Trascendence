@@ -1,5 +1,5 @@
 import json
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
 from rest_framework.decorators import api_view
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.content_types import content_json, json_serializer
@@ -7,23 +7,28 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import parser_classes
 import requests
 from trascendence.api.models.User import UserModel
+from ..serializers import serialize_json
+
 
 @api_view(['POST'])
 @parser_classes([JSONParser])
-#@authorize
+@authorize
 @content_json
 def sign_in(request: HttpRequest) -> HttpResponse:
     """
     Authorize: Bearer <token>
     {
-        intraId: "string"
+        intraId: number
     }
 
     200: Ok,
     404: Not found
     401: Not authorized
     """
-    return JsonResponse({"content": request.content_json['id']})
+    user = UserModel.objects.filter(intraId=request.content_json['intraId']).first()
+    if user is None:
+        return HttpResponseNotFound({"message": "user not found"}, content_type="application/json")
+    return JsonResponse({"content": serialize_json(user)})
 
 
 @api_view(['POST'])
@@ -36,7 +41,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         intraId: "string",
         userName: "string",
         email: "string",
-        avatarUri: "string"
+        avatarURI: "string"
     }
 
     200: Ok
@@ -48,7 +53,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         email=request.content_json['email'],
         avatarURI=request.content_json['avatarURI']
     )
-    return JsonResponse({"message:": "User created", "content": user}, status=201)
+    return JsonResponse({"message:": "User created", "content": serialize_json(user)}, status=201)
 
 
 @api_view(['POST'])
