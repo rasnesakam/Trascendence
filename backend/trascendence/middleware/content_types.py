@@ -9,7 +9,7 @@ def content_json(response_view):
     """
     Sets attribute `content_json` for json parsed bodies
     """
-    def wrapper(request: HttpRequest):
+    def wrapper(request: HttpRequest, *args):
         body_json = json.loads(request.body)
         setattr(request, "content_json", body_json)
         return response_view(request)
