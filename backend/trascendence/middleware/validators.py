@@ -19,7 +19,7 @@ content_parsers: dict[str, Callable[[str | bytes], dict | None]] = {
 
 def request_body(content_type, fields: dict):
     def decorator(request_view):
-        def wrapper(request: HttpRequest):
+        def wrapper(request: HttpRequest, *args):
             if request.content_type != content_type:
                 return HttpResponse({"message": "content type is not supported"}, status=415,
                                     content_type="application/json")
@@ -29,7 +29,7 @@ def request_body(content_type, fields: dict):
                 return HttpResponseBadRequest(str({"message": "Content is not parsable"}), content_type=content_type)
             try:
                 validate_content(content, fields)
-                return request_view(request, content)
+                return request_view(request, *args, content)
             except Exception as err:
                 return HttpResponseBadRequest(str({"message": str(err)}), content_type=content_type)
         return wrapper
