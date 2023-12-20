@@ -2,7 +2,7 @@ from django.urls import  path, include
 from django.views.generic.base import RedirectView
 from trascendence.api.views.UserView import UserView
 from trascendence.api.views import AuthView
-from trascendence.api.views import Hello
+from trascendence.api.views import InteractionsView
 
 # Write decorator to restrict http methods for requests
 # auth_redirect -> 42/oauth -> auth/token/code -> page
@@ -17,14 +17,14 @@ urlpatterns = [
     path('auth/token/code', AuthView.token),
 
     # Interactions
-    path('interacts/friends/<username>'),
-    path('interacts/friends/<username>/add'),
-    path('interacts/friends/<username>/delete/<username>'),
-    path('interacts/invitation/<username>'),
-    path('interacts/invitation/<username>/<invite_code>/accept'),
-    path('interacts/invitation/<username>/<invite_code>/delete'),
-    path('interacts/blacklist/<username>'),
-    path('interacts/blacklist/<username>/add'),
-    path('interacts/blacklist/<username>/<user>/delete')
+    path('interacts/friends/<username>', InteractionsView.get_friends),
+    path('interacts/friends/<username>/add', InteractionsView.add_friend),
+    path('interacts/friends/<username>/delete/<user>', InteractionsView.delete_friend),
+    path('interacts/invitation/<username>', InteractionsView.get_invitations),
+    path('interacts/invitation/<username>/<invite_code>/accept', InteractionsView.accept_invitation),
+    path('interacts/invitation/<username>/<invite_code>/delete', InteractionsView.decline_invitation),
+    path('interacts/blacklist/<username>', InteractionsView.get_blacklist),
+    path('interacts/blacklist/<username>/add', InteractionsView.add_blacklist),
+    path('interacts/blacklist/<username>/<user>/delete', InteractionsView.remove_blacklist)
 
 ]
