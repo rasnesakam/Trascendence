@@ -25,6 +25,6 @@ urlpatterns = [
     path('interacts/invitation/<username>/<invite_code>/delete', InteractionsView.decline_invitation),
     path('interacts/blacklist/<username>', InteractionsView.get_blacklist),
     path('interacts/blacklist/<username>/add', InteractionsView.add_blacklist),
-    path('interacts/blacklist/<username>/<user>/delete', InteractionsView.remove_blacklist)
+    path('interacts/blacklist/<issuer_username>/<target_username>/delete', InteractionsView.remove_blacklist)
 
 ]
