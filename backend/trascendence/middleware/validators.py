@@ -27,12 +27,12 @@ def request_body(content_type, fields: dict):
             content = content_parsers[content_type](request.body)
             if content is None:
                 return HttpResponseBadRequest(str({"message": "Content is not parsable"}), content_type=content_type)
-            #try:
-            validate_content(content, fields)
-            setattr(request, "request_body", content)
-            return request_view(request, *args, **kwargs)
-            #except Exception as err:
-            #    return HttpResponseBadRequest(str({"message": err}), content_type=content_type)
+            try:
+                validate_content(content, fields)
+                combined_kwargs = {**kwargs, **({"content": content})}
+                return request_view(request, *args, **combined_kwargs)
+            except Exception as err:
+                return HttpResponseBadRequest(str({"message": str(err)}), content_type=content_type)
         return wrapper
 
     return decorator
