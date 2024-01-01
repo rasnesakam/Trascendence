@@ -2,6 +2,6 @@ POST http://localhost:8000/api/interacts/friends/Amela/add HTTP/1.1
 content-type: application/json
 
 {
-  "target_user": "Alfreda",
+  "username": "Alfreda",
   "message": "Hi Alfreda, I want to be friend with you"
 }
