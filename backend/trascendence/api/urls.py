@@ -28,6 +28,8 @@ urlpatterns = [
     path('interacts/blacklist/<issuer_username>/<target_username>/delete', InteractionsView.remove_blacklist),
 
     # Tournaments
+    path('tournaments/invitations'),
+    path('tournaments/invitations/<invitationcode>'),
     path('tournaments/<tournamentcode>'),
     path('tournaments/<tournamentcode>/matches'),
     path('tournaments/create'),
