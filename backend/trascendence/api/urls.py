@@ -30,6 +30,8 @@ urlpatterns = [
     # Tournaments
     path('tournaments/invitations'),
     path('tournaments/invitations/<invitationcode>'),
+    path('tournaments/invitations/<invitationcode>/accept'),
+    path('tournaments/invitations/<invitationcode>/delete'),
     path('tournaments/<tournamentcode>'),
     path('tournaments/<tournamentcode>/matches'),
     path('tournaments/create'),
