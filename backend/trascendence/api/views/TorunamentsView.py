@@ -53,7 +53,7 @@ def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonRes
 
 @require_http_methods(['POST'])
 @authorize
-def tournament_create(request: HttpRequest) -> JsonResponse:
+def create_tournament(request: HttpRequest) -> JsonResponse:
     pass
 
 
