@@ -1,2 +1,4 @@
-from .Interactions import Friends, BlackList, FriendInvitation
-from .User import UserModel
+from .Interactions import *
+from .User import *
+from .Tournaments import *
+from .Matches import *
