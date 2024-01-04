@@ -3,6 +3,7 @@ from django.views.generic.base import RedirectView
 from trascendence.api.views.UserView import UserView
 from trascendence.api.views import AuthView
 from trascendence.api.views import InteractionsView
+from trascendence.api.views import TorunamentsView
 
 # Write decorator to restrict http methods for requests
 # auth_redirect -> 42/oauth -> auth/token/code -> page
@@ -28,11 +29,13 @@ urlpatterns = [
     path('interacts/blacklist/<issuer_username>/<target_username>/delete', InteractionsView.remove_blacklist),
 
     # Tournaments
-    path('tournaments/invitations'),
-    path('tournaments/invitations/<invitationcode>'),
-    path('tournaments/invitations/<invitationcode>/accept'),
-    path('tournaments/invitations/<invitationcode>/delete'),
-    path('tournaments/<tournamentcode>'),
+    path('tournaments/invitations', TorunamentsView.get_tournament_invitations),
+    path('tournaments/invitations/<invitationcode>', TorunamentsView.get_tournament_invitation),
+    path('tournaments/invitations/<invitationcode>/accept', TorunamentsView.accept_tournamet),
+    path('tournaments/invitations/<invitationcode>/delete', TorunamentsView.decline_tournament),
+    path('tournaments/', TorunamentsView.get_tournaments),
+    path('tournaments/<username>', TorunamentsView.get_tournaments_for_user),
+    path('tournaments/<tournamentcode>', TorunamentsView.get_tournament),
     path('tournaments/<tournamentcode>/matches'),
     path('tournaments/create'),
     path('tournaments/<tournamentcode>/<username>/delete')
