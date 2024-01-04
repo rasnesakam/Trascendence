@@ -1,12 +1,17 @@
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseServerError
-
+from trascendence.api.models.User import UserModel
+from trascendence.api.models.Tournaments import TournamentPlayers, TournamentInvitations, Tournaments
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournament_invitations(request: HttpRequest, username) -> JsonResponse:
-    pass
+def get_tournament_invitations(request: HttpRequest, username: str) -> JsonResponse | HttpResponseNotFound:
+    user = UserModel.objects.get(username=username)
+    if user is None:
+        return HttpResponseNotFound(str({"message": f"User {username} not found"}), content_type="application/json")
+    tournament_invitations = [invitation for invitation in TournamentInvitations.objects.filter(target_user=user).values()]
+    return JsonResponse({"message": f"there is {len(tournament_invitations)} of invitations", "content": tournament_invitations}, status=200)
 
 
 @require_http_methods(['GET'])
