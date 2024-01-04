@@ -29,7 +29,7 @@ urlpatterns = [
     path('interacts/blacklist/<issuer_username>/<target_username>/delete', InteractionsView.remove_blacklist),
 
     # Tournaments
-    path('tournaments/invitations', TorunamentsView.get_tournament_invitations),
+    path('tournaments/invitations/<username>', TorunamentsView.get_tournament_invitations),
     path('tournaments/invitations/<invitationcode>', TorunamentsView.get_tournament_invitation),
     path('tournaments/invitations/<invitationcode>/accept', TorunamentsView.accept_tournamet),
     path('tournaments/invitations/<invitationcode>/delete', TorunamentsView.decline_tournament),

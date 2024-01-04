@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNot
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournament_invitations(request: HttpRequest) -> JsonResponse:
+def get_tournament_invitations(request: HttpRequest, username) -> JsonResponse:
     pass
 
 
