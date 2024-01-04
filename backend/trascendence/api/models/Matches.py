@@ -5,8 +5,12 @@ from .User import UserModel
 from .Tournaments import Tournaments
 import uuid
 
-# (h)ome, (a)way, (u)nknown
-MATCH_WINNERS = ["h", "a", "u"]
+
+MATCH_WINNERS = (
+    ('h', "home"),
+    ('a', "away"),
+    ('u', "unknown")
+)
 
 
 class Matches(models.Model, SerializableModel):
