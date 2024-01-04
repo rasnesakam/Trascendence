@@ -16,6 +16,7 @@ class Tournaments(models.Model, SerializableModel):
 class TournamentPlayers(models.Model, SerializableModel):
     id = models.CharField(max_length=36, default=uuid.uuid4, primary_key=True)
     user = models.ForeignKey(UserModel, related_name="%(class)s_user", on_delete=models.CASCADE)
+    tournament = models.ForeignKey(Tournaments, related_name="%(class)s_tournament_id", on_delete=models.CASCADE)
     accepted = models.BooleanField
 
 
