@@ -35,6 +35,18 @@ def get_tournaments(request: HttpRequest) -> JsonResponse:
 
 @require_http_methods(['GET'])
 @authorize
+def get_tournaments_for_user(request: HttpRequest, username) -> JsonResponse:
+    pass
+
+
+@require_http_methods(['GET'])
+@authorize
+def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
+    pass
+
+
+@require_http_methods(['GET'])
+@authorize
 def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     pass
 
