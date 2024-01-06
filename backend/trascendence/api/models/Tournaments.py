@@ -4,6 +4,7 @@ from .SerializableModel import SerializableModel
 from .User import UserModel
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
+from .Matches import Matches
 
 
 class Tournaments(models.Model, SerializableModel):
@@ -30,4 +31,13 @@ class TournamentInvitations(models.Model, SerializableModel):
     target_user = models.ForeignKey(UserModel, related_name="%(class)s_target_user", on_delete=models.CASCADE)
     tournament = models.ForeignKey(Tournaments, related_name="%(class)s_tournament_id", on_delete=models.CASCADE)
     message = models.CharField(max_length=400)
+
+
+class TournamentMatches(models.Model, SerializableModel):
+    id = models.CharField(max_length=36, default=uuid.uuid4, primary_key=True)
+    match = models.ForeignKey(Matches, related_name="%(class)s_match_id", on_delete=models.CASCADE)
+    match_priority = models.IntegerField(validators=[
+        MaxValueValidator(3),
+        MinValueValidator(1)
+    ])
 
