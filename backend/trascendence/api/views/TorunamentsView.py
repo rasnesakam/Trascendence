@@ -35,13 +35,17 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 @require_http_methods(['GET'])
 @authorize
 def get_tournaments(request: HttpRequest, tournamentcode: str) -> JsonResponse:
-    #tournaments = Tournaments.objects.filter(tournament_)
-    pass
+    tournaments = [tournament for tournament in Tournaments.objects.filter(tournament_code__exact=tournamentcode).values()]
+    return JsonResponse({"message": f"There is {len(tournaments)} users in tournament", "content": tournaments}, status=200)
+
 
 @require_http_methods(['GET'])
 @authorize
 def get_tournaments_for_user(request: HttpRequest, username) -> JsonResponse:
-    pass
+    tournaments_user_query = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=username)
+    user_tournaments = [tournament for tournament in tournaments_user_query.values()]
+    return JsonResponse({"message": f"There is {len(user_tournaments)} tournaments that {username} joined", "content": user_tournaments}, status=200)
+
 
 
 @require_http_methods(['GET'])
