@@ -2,7 +2,7 @@ from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseServerError
 from trascendence.api.models.User import UserModel
-from trascendence.api.models.Tournaments import TournamentPlayers, TournamentInvitations, Tournaments
+from trascendence.api.models.TournamentModels import TournamentPlayers, TournamentInvitations, Tournaments
 
 @require_http_methods(['GET'])
 @authorize
@@ -34,9 +34,9 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournaments(request: HttpRequest) -> JsonResponse:
+def get_tournaments(request: HttpRequest, tournamentcode: str) -> JsonResponse:
+    #tournaments = Tournaments.objects.filter(tournament_)
     pass
-
 
 @require_http_methods(['GET'])
 @authorize
