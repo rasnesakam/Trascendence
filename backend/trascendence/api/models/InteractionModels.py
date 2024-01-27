@@ -5,11 +5,8 @@ import uuid
 import django.utils.timezone
 from .SerializableModel import SerializableModel
 from django.db import models
-from .User import UserModel
-
-
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+from trascendence.api.models import UserModel
+from .shared_functions import id_generator
 
 
 class Friends(models.Model, SerializableModel):

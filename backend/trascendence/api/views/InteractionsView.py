@@ -3,7 +3,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNot
 from trascendence.api.models import UserModel
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.validators import request_body, str_field
-from trascendence.api.models.Interactions import Friends, FriendInvitation, BlackList
+from trascendence.api.models.InteractionModels import Friends, FriendInvitation, BlackList
 from django.views.decorators.csrf import csrf_exempt
 
 
