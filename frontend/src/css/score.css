@@ -4,8 +4,13 @@ body {
 }
 
 img {
-    max-width: 90px;
+    max-width:50%;
     height: auto;
+}
+
+.bg-score-page
+{
+    background: rgb(221,221,221);
 }
 
 .example::-webkit-scrollbar {
@@ -15,6 +20,7 @@ img {
 .rush {
     top: 5%;
     right: 5%;
+
 }
 
 div.animate {
