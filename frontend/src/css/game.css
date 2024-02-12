@@ -12,7 +12,7 @@
 }
 
 .game-header .player img {
-    width: 50px;
+    width: 60px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
@@ -99,9 +99,9 @@
 }
 
 .scoreboard__badge {
-    margin: 0 8px;
-    width: 40px;
-    height: 40px;
+    margin: 0 48px;
+    width: 70px;
+    height: 70px;
 }
 
 .scoreboard__badge img {
