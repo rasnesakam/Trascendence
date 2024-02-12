@@ -1,0 +1,36 @@
+version: '3.2'
+
+networks :
+  my_network:
+    driver: bridge
+
+  volumes:
+    backend:
+      driver: local
+      name: volume_backend
+
+  services:
+    backend:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile
+        container_name: my_backend
+        expose:
+          - 8000
+        #nereye ayıralım
+        volumes:
+          - backend:/./backend/bvolume
+        networks:
+          - my_network
+    frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+        container_name: my_frontend
+        expose:
+          -8000
+          #frontend de volume istersek burayı acariz
+          #volumes:
+          #  - frontend:/./frontend/fvolume
+            networks:
+              - my_network
