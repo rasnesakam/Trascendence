@@ -1,5 +1,6 @@
 import json
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
+from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.content_types import content_json, json_serializer
@@ -8,6 +9,7 @@ from rest_framework.decorators import parser_classes
 import requests
 from trascendence.api.models.User import UserModel
 from ..serializers import serialize_json
+from ...middleware.validators import request_body, str_field
 
 
 @api_view(['POST'])
@@ -29,6 +31,17 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     if user is None:
         return HttpResponseNotFound({"message": "user not found"}, content_type="application/json")
     return JsonResponse({"content": serialize_json(user)})
+
+
+@require_http_methods(['POST'])
+@request_body(
+    content_type="application/json",
+    fields={
+        "code": str_field(required=True)
+    }
+)
+def sign_in_42(request: HttpRequest, content) -> JsonResponse:
+    return JsonResponse({"content": content}, 200)
 
 
 @api_view(['POST'])
