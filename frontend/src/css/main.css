@@ -1,8 +1,26 @@
 .big-text
 {
-	font-size: 3rem;
+	font-size: 350%;
 }
 
 .my-margin-center {
-	margin-left: 400px;
+	margin-left: 55%;
+}
+
+.card-size
+{
+	width: 45%;
+	padding: 5px;
+	
+	@media (max-width: 992px) {
+		width: 85%;
+		padding: 10px;
+	}	
+}
+
+.btn-size
+{
+	@media (max-width: 992px) {
+		width: 165%;
+	}
 }
