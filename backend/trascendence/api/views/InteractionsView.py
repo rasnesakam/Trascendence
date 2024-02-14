@@ -21,12 +21,12 @@ friends_user_pair_1__user_pair_2__exact
 """
 
 @require_http_methods(['GET'])
-#@authorize
+@authorize
 def get_friends(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
-    user = UserModel.objects.get(username=username)
-    if user is None:
+    try:
+        user = UserModel.objects.get(username=username)
+    except UserModel.DoesNotExist as e:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
-
     friends1 = [friend for friend in UserModel.objects.filter(friends_user_pair_1__user_pair_2__exact=user.id).values()]
     friends2 = [friend for friend in UserModel.objects.filter(friends_user_pair_2__user_pair_1__exact=user.id).values()]
     content = {"content": friends1 + friends2}

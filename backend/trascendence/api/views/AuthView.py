@@ -1,13 +1,17 @@
-import json
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
+from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from trascendence.middleware.auth import authorize
-from trascendence.middleware.content_types import content_json, json_serializer
+from trascendence.middleware.content_types import content_json
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import parser_classes
 import requests
 from trascendence.api.models.User import UserModel
+from ..api_42 import get_42_token
+from trascendence.core.token_manager import generate_token
 from ..serializers import serialize_json
+from ...middleware.validators import request_body, str_field
+from trascendence.api.api_42 import get_user_info
 
 
 @api_view(['POST'])
@@ -29,6 +33,33 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     if user is None:
         return HttpResponseNotFound({"message": "user not found"}, content_type="application/json")
     return JsonResponse({"content": serialize_json(user)})
+
+
+@require_http_methods(['POST'])
+@request_body(
+    content_type="application/json",
+    fields={
+        "code": str_field(required=True)
+    }
+)
+def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
+    code = content.get("code")
+    response = get_42_token(code)
+    if response["ok"]:
+        token = response["content"]["access_token"]
+        info_response = get_user_info(token)
+        user_42 = info_response["content"]
+        user_db_query = UserModel.objects.filter(intraId=user_42["id"])
+        if user_db_query.exists():
+            user_db = user_db_query.first()
+        else:
+            user_db = UserModel.objects.create(intraId=user_42["id"], username=user_42["login"], email=user_42["email"],
+                                           avatarURI=user_42["image"]["link"])
+        token = generate_token({"sub": user_db.username})
+        user_json = serialize_json(user_db)
+        user_json.update({"access_token": token})
+        return JsonResponse(user_json, status=401, safe=False)
+    return JsonResponse({"message": "code is invalid"}, status=401)
 
 
 @api_view(['POST'])

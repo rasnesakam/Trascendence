@@ -1,0 +1,3 @@
+SECRET = "42_rush"
+ALGORITHM = "HS256"
+ISSUER = "42_rush"

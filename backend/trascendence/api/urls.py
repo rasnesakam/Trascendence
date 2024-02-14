@@ -12,6 +12,7 @@ urlpatterns = [
     path('users', UserView.as_view()),
 
     # Authentication
+    path('auth/sign-in/42', AuthView.sign_in_42),
     path('auth/sign-in', AuthView.sign_in),
     path('auth/sign-up', AuthView.sign_up),
     path('auth_redirect', AuthView.OAuth),
