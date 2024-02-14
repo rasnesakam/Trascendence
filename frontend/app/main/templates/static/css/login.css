@@ -1,0 +1,36 @@
+.head_size {
+	font-size: 55px;
+}
+
+.button-42 {
+	width: 200px;
+	height: 100px;
+}
+
+.rush_logo_size {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -100%);
+	width: 450px;
+	height: 450px;
+}
+
+.card-size {
+	width: 450px;
+	height: 450px;
+	background-color: red;
+}
+
+.card-position {
+	border: 5px solid;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -40%);
+	padding: 10px;
+}
+
+.modal-backdrop {
+	z-index: -1;
+  }
