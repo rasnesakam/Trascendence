@@ -1,34 +1,28 @@
-.head_size
-{
-	font-size: 35px;
+.head_size {
+	font-size: 55px;
 }
 
-.button-42
-{
-	width: 100px;
-    height: 50px;
+.button-42 {
+	width: 200px;
+	height: 100px;
 }
 
-.rush_logo_size
-{
-	display:flex;   
-	border: 5px solid;
+.rush_logo_size {
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -100%);
-	padding: 10px;
-	width: 350px;
-    height: 350px;
+	width: 450px;
+	height: 450px;
 }
 
-.bg-image {
-    background-image: url('../photos/42-button_.png');
+.card-size {
+	width: 450px;
+	height: 450px;
+	background-color: red;
 }
 
-.card-position
-{
-	display:flex;   
+.card-position {
 	border: 5px solid;
 	position: absolute;
 	top: 50%;
@@ -37,4 +31,6 @@
 	padding: 10px;
 }
 
-
+.modal-backdrop {
+	z-index: -1;
+  }
