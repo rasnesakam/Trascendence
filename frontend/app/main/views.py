@@ -20,4 +20,4 @@ def get_requested_file(url: str, routes: dict) -> str:
 
 def home(request, url):
     page = get_requested_file(url, routes)
-    return render(request, "index.html", {'page_requested': f"pages/{page}"})
+    return render(request, "index.html", {'page_requested': f"static/pages/{page}"})
