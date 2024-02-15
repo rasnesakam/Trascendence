@@ -24,3 +24,13 @@
 		width: 165%;
 	}
 }
+
+
+  .darken-on-hover:hover {
+	display: block;
+	width: 120%; /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
+	height: auto; /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
+	transition: opacity 0.5s ease; /* Animasyon efekti ekler (isteğe bağlı) */
+	opacity: 0.6;
+  }
+  
