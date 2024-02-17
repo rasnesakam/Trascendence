@@ -1,0 +1,25 @@
+body
+{
+	overflow-x: hidden;
+}
+
+.rgba-background-dark
+{
+	background-color: rgba(33,37,41, 0.8);
+}
+
+.hidden-lg
+{
+	display: block;
+	@media (min-width: 970px) {
+		display: none;
+	}
+}
+
+.hidden-md
+{
+	display: block;
+	@media (max-width: 970px) {
+		display: none;
+	}
+}

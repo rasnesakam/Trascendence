@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/main.css">
+	<link rel="stylesheet" href="../css/profile-detail.css">
+	<title>Profile-detail</title>
+</head>
+
+<body class="bg-dark" style="background-image: url(https://cdn.intra.42.fr/coalition/cover/365/Slytherin.png);">
+	<!-- NAVBAR START -->
+	<nav class="navbar bg-dark border-bottom navbar-expand-lg  border-body mb-5" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#"><img src="../assets/tr-logo.png"></a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+				aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/livechat">Live Chat</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">About</a>
+					</li>
+
+				</ul>
+				<form class="d-flex" role="search">
+					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+	<!-- NAVBAR END -->
+
+
+
+	<!-- MAIN START -->
+	<main class="" style="background-image: url(https://cdn.intra.42.fr/coalition/cover/365/Slytherin.png);">
+		<div class="row" style="margin-bottom: 8%;">
+
+			<div class="col-lg-2 my-5"></div>
+
+			<div class="col-lg-10 col-12 d-flex justify-content-center">
+
+				<div class="card my-2 px-5 justify-content-center rgba-background-dark" style="width: 98%;">
+
+					<div class="container text-center">
+						<div class="row align-items-start">
+							<div class="col-3 text-white">
+								<h5 style="color: #02c302;">Match</h5>
+								20
+							</div>
+							<div class="col-3 text-white">
+								<h5 style="color: #02c302;">Tournament</h5>
+								3
+							</div>
+							<div class="col-3 text-white">
+								<h5 style="color: #02c302;">Enemy</h5>
+								Emakas
+							</div>
+							<div class="col-3 text-white">
+								<h5 style="color: #02c302;">Minute</h5>
+								120
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="col-lg-2 mt-5 d-flex justify-content-center">
+				<img class="rounded-circle mb-4 mb-lg-0" src="../assets/profile-photos/emakas.jpg"
+					style="width: 150px; height: 150px;">
+			</div>
+
+
+			<div class="col-lg-5 col-12 d-flex justify-content-center">
+
+				<div class="card justify-content-center rgba-background-dark" style="width: 98%; height: 110%;">
+
+					<div class="container text-center">
+						<div class="row align-items-start">
+
+							<div class="col-6 text-white">
+
+
+								<div class="card-body">
+									<h4>Match</h4>
+									<div class="card-body">
+										<!-- Pasta Grafiği -->
+										<div class="text-center">
+											<canvas id="myPieChart"> </canvas>
+										</div>
+									</div>
+
+								</div>
+
+							</div>
+							<div class="col-6 text-white">
+								<div class="card-body">
+									<h4>Tournament</h4>
+
+									<div class="card-body">
+
+										<!-- Pasta Grafiği -->
+										<div class="text-center">
+											<canvas id="myPieChart2"> </canvas>
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="col-lg-5 mt-sm-5 mt-lg-0 d-flex justify-content-center">
+
+				<div class="card justify-content-center rgba-background-dark" style="width: 98%; height: 110%;">
+
+					<div class="container text-center">
+						<div class="row align-items-start">
+							<div class="container">
+								<div class="row">
+									<div class="col-12">
+										<ul class="list-group">
+											<li
+												class="list-group-item d-flex justify-content-between align-items-center bg-danger">
+												<span class="text-white">ayumusak - emakas</span>
+												<span class="text-white">4 - 3</span>
+											</li>
+											<li
+												class="list-group-item d-flex justify-content-between align-items-center bg-success">
+												<span class="text-white">ayumusak - emakas</span>
+												<span class="text-white">3 - 1</span>
+											</li>
+											<li
+												class="list-group-item d-flex justify-content-between align-items-center bg-success">
+												<span class="text-white">ayumusak - emakas</span>
+												<span class="text-white">3 - 3</span>
+											</li>
+											<li
+												class="list-group-item d-flex justify-content-between align-items-center bg-danger">
+												<span class="text-white">ayumusak - emakas</span>
+												<span class="text-white">4 - 3</span>
+											</li>
+											<li
+												class="list-group-item d-flex justify-content-between align-items-center bg-success">
+												<span class="text-white">ayumusak - emakas</span>
+												<span class="text-white">3 - 3</span>
+											</li>
+										</ul>
+										<div class="col-12 mt-5">
+											<ul class="list-group">
+												<li
+													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
+													<span class="text-white">Nova</span>
+													<img src="../assets/icons/number-3.png" style="width: 20px;" alt="">
+												</li>
+												<li
+													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
+													<span class="text-white">Torunlar</span>
+													<img src="../assets/icons/number-2.png" style="width: 20px;" alt="">
+												</li>
+												<li
+													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
+													<span class="text-white">Yigitler</span>
+													<img src="../assets/icons/number-1.png" style="width: 20px;" alt="">
+												</li>
+												<li
+													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
+													<span class="text-white">Nokia</span>
+													<img src="../assets/icons/number-1.png" style="width: 20px;" alt="">
+												</li>
+											</ul>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+
+	</main>
+	<!-- MAIN END -->
+
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+		</script>
+	<script src="../js/main.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="../js/profile-detail.js"></script>
+
+</body>
+
+</html>
