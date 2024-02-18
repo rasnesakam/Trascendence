@@ -80,6 +80,23 @@ const closeUpdateProfile = () => {
   profil_photo.style.cursor = "default";
 };
 
+const clickOpcity = (section, othSection) =>
+{
+  let target = document.getElementById(section);
+  let event = document.getElementById("under-" + section);
+  let othTarget = document.getElementById(othSection);
+  let othEvent = document.getElementById("under-" + othSection);
+
+  target.style.cursor = "default";
+  othTarget.style.cursor = "pointer";
+  target.style.opacity = 0.6;
+  othTarget.style.opacity = 1;
+  event.style.display = "block";
+  othEvent.style.display = "none";
+}
+
+//document.getElementById("rate").onclick = clickOpcity;
+
 const changePhoto = () => {
   let control = document.getElementById("close-icon").style;
   if (control.display == "block") {

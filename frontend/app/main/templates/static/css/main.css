@@ -25,6 +25,11 @@
 	}
 }
 
+.click
+{
+	cursor: pointer;
+}
+
 
   .darken-on-hover:hover {
 	display: block;
