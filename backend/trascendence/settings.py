@@ -30,7 +30,7 @@ SECRET_KEY = env("JWT_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['backend']
 
 
 # Application definition
