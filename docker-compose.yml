@@ -14,7 +14,7 @@ services:
     image: nginx
     container_name: gateway
     volumes:
-      - ./.conf/nginx/conf:/etc/nginx/templates
+      - ./.conf/nginx/conf:/etc/nginx/conf.d:ro
     ports:
       - "80:80"
       - "443:443"
