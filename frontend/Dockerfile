@@ -1,11 +1,14 @@
 FROM python:3.12
 
-RUN python -m venv ./venv
-RUN source venv/bin/activate
+WORKDIR /app
 
-#-r requirements de versiyon çakışması alındı
-RUN pip install -r requirements.txt 
+COPY requirements.txt .
 
-RUN python app/manage.py runserver
+RUN pip install -r requirements.txt
+
+COPY . .
 
 EXPOSE 8000
+
+CMD ["python", "app/manage.py", "runserver", "0.0.0.0:8000"]
+
