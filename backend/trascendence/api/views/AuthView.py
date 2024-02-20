@@ -9,12 +9,18 @@ from trascendence.core.token_manager import generate_token
 from ..serializers import serialize_json
 from ...middleware.validators import request_body, str_field
 from trascendence.api.api_42 import get_user_info
-
+from django.contrib.auth.hashers import BCryptPasswordHasher
 
 @require_http_methods(['POST'])
 @authorize
-@content_json
-def sign_in(request: HttpRequest) -> HttpResponse:
+@request_body(
+    content_type="application/json",
+    fields={
+        "username": str_field(required=True),
+        "password": str_field(required=True)
+	}
+)
+def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
     """
     Authorize: Bearer <token>
     {
