@@ -1,10 +1,7 @@
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import api_view
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.content_types import content_json
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import parser_classes
 import requests
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
@@ -14,8 +11,7 @@ from ...middleware.validators import request_body, str_field
 from trascendence.api.api_42 import get_user_info
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
+@require_http_methods(['POST'])
 @authorize
 @content_json
 def sign_in(request: HttpRequest) -> HttpResponse:
@@ -62,7 +58,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     return JsonResponse({"message": "code is invalid"}, status=401)
 
 
-@api_view(['POST'])
+@require_http_methods(['POST'])
 @content_json
 @authorize
 def sign_up(request: HttpRequest) -> HttpResponse:
@@ -87,14 +83,13 @@ def sign_up(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"message:": "User created", "content": serialize_json(user)}, status=201)
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
+@require_http_methods(['POST'])
 @authorize
 def sign_out(request: HttpRequest) -> HttpResponse:
-    return JsonResponse({"message": request.data['id']})
+    return JsonResponse({"message": "Not Supported Yet."})
 
 
-@api_view(['GET'])
+@require_http_methods(['GET'])
 def OAuth(request: HttpRequest):
     """
     DEPRECATED: Will be removed
@@ -104,7 +99,7 @@ def OAuth(request: HttpRequest):
     return response
 
 
-@api_view(['GET'])
+@require_http_methods(['GET'])
 def token(request):
     """
     DEPRECATED: Will be removed
