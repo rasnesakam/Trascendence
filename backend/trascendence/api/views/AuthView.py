@@ -58,7 +58,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
         token = generate_token({"sub": user_db.username})
         user_json = serialize_json(user_db)
         user_json.update({"access_token": token})
-        return JsonResponse(user_json, status=401, safe=False)
+        return JsonResponse(user_json, status=201)
     return JsonResponse({"message": "code is invalid"}, status=401)
 
 
