@@ -12,5 +12,7 @@ class UserModel(models.Model, SerializableModel):
     email = models.CharField(max_length=100, unique=True)
     avatarURI = models.CharField(max_length=200)
     password = models.CharField(max_length=72, blank=True, null=True,)
+    intra_login = models.BooleanField(default=False)
+    user_active = models.BooleanField(default=True)
 
 
