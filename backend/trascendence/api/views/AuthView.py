@@ -1,8 +1,9 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.content_types import content_json
 import requests
+import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
 from trascendence.core.token_manager import generate_token
@@ -10,6 +11,14 @@ from ..serializers import serialize_json
 from ...middleware.validators import request_body, str_field
 from trascendence.api.api_42 import get_user_info
 from django.contrib.auth.hashers import BCryptPasswordHasher
+
+def create_user_data(usermodel: UserModel, token: str) -> dict:
+	userdata = dict()
+	userdata['username'] = usermodel.username
+	userdata['email'] = usermodel.email
+	userdata['avatarURI'] = usermodel.avatarURI
+	userdata['token'] = token
+	return userdata
 
 @require_http_methods(['POST'])
 @authorize
@@ -21,20 +30,16 @@ from django.contrib.auth.hashers import BCryptPasswordHasher
 	}
 )
 def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
-    """
-    Authorize: Bearer <token>
-    {
-        intraId: number
-    }
-
-    200: Ok,
-    404: Not found
-    401: Not authorized
-    """
-    user = UserModel.objects.filter(intraId=request.content_json['intraId']).first()
-    if user is None:
-        return HttpResponseNotFound({"message": "user not found"}, content_type="application/json")
-    return JsonResponse({"content": serialize_json(user)})
+	query = UserModel.objects.filter(username=content['username'])
+	if not query.exists():
+		return HttpResponseBadRequest(json.dumps({'message':'user not found'}), content_type="application/json")
+	user = query.first()
+	hasher = BCryptPasswordHasher()
+	if hasher.verify(content.get('password'), user.password):
+		token = generate_token({'sub':user.username})
+		user_data = create_user_data(user, token)
+		return JsonResponse({"content": user_data})
+	return HttpResponseForbidden(json.dumps({'message': 'Invalid credentials.'}), content_type='application.json')
 
 
 @require_http_methods(['POST'])
@@ -61,7 +66,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
         user_json = serialize_json(user_db)
         user_json.update({"access_token": token})
         return JsonResponse(user_json, status=201)
-    return JsonResponse({"message": "code is invalid"}, status=401)
+    return HttpResponseForbidden({"message": "code is invalid"}, content_type='application/json')
 
 
 @require_http_methods(['POST'])
