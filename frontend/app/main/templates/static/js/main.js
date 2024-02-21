@@ -4,7 +4,7 @@ var user = {
 	username: 'ayumusak',
 	name: 'Ahmet Kaan',
 	surname: 'Yumuşakdiken',
-	photo: '../assets/profile-photos/aydemir.jpg',
+	photo: 'static/assets/profile-photos/aydemir.jpg',
 
 	total_time: 120,
 	total_tournament: 3,
