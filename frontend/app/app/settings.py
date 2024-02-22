@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-mufim&2iu$@139rbo22=y02)_5-ac*mphimy5o@$htw_6j3l1d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['frontend']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -38,13 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'daphne',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -68,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'app.wsgi.application'
+ASGI_APPLICATION = 'app.asgi.application'
 
 
 # Database
@@ -118,11 +119,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-#STATIC_ROOT = BASE_DIR / 'main/templates/static'
+STATIC_ROOT = BASE_DIR / 'main/templates/static'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "main/templates/static",
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "main/templates/static",
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
