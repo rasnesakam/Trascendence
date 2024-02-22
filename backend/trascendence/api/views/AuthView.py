@@ -1,38 +1,48 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseBadRequest, \
+    HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
-from rest_framework.decorators import api_view
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.content_types import content_json
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import parser_classes
 import requests
+import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
 from trascendence.core.token_manager import generate_token
 from ..serializers import serialize_json
-from ...middleware.validators import request_body, str_field
+from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
+from django.contrib.auth.hashers import BCryptPasswordHasher
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
+def create_user_data(usermodel: UserModel, token: str) -> dict:
+    userdata = dict()
+    userdata['username'] = usermodel.username
+    userdata['email'] = usermodel.email
+    userdata['avatarURI'] = usermodel.avatarURI
+    userdata['token'] = token
+    return userdata
+
+
+@require_http_methods(['POST'])
 @authorize
-@content_json
-def sign_in(request: HttpRequest) -> HttpResponse:
-    """
-    Authorize: Bearer <token>
-    {
-        intraId: number
+@request_body(
+    content_type="application/json",
+    fields={
+        "username": str_field(required=True),
+        "password": str_field(required=True)
     }
-
-    200: Ok,
-    404: Not found
-    401: Not authorized
-    """
-    user = UserModel.objects.filter(intraId=request.content_json['intraId']).first()
-    if user is None:
-        return HttpResponseNotFound({"message": "user not found"}, content_type="application/json")
-    return JsonResponse({"content": serialize_json(user)})
+)
+def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
+    query = UserModel.objects.filter(username=content['username'])
+    if not query.exists():
+        return HttpResponseBadRequest(json.dumps({'message': 'user not found'}), content_type="application/json")
+    user = query.first()
+    hasher = BCryptPasswordHasher()
+    if hasher.verify(content.get('password'), user.password):
+        token = generate_token({'sub': user.username})
+        user_data = create_user_data(user, token)
+        return JsonResponse({"content": user_data})
+    return HttpResponseForbidden(json.dumps({'message': 'Invalid credentials.'}), content_type='application.json')
 
 
 @require_http_methods(['POST'])
@@ -45,6 +55,7 @@ def sign_in(request: HttpRequest) -> HttpResponse:
 def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     code = content.get("code")
     response = get_42_token(code)
+    print("here")
     if response["ok"]:
         token = response["content"]["access_token"]
         info_response = get_user_info(token)
@@ -54,18 +65,25 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
             user_db = user_db_query.first()
         else:
             user_db = UserModel.objects.create(intraId=user_42["id"], username=user_42["login"], email=user_42["email"],
-                                           avatarURI=user_42["image"]["link"])
+                                               avatarURI=user_42["image"]["link"])
         token = generate_token({"sub": user_db.username})
         user_json = serialize_json(user_db)
         user_json.update({"access_token": token})
         return JsonResponse(user_json, status=201)
-    return JsonResponse({"message": "code is invalid"}, status=401)
+    return HttpResponseForbidden({"message": "code is invalid"}, content_type='application/json')
 
 
-@api_view(['POST'])
-@content_json
+@require_http_methods(['POST'])
+@request_body(
+    content_type="application/json",
+    fields={
+        "username": str_field(min_length=9, required=True),
+        "email": str_field(required=True, max_length=50),
+        "password": str_field(required=True)
+    }
+)
 @authorize
-def sign_up(request: HttpRequest) -> HttpResponse:
+def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
     """
     Authorize: Bearer <token>
     {
@@ -77,34 +95,39 @@ def sign_up(request: HttpRequest) -> HttpResponse:
 
     200: Ok
     401: Not authorized
+    403: bad request. invalid inputs
     """
+    usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
+    if usernamecheck.exists():
+        return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
+    password_hasher = BCryptPasswordHasher()
+    #encoded_password = password_hasher.encode()
     user = UserModel.objects.create(
-        intraId=request.content_json['intraId'],
-        username=request.content_json['username'],
-        email=request.content_json['email'],
-        avatarURI=request.content_json['avatarURI']
+        username=content['username'],
+        email=content['email'],
+        avatarURI="default.jpeg"
     )
-    return JsonResponse({"message:": "User created", "content": serialize_json(user)}, status=201)
+    return JsonResponse({"message:": "User created", "content": create_user_data(user)}, status=201)
 
 
-@api_view(['POST'])
-@parser_classes([JSONParser])
+@require_http_methods(['POST'])
 @authorize
 def sign_out(request: HttpRequest) -> HttpResponse:
-    return JsonResponse({"message": request.data['id']})
+    return JsonResponse({"message": "Not Supported Yet."})
 
 
-@api_view(['GET'])
+@require_http_methods(['GET'])
 def OAuth(request: HttpRequest):
     """
     DEPRECATED: Will be removed
     """
     response = HttpResponse(status=302)
-    response["Location"] = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fauth%2Ftoken%2Fcode&response_type=code"
+    response[
+        "Location"] = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fauth%2Ftoken%2Fcode&response_type=code"
     return response
 
 
-@api_view(['GET'])
+@require_http_methods(['GET'])
 def token(request):
     """
     DEPRECATED: Will be removed
