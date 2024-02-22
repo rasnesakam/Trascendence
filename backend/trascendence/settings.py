@@ -29,9 +29,9 @@ print(str(BASE_DIR) + "/.env")
 SECRET_KEY = env("JWT_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['backend']
+ALLOWED_HOSTS = ['backend', 'localhost']
 
 
 # Application definition
