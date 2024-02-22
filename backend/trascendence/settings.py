@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'trascendence.api'
+    'trascendence.api',
+    'daphne'
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'trascendence.wsgi.application'
+ASGI_APPLICATION = 'trascendence.asgi.application'
 
 
 # Database
@@ -133,7 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
 #STATIC_ROOT = BASE_DIR / "trascendence/static"
 #STATICFILES_DIR = [
 #	BASE_DIR / "trascendence/static/uploads"
