@@ -4,7 +4,13 @@ routes = {
     '': 'main.html',
     'game': 'game.html',
     'login': 'login.html',
-    'tournament': 'tournament.html'
+    'tournament': 'tournament.html',
+    'about': 'about.html',
+    'profile-detail': 'profile-detail.html',
+    'livechat': 'livechat.html',
+    'match': 'match.html',
+    'score': 'score.html',
+    'finish-match': 'finish-match.html',
 }
 
 

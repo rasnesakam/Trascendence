@@ -34,7 +34,7 @@ def get_friends(request: HttpRequest, username) -> JsonResponse | HttpResponseNo
 
 
 @require_http_methods(['POST'])
-#@authorize
+@authorize
 @request_body(
     content_type="application/json",
     fields={
@@ -57,7 +57,7 @@ def add_friend(request: HttpRequest, username, content: dict) -> JsonResponse | 
     return JsonResponse({"message": "Invitation sent"}, status=201)
 
 @require_http_methods(['DELETE'])
-#@authorize
+@authorize
 def delete_friend(request: HttpRequest, username, user) -> JsonResponse | HttpResponseNotFound:
     user = UserModel.objects.get(username=username)
     if user is None:
@@ -72,7 +72,7 @@ def delete_friend(request: HttpRequest, username, user) -> JsonResponse | HttpRe
 
 
 @require_http_methods(['GET'])
-#@authorize
+@authorize
 def get_invitations(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
     user = UserModel.objects.get(username=username)
     if user is None:
@@ -82,7 +82,7 @@ def get_invitations(request: HttpRequest, username) -> JsonResponse | HttpRespon
 
 
 @require_http_methods(['POST'])
-#@authorize
+@authorize
 def accept_invitation(request: HttpRequest, username, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = UserModel.objects.get(username=username)
     if user is None:
@@ -98,7 +98,7 @@ def accept_invitation(request: HttpRequest, username, invite_code) -> JsonRespon
 
 
 @require_http_methods(['POST'])
-#@authorize
+@authorize
 def decline_invitation(request: HttpRequest, username, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = UserModel.objects.get(username=username)
     if user is None:
@@ -111,7 +111,7 @@ def decline_invitation(request: HttpRequest, username, invite_code) -> JsonRespo
 
 
 @require_http_methods(['GET'])
-#@authorize
+@authorize
 def get_blacklist(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
     user = UserModel.objects.get(username=username)
     if user is None:
@@ -123,7 +123,7 @@ def get_blacklist(request: HttpRequest, username) -> JsonResponse | HttpResponse
 
 
 @require_http_methods(['POST'])
-#@authorize
+@authorize
 @request_body(
     content_type="application/json",
     fields={
@@ -144,7 +144,7 @@ def add_blacklist(request: HttpRequest, username, content) -> JsonResponse | Htt
 
 
 @require_http_methods(['DELETE'])
-#@authorize
+@authorize
 def remove_blacklist(request: HttpRequest, issuer_username, target_username) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     issuer_user = UserModel.objects.get(username=issuer_username)
     if issuer_user is None:

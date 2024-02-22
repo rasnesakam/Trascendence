@@ -1,15 +1,14 @@
-from django.urls import  path, include
+from django.urls import path, include
 from django.views.generic.base import RedirectView
-from trascendence.api.views.UserView import UserView
 from trascendence.api.views import AuthView
 from trascendence.api.views import InteractionsView
 from trascendence.api.views import TorunamentsView
+from trascendence.api.views import Uploads
 
 # Write decorator to restrict http methods for requests
 # auth_redirect -> 42/oauth -> auth/token/code -> page
 
 urlpatterns = [
-    path('users', UserView.as_view()),
 
     # Authentication
     path('auth/sign-in/42', AuthView.sign_in_42),
@@ -39,5 +38,9 @@ urlpatterns = [
     path('tournaments/<tournamentcode>', TorunamentsView.get_tournament),
     path('tournaments/<tournamentcode>/matches', TorunamentsView.get_tournament_matches),
     path('tournaments/create', TorunamentsView.create_tournament),
-    path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user)
+    path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user),
+
+    # Uploads
+    path('uploads/upload', Uploads.upload_file),
+    path('uploads/delete/<file>', Uploads.delete_file)
 ]
