@@ -175,6 +175,36 @@ function loadContact()
 
 }
 
+function connectWebSocket()
+{
+  var socket = new WebSocket("ws://localhost:8080");
+
+  // Bağlantı açıldığında
+  socket.addEventListener("open", function (event) {
+      console.log("WebSocket bağlantısı açıldı.");
+  });
+
+  // Mesaj alındığında
+  socket.addEventListener("message", function (event) {
+      var outputDiv = document.getElementById("output");
+      outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
+  });
+
+  // Bağlantı kapandığında
+  socket.addEventListener("close", function (event) {
+      console.log("WebSocket bağlantısı kapandı.");
+  });
+
+  // Hata oluştuğunda
+  socket.addEventListener("error", function (event) {
+      console.error("WebSocket hatası:", event);
+  });
+
+  socket.send
+
+  
+}
+
 
 
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
