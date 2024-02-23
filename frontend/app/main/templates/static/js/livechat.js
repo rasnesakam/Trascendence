@@ -1,5 +1,5 @@
 people = {
-  0 : {
+  0: {
     name: "Harvey Specter",
     messages: [
       {
@@ -9,13 +9,15 @@ people = {
         type: "sent",
       },
       {
-        message: "What are you talking about? You do what they say or they shoot you.",
+        message:
+          "What are you talking about? You do what they say or they shoot you.",
         date: "2021-01-01",
         time: "13:00",
         type: "replies",
       },
       {
-        message: "What are you talking about? You do what they say or they shoot you.",
+        message:
+          "What are you talking about? You do what they say or they shoot you.",
         date: "2021-01-01",
         time: "15:00",
         type: "sent",
@@ -30,7 +32,7 @@ people = {
     profile_photo: "http://emilcarlsson.se/assets/harveyspecter.png",
     status: "online",
   },
-  1 : {
+  1: {
     name: "Charles Forstman",
     messages: [
       {
@@ -49,7 +51,7 @@ people = {
     profile_photo: "http://emilcarlsson.se/assets/charlesforstman.png",
     status: "offline",
   },
-  2 : {
+  2: {
     name: "Jonathan Sidwell",
     messages: [
       {
@@ -70,17 +72,15 @@ people = {
   },
 };
 
-
 (function () {
   disableChat();
   loadContact();
 })();
 
-function sendMessage(sendType, photoWho, sendText)
-{
+function sendMessage(sendType, photoWho, sendText) {
   var message = document.createElement("li");
   message.classList.add(sendType);
-  
+
   var img = document.createElement("img");
   img.src = photoWho;
   message.appendChild(img);
@@ -89,58 +89,60 @@ function sendMessage(sendType, photoWho, sendText)
   para.textContent = sendText;
   message.appendChild(para);
 
-
   document.getElementById("message").appendChild(message);
   console.log(message);
-  document.querySelector(".messages").scrollTop = document.querySelector(".messages").scrollHeight;
+  document.querySelector(".messages").scrollTop =
+    document.querySelector(".messages").scrollHeight;
 }
 
-function clearMessages()
-{
+function clearMessages() {
   var message = document.getElementById("message");
   while (message.firstChild) {
     message.removeChild(message.firstChild);
   }
 }
 
-function disableChat()
-{
-  document.getElementById("contact-selected-profile-photo").setAttribute("src", "https://img.freepik.com/free-photo/abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1708365600&semt=ais");
+function disableChat() {
+  document
+    .getElementById("contact-selected-profile-photo")
+    .setAttribute(
+      "src",
+      "https://img.freepik.com/free-photo/abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1708365600&semt=ais"
+    );
   document.getElementById("contact-selected-profile-name").innerHTML = "";
   document.getElementById("message-input").style.display = "none";
 }
 
-function selectedPerson(name) //zamana göre mesajları gösterme
-{
+function selectedPerson(name) {
+  //zamana göre mesajları gösterme
   console.log(name);
   clearMessages();
   document.getElementById("message-input").style.display = "block";
-  for (i = 0; i < Object.keys(people).length; i++)
-  {
-    if (people[i].name == name)
-    {
+  for (i = 0; i < Object.keys(people).length; i++) {
+    if (people[i].name == name) {
       document.getElementById(people[i].name).classList.add("active");
-      document.getElementById("contact-selected-profile-photo").setAttribute("src", people[i].profile_photo);
-      document.getElementById("contact-selected-profile-name").innerHTML = people[i].name;
-      for (j = 0; j < Object.keys(people[i].messages).length; j++)
-      {
-        sendMessage(people[i].messages[j].type, people[i].profile_photo, people[i].messages[j].message);
+      document
+        .getElementById("contact-selected-profile-photo")
+        .setAttribute("src", people[i].profile_photo);
+      document.getElementById("contact-selected-profile-name").innerHTML =
+        people[i].name;
+      for (j = 0; j < Object.keys(people[i].messages).length; j++) {
+        sendMessage(
+          people[i].messages[j].type,
+          people[i].profile_photo,
+          people[i].messages[j].message
+        );
       }
-    }
-    else
-    {
+    } else {
       document.getElementById(people[i].name).classList.remove("active");
     }
   }
 }
 
-
-function loadContact()
-{
+function loadContact() {
   var contact = document.getElementById("add-contacts");
 
-  for (var i = 0; i < Object.keys(people).length; i++)
-  {
+  for (var i = 0; i < Object.keys(people).length; i++) {
     var add = document.createElement("li");
     add.classList.add("add");
 
@@ -167,45 +169,42 @@ function loadContact()
     wrapDiv.appendChild(metaDiv);
     add.appendChild(wrapDiv);
 
-
-    contact.innerHTML += "<li id=\"" + people[i].name + "\"" 
-    + "class=\'contact\' onclick=selectedPerson(id)>"  + add.innerHTML
-    + "</li>";
+    contact.innerHTML +=
+      '<li id="' +
+      people[i].name +
+      '"' +
+      "class='contact' onclick=selectedPerson(id)>" +
+      add.innerHTML +
+      "</li>";
   }
-
 }
 
-function connectWebSocket()
-{
+function connectWebSocket() {
   var socket = new WebSocket("ws://localhost:8080");
 
   // Bağlantı açıldığında
   socket.addEventListener("open", function (event) {
-      console.log("WebSocket bağlantısı açıldı.");
+    console.log("WebSocket bağlantısı açıldı.");
   });
 
   // Mesaj alındığında
   socket.addEventListener("message", function (event) {
-      var outputDiv = document.getElementById("output");
-      outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
+    var outputDiv = document.getElementById("output");
+    outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
   });
 
   // Bağlantı kapandığında
   socket.addEventListener("close", function (event) {
-      console.log("WebSocket bağlantısı kapandı.");
+    console.log("WebSocket bağlantısı kapandı.");
   });
 
   // Hata oluştuğunda
   socket.addEventListener("error", function (event) {
-      console.error("WebSocket hatası:", event);
+    console.error("WebSocket hatası:", event);
   });
 
-  socket.send
-
-  
+  socket.send;
 }
-
-
 
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 $("#profile-img").click(function () {
@@ -240,7 +239,8 @@ $("#status-options ul li").click(function () {
   $("#status-options").removeClass("active");
 });
 
-function newMessage() { //mesaj göndermek için
+function newMessage() {
+  //mesaj göndermek için
   message = $(".message-input input").val();
   if ($.trim(message) == "") {
     return false;
@@ -266,8 +266,6 @@ $(window).on("keydown", function (e) {
   }
 });
 
-
-
 const searchAlgorithm = () => {
   var search = document.querySelector("#search input").value;
 
@@ -282,4 +280,3 @@ const searchAlgorithm = () => {
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
-

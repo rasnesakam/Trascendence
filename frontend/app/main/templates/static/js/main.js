@@ -1,36 +1,36 @@
 var user = {
-	id: 1,
-	nickname: "ayumusak",
-	username: 'ayumusak',
-	name: 'Ahmet Kaan',
-	surname: 'Yumuşakdiken',
-	photo: 'static/assets/profile-photos/aydemir.jpg',
+  id: 1,
+  nickname: "ayumusak",
+  username: "ayumusak",
+  name: "Ahmet Kaan",
+  surname: "Yumuşakdiken",
+  photo: "static/assets/profile-photos/aydemir.jpg",
 
-	total_time: 120,
-	total_tournament: 3,
-	total_match: 20,
-	enemy: "emakas"
+  total_time: 120,
+  total_tournament: 3,
+  total_match: 20,
+  enemy: "emakas",
 };
 
 (function () {
   loadUserInformation();
 })();
 
-function loadUserInformation()
-{
+function loadUserInformation() {
   document.getElementById("nickname").innerHTML = user.nickname;
   document.getElementById("pr-name").innerHTML = "Name: " + user.name;
   document.getElementById("pr-surname").innerHTML = "Surname: " + user.surname;
   document.getElementById("profile-photo").src = user.photo;
-  
+
   document.getElementById("total_time").innerHTML = user.total_time + " Min";
-  document.getElementById("total_tournament").innerHTML = user.total_tournament + " Tournament";
-  document.getElementById("total_match").innerHTML = user.total_match + " Match";
+  document.getElementById("total_tournament").innerHTML =
+    user.total_tournament + " Tournament";
+  document.getElementById("total_match").innerHTML =
+    user.total_match + " Match";
   document.getElementById("enemy").innerHTML = user.enemy;
 }
 
-function saveUserInformation()
-{
+function saveUserInformation() {
   user.nickname = document.getElementById("nicknameInput").value;
   //user.photo = document.getElementById("fileInput").files[0].path; // sunucu ile bağlamamız gerekiyor
   alert("file: " + user.photo);
@@ -60,8 +60,6 @@ const updateProfile = () => {
   document.getElementById("nameInput").value = user.name;
   document.getElementById("surnameInput").value = user.surname;
 
-
-
   document.getElementById("profile-photo").style.cursor = "pointer";
 };
 
@@ -80,8 +78,7 @@ const closeUpdateProfile = () => {
   profil_photo.style.cursor = "default";
 };
 
-const clickOpcity = (section, othSection) =>
-{
+const clickOpcity = (section, othSection) => {
   let target = document.getElementById(section);
   let event = document.getElementById("under-" + section);
   let othTarget = document.getElementById(othSection);
@@ -93,7 +90,7 @@ const clickOpcity = (section, othSection) =>
   othTarget.style.opacity = 1;
   event.style.display = "block";
   othEvent.style.display = "none";
-}
+};
 
 //document.getElementById("rate").onclick = clickOpcity;
 

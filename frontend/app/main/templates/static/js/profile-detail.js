@@ -1,5 +1,4 @@
-(function ()
-{
+(function () {
   var matchesCount = 100;
   var winsCount = 37;
   var data = {
@@ -41,5 +40,4 @@
       maintainAspectRatio: false,
     },
   });
-})()
-
+})();
