@@ -22,9 +22,9 @@ friends_user_pair_1__user_pair_2__exact
 
 @require_http_methods(['GET'])
 @authorize
-def get_friends(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
+def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     try:
-        user = UserModel.objects.get(username=username)
+        user = UserModel.objects.get(username=request.auth_info["sub"])
     except UserModel.DoesNotExist as e:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     friends1 = [friend for friend in UserModel.objects.filter(friends_user_pair_1__user_pair_2__exact=user.id).values()]
@@ -42,10 +42,10 @@ def get_friends(request: HttpRequest, username) -> JsonResponse | HttpResponseNo
         "message": str_field(max_length=400)
     }
 )
-def add_friend(request: HttpRequest, username, content: dict) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
+def add_friend(request: HttpRequest, content: dict) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     target_username = content.get("username")
     invitation_message = content.get("message", "")
-    user = UserModel.objects.get(username=username)
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     target = UserModel.objects.get(username=target_username)
@@ -58,8 +58,8 @@ def add_friend(request: HttpRequest, username, content: dict) -> JsonResponse | 
 
 @require_http_methods(['DELETE'])
 @authorize
-def delete_friend(request: HttpRequest, username, user) -> JsonResponse | HttpResponseNotFound:
-    user = UserModel.objects.get(username=username)
+def delete_friend(request: HttpRequest, user) -> JsonResponse | HttpResponseNotFound:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     old_friend = UserModel.objects.get(username=user)
@@ -73,8 +73,8 @@ def delete_friend(request: HttpRequest, username, user) -> JsonResponse | HttpRe
 
 @require_http_methods(['GET'])
 @authorize
-def get_invitations(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
-    user = UserModel.objects.get(username=username)
+def get_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     invitations = [invitation for invitation in FriendInvitation.objects.filter(target=user).values()]
@@ -83,8 +83,8 @@ def get_invitations(request: HttpRequest, username) -> JsonResponse | HttpRespon
 
 @require_http_methods(['POST'])
 @authorize
-def accept_invitation(request: HttpRequest, username, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
-    user = UserModel.objects.get(username=username)
+def accept_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     invitation = FriendInvitation.objects.get(invite_code=invite_code)
@@ -99,8 +99,8 @@ def accept_invitation(request: HttpRequest, username, invite_code) -> JsonRespon
 
 @require_http_methods(['POST'])
 @authorize
-def decline_invitation(request: HttpRequest, username, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
-    user = UserModel.objects.get(username=username)
+def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     invitation = FriendInvitation.objects.get(invite_code=invite_code)
@@ -112,8 +112,8 @@ def decline_invitation(request: HttpRequest, username, invite_code) -> JsonRespo
 
 @require_http_methods(['GET'])
 @authorize
-def get_blacklist(request: HttpRequest, username) -> JsonResponse | HttpResponseNotFound:
-    user = UserModel.objects.get(username=username)
+def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     print(UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id).query)
@@ -130,8 +130,8 @@ def get_blacklist(request: HttpRequest, username) -> JsonResponse | HttpResponse
         "username": str_field(required=True, max_length=8)
     }
 )
-def add_blacklist(request: HttpRequest, username, content) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
-    user = UserModel.objects.get(username=username)
+def add_blacklist(request: HttpRequest, content) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     target = UserModel.objects.get(username=content["username"])
@@ -145,8 +145,8 @@ def add_blacklist(request: HttpRequest, username, content) -> JsonResponse | Htt
 
 @require_http_methods(['DELETE'])
 @authorize
-def remove_blacklist(request: HttpRequest, issuer_username, target_username) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
-    issuer_user = UserModel.objects.get(username=issuer_username)
+def remove_blacklist(request: HttpRequest, target_username) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
+    issuer_user = UserModel.objects.get(username=request.auth_info["sub"])
     if issuer_user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
     target_user = UserModel.objects.get(username=target_username)
