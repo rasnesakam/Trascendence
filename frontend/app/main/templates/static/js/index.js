@@ -1,4 +1,6 @@
 //İndex.js
+
+
 var user = {
   id: 1,
   nickname: "ayumusak",
@@ -33,10 +35,19 @@ function whichEvent(id) {
   }
 }
 
+function isPassageEvent(eventId) {
+  if (eventId == "nav-home") return true;
+  if (eventId == "nav-about") return true;
+  if (eventId == "nav-game") return true;
+  return false;
+}
+
 const router = () => {
   var body = document.body;
 
   body.addEventListener("click", function (event) {
+    if (!isPassageEvent(event.target.id))
+      return 0;
     event.preventDefault();
     window.history.pushState({}, "", event.target.href);
     switchPages(event.target.id);
@@ -141,6 +152,13 @@ const changePhoto = () => {
     document.getElementById("fileInput").click();
   }
 };
+
+function outLogin()
+{
+  localStorage.removeItem(0);
+  window.location.href = "/login";
+
+}
 
 //livechat.js
 people = {
@@ -347,9 +365,12 @@ function connectWebSocket() {
 }
 
 
-
-document.querySelector(".messages").scrollTop = document.body.scrollHeight;
-
+/*
+var messagesElement = document.querySelector(".messages");
+if (messagesElement) {
+  messagesElement.scrollTop = document.body.scrollHeight;
+}
+*
 document.querySelector("#profile-img").addEventListener("click", function () {
   document.querySelector("#status-options").classList.toggle("active");
 });
@@ -442,7 +463,7 @@ const searchAlgorithm = () => {
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
-
+*/
 /*
 //profile-detail.js
 function setRate(win, lose, elementId) {
@@ -523,25 +544,32 @@ document.addEventListener("keydown", function (event) {
 */
 
 //controller.js
-/*
+
 (function () {
-  isLogin();
-})();*/
+  if (isLogin()) 
+    isLogin();
+})();
 
 function isLogin() {
   const url = window.location.pathname;
-  let login;
   let loginStr = localStorage.getItem(0);
+  var login;
 
   try {
     if (!url.includes("/login")) {
-      login = JSON.parse(loginStr);
+        login = JSON.parse(loginStr);
 
-      if (login == null || !login.login) throw new Error("is not login");
+      alert("bende login: " +  login);
+      alert("bende login: " +  url);
+      alert("bende login: " +  login.access_token);
+      if (login.access_token == undefined)  throw new Error("is not login");
     }
   } catch (error) {
+    alert("girdi");
     window.location.href = "login";
+    router();
     return false;
   }
   return true;
 }
+
