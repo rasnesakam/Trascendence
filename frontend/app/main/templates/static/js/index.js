@@ -365,12 +365,12 @@ function connectWebSocket() {
 }
 
 
-/*
+
 var messagesElement = document.querySelector(".messages");
 if (messagesElement) {
   messagesElement.scrollTop = document.body.scrollHeight;
 }
-*
+
 document.querySelector("#profile-img").addEventListener("click", function () {
   document.querySelector("#status-options").classList.toggle("active");
 });
@@ -463,7 +463,7 @@ const searchAlgorithm = () => {
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
-*/
+
 /*
 //profile-detail.js
 function setRate(win, lose, elementId) {
@@ -559,13 +559,9 @@ function isLogin() {
     if (!url.includes("/login")) {
         login = JSON.parse(loginStr);
 
-      alert("bende login: " +  login);
-      alert("bende login: " +  url);
-      alert("bende login: " +  login.access_token);
       if (login.access_token == undefined)  throw new Error("is not login");
     }
   } catch (error) {
-    alert("girdi");
     window.location.href = "login";
     router();
     return false;
