@@ -2,22 +2,23 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 75vh;
+  height: 100vh;
   color: #ffffff;
 }
 
 .card {
   background: #fff;
   transition: 0.5s;
-  border: 0;
+  border: 2px dashed #ffffff;
   border-radius: 0.55rem;
   position: relative;
   width: 100%;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 .chat-app .people-list {
-  width: 280px;
+  width: 290px;
+  height: 100vh;
   position: absolute;
   left: 0;
   top: 0;
@@ -44,7 +45,8 @@ body {
 }
 
 .people-list .chat-list li:hover {
-  background: #efefef;
+  background: #535353;
+  color: #efefef;
   cursor: pointer;
 }
 
@@ -54,7 +56,7 @@ body {
 
 .people-list .chat-list li .name {
   font-size: 15px;
-  color: #adadad;
+  color: #ffffff;
 }
 
 .people-list .chat-list img {
@@ -91,10 +93,11 @@ body {
 .chat .chat-header .chat-about {
   float: left;
   padding-left: 10px;
-  color: #7c7b7b;
+  color: #ffffff;
 }
 
 .chat .chat-history {
+  height: 550px;
   padding: 20px;
   border-bottom: 2px solid #fff;
 }
@@ -198,6 +201,17 @@ body {
   content: " ";
   clear: both;
   height: 0;
+}
+
+.icon-search::placeholder {
+  background-color: #535353;
+  color: #efefef;
+}
+
+.icons {
+  padding: 12px;
+  background-color: #535353;
+  color: #efefef;
 }
 
 @media only screen and (max-width: 767px) {
