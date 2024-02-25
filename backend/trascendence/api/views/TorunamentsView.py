@@ -10,8 +10,8 @@ from trascendence.middleware.validators import request_body, str_field
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournament_invitations(request: HttpRequest, username: str) -> JsonResponse | HttpResponseNotFound:
-    user = UserModel.objects.get(username=username)
+def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
+    user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": f"User {username} not found"}), content_type="application/json")
     tournament_invitations = [invitation for invitation in
@@ -77,8 +77,8 @@ def get_tournaments(request: HttpRequest, tournamentcode: str) -> JsonResponse:
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournaments_for_user(request: HttpRequest, username) -> JsonResponse:
-    tournaments_user_query = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=username)
+def get_tournaments_for_user(request: HttpRequest) -> JsonResponse:
+    tournaments_user_query = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=request.auth_info["sub"])
     user_tournaments = [tournament for tournament in tournaments_user_query.values()]
     return JsonResponse({"message": f"There is {len(user_tournaments)} tournaments that {username} joined",
                          "content": user_tournaments}, status=200)
