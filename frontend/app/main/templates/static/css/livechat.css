@@ -1,7 +1,4 @@
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
   color: #ffffff;
 }
@@ -204,7 +201,6 @@ body {
 }
 
 .icon-search::placeholder {
-  background-color: #535353;
   color: #efefef;
 }
 
@@ -212,6 +208,10 @@ body {
   padding: 12px;
   background-color: #535353;
   color: #efefef;
+}
+
+.special-search {
+  padding: 8px;
 }
 
 @media only screen and (max-width: 767px) {

@@ -1,5 +1,12 @@
-//İndex.js
+const search = document.querySelector(".special-search");
 
+search.addEventListener("focus", function() {
+    search.style.backgroundColor = "#535353";
+    search.style.color = "#efefef";
+});
+
+
+//İndex.js
 
 var user = {
   id: 1,
@@ -371,7 +378,7 @@ if (messagesElement) {
   messagesElement.scrollTop = document.body.scrollHeight;
 }
 
-document.querySelector("#profile-img").addEventListener("click", function () {
+document.getElementById("profile-img").addEventListener("click", function () {
   document.querySelector("#status-options").classList.toggle("active");
 });
 
