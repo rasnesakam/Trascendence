@@ -1,41 +1,108 @@
-.big-text
-{
-	font-size: 350%;
+.big-text {
+  font-size: 350%;
 }
 
 .my-margin-center {
-	margin-left: 55%;
+  margin-left: 55%;
 }
 
-.card-size
-{
-	width: 45%;
-	padding: 5px;
-	
-	@media (max-width: 992px) {
-		width: 85%;
-		padding: 10px;
-	}	
-}
+.card-size {
+  width: 45%;
+  padding: 5px;
 
-.btn-size
-{
-	@media (max-width: 992px) {
-		width: 165%;
-	}
-}
-
-.click
-{
-	cursor: pointer;
-}
-
-
-  .darken-on-hover:hover {
-	display: block;
-	width: 120%; /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
-	height: auto; /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
-	transition: opacity 0.5s ease; /* Animasyon efekti ekler (isteğe bağlı) */
-	opacity: 0.6;
+  @media (max-width: 992px) {
+    width: 85%;
+    padding: 10px;
   }
-  
+}
+
+.btn-size {
+  @media (max-width: 992px) {
+    width: 165%;
+  }
+}
+
+.click {
+  cursor: pointer;
+}
+
+.btn-slice {
+  width: 200px;
+  height: 75px;
+  padding: 12px 32px;
+  background: #ffffff;
+  color: #000000;
+  margin: 1rem;
+  border: 1px solid;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s, background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-slice:hover {
+  color: #c0c9d5;
+  background: linear-gradient(to left top, #000000 50%, #ffffff 50%);
+}
+
+.btn-slice:hover .game {
+  display: none;
+}
+
+.slice-left,
+.slice-right {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.slice-left {
+  left: 0;
+}
+
+.slice-right {
+  right: 0;
+}
+
+.btn-slice:hover .slice-left,
+.btn-slice:hover .slice-right {
+  opacity: 1;
+}
+
+.pvp-link,
+.ai-link {
+  text-decoration: none;
+  color: #efefef;
+  line-height: 40px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-slice:hover .slice-left .pvp-link {
+  opacity: 1;
+  font-size: 22px;
+  transform: translate(-200%, -75%);
+  color: #000000;
+}
+
+.btn-slice:hover .slice-right .ai-link {
+  opacity: 1;
+  font-size: 22px;
+  transform: translate(225%, -25%);
+}
