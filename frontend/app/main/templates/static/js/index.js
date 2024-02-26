@@ -1,6 +1,5 @@
 //İndex.js
 
-
 var user = {
   id: 1,
   nickname: "ayumusak",
@@ -27,37 +26,52 @@ const webRoute = {
 };
 
 function whichEvent(id) {
-  if (id == "nav-home") {
+  if (id == "/") {
     loadUserInformation();
-  } else if (id == "nav-livechat") {
+  } else if (id == "/livechat") {
     disableChat();
     loadContact();
+  }
+  else if (id == "login")
+  {
+    takeUrl();
   }
 }
 
 function isPassageEvent(eventId) {
-  if (eventId == "nav-home") return true;
-  if (eventId == "nav-about") return true;
-  if (eventId == "nav-game") return true;
+  if (eventId == "/") return true;
+  if (eventId == "/about") return true;
+  if (eventId == "/livechat") return true;
+  if (eventId == "/login") return true;
   return false;
 }
 
+var isEventListenerAdded = false;
+
 const router = () => {
+  if (isEventListenerAdded) {
+    return;
+  }
   var body = document.body;
 
   body.addEventListener("click", function (event) {
-    if (!isPassageEvent(event.target.id))
-      return 0;
-    event.preventDefault();
-    window.history.pushState({}, "", event.target.href);
-    switchPages(event.target.id);
+    if (isPassageEvent(event.target.id)) {
+      event.preventDefault();
+
+      window.history.pushState({}, "", event.target.href);
+      switchPages(event.target.id);
+    }
   });
+
+  isEventListenerAdded = true;
 };
 
 const switchPages = async (eventId) => {
   const path = window.location.pathname;
   const route = webRoute[path] || webRoute[404];
-  const html = await fetch(route).then((response) => response.text());
+  console.log("route: ", route, eventId);
+  const html = await fetch(route).then((response) => response.text()).catch((error) => alert("hatam nerde " + error));
+  console.log("html: ", html, eventId);
 
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(html, "text/html");
@@ -87,12 +101,10 @@ function loadUserInformation() {
 function saveUserInformation() {
   user.nickname = document.getElementById("nicknameInput").value;
 
-  alert("file: " + user.photo);
   user.name = document.getElementById("nameInput").value;
   user.surname = document.getElementById("surnameInput").value;
   loadUserInformation();
   closeUpdateProfile();
-  alert("oli");
 }
 
 function removeSubstring(originalString, substringToRemove) {
@@ -153,14 +165,13 @@ const changePhoto = () => {
   }
 };
 
-function outLogin()
-{
+function outLogin() {
   localStorage.removeItem(0);
   window.location.href = "/login";
-
 }
 
 //livechat.js
+/*
 people = {
   0: {
     name: "Harvey Specter",
@@ -546,8 +557,7 @@ document.addEventListener("keydown", function (event) {
 //controller.js
 
 (function () {
-  if (isLogin()) 
-    isLogin();
+  isLogin();
 })();
 
 function isLogin() {
@@ -557,9 +567,9 @@ function isLogin() {
 
   try {
     if (!url.includes("/login")) {
-        login = JSON.parse(loginStr);
+      login = JSON.parse(loginStr);
 
-      if (login.access_token == undefined)  throw new Error("is not login");
+      if (login.access_token == undefined) throw new Error("is not login");
     }
   } catch (error) {
     window.location.href = "login";
@@ -569,3 +579,47 @@ function isLogin() {
   return true;
 }
 
+//login.js
+async function takeUrl() {
+  myUrl = window.location.search;
+  searchParams = new URLSearchParams(myUrl);
+
+  if (myUrl.includes("/login") && searchParams.has("code")) {
+    await fetch("http://localhost/api/auth/sign-in/42", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        code: searchParams.get("code"),
+      }),
+    })
+      .then(async (response) => {
+        if (!response.ok) return new Error("Respone is not ok");
+        return response.json();
+      })
+      .then((data) => {
+        alert("You are logged in: " + myUrl);
+        localStorage.setItem(0, JSON.stringify(data));
+
+        console.log("data: ", window.location.href);
+        window.history.pushState({}, "", "/");
+        console.log("data2: ", window.location.href);
+        router();
+        return data;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+}
+
+//back-transition
+
+window.onpopstate = async function (event) {
+  if (event.state) {
+    var currentUrl = window.location.pathname;
+    event.preventDefault();
+    await switchPages(currentUrl);
+  }
+};
