@@ -1,9 +1,9 @@
-from django.urls import path, include
-from django.views.generic.base import RedirectView
+from django.urls import path
 from trascendence.api.views import AuthView
 from trascendence.api.views import InteractionsView
 from trascendence.api.views import TorunamentsView
 from trascendence.api.views import Uploads
+from trascendence.api.views import profile_views
 
 # Write decorator to restrict http methods for requests
 # auth_redirect -> 42/oauth -> auth/token/code -> page
@@ -21,7 +21,7 @@ urlpatterns = [
     path('interacts/friends', InteractionsView.get_friends),
     path('interacts/friends/add', InteractionsView.add_friend),
     path('interacts/friends/delete/<user>', InteractionsView.delete_friend),
-    path('interacts/invitation>', InteractionsView.get_invitations),
+    path('interacts/invitation/', InteractionsView.get_invitations),
     path('interacts/invitation/<invite_code>/accept', InteractionsView.accept_invitation),
     path('interacts/invitation/<invite_code>/delete', InteractionsView.decline_invitation),
     path('interacts/blacklist', InteractionsView.get_blacklist),
@@ -42,5 +42,8 @@ urlpatterns = [
 
     # Uploads
     path('uploads/upload', Uploads.upload_file),
-    path('uploads/delete/<file>', Uploads.delete_file)
+    path('uploads/delete/<file>', Uploads.delete_file),
+
+    # Profile
+    path('profile/<username>', profile_views.get_user_profile)
 ]
