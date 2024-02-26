@@ -1,8 +1,7 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseBadRequest, \
+from django.http import HttpRequest, HttpResponse, JsonResponse,  HttpResponseBadRequest, \
     HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
-from trascendence.middleware.content_types import content_json
 import requests
 import json
 from trascendence.api.models.User import UserModel
@@ -53,9 +52,8 @@ def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
     }
 )
 def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
-    code = content.get("code")
+    code = content["code"]
     response = get_42_token(code)
-    print("here")
     if response["ok"]:
         token = response["content"]["access_token"]
         info_response = get_user_info(token)
@@ -128,28 +126,6 @@ def OAuth(request: HttpRequest):
 
 
 @require_http_methods(['GET'])
-def token(request):
-    """
-    DEPRECATED: Will be removed
-    """
-    client_id = "u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c"
-    client_secret = "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"
-    redirect_url = "http://localhost:8000/api/auth/token/code"
-    code = request.GET.get("code", "undefined")
-    if code != "undefined":
-        url = "https://api.intra.42.fr/oauth/token"
-        data = {
-            "grant_type": "authorization_code",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "code": code,
-            "redirect_uri": redirect_url
-        }
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-        res = requests.post(url, data=data, headers=headers)
-        print(f"code: {code}")
-        print(f"response: {res.text}")
-        return JsonResponse({"message": res.json(), "status": res.status_code})
-    return JsonResponse({"message": "code not found"}, status=404)
+@authorize
+def verify_token(request):
+    return JsonResponse(json.dumps({"message": "Token is valid."}), status=200)
