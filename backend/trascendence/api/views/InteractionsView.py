@@ -30,7 +30,7 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     friends1 = [friend for friend in UserModel.objects.filter(friends_user_pair_1__user_pair_2__exact=user.id).values()]
     friends2 = [friend for friend in UserModel.objects.filter(friends_user_pair_2__user_pair_1__exact=user.id).values()]
     content = {"content": friends1 + friends2}
-    return JsonResponse(content)
+    return JsonResponse(content, status=200)
 
 
 @require_http_methods(['POST'])
