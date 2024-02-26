@@ -1,4 +1,5 @@
 from django.urls import path
+from trascendence.api.views import UserView
 from trascendence.api.views import AuthView
 from trascendence.api.views import InteractionsView
 from trascendence.api.views import TorunamentsView
@@ -45,5 +46,8 @@ urlpatterns = [
     path('uploads/delete/<file>', Uploads.delete_file),
 
     # Profile
-    path('profile/<username>', profile_views.get_user_profile)
+    path('profile/<username>', profile_views.get_user_profile),
+
+    # Search User
+    path('users/search/<username>', UserView.search_user)
 ]
