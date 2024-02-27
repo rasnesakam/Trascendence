@@ -2,7 +2,7 @@
 import json
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponseNotFound, JsonResponse
-from backend.trascendence.api.models.User import UserModel
+from trascendence.api.models.User import UserModel
 
 
 def create_user_list(users: list[UserModel]) -> dict:
