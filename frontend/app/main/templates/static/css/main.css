@@ -27,11 +27,12 @@
 }
 
 .btn-slice {
-  width: 200px;
-  height: 75px;
+  width: 400px;
+  height: 150px;
   padding: 12px 32px;
   background: #ffffff;
   color: #000000;
+  border-radius: 18px;
   margin: 1rem;
   border: 1px solid;
   text-align: center;
@@ -51,6 +52,10 @@
 
 .btn-slice:hover .game {
   display: none;
+}
+
+.btn-slice .game {
+  font-size: 22px;
 }
 
 .slice-left,
@@ -94,15 +99,14 @@
   transform: translate(-50%, -50%);
 }
 
-.btn-slice:hover .slice-left .pvp-link {
+.btn-slice:hover .slice-left .pvp-link, .slice-right .ai-link{
   opacity: 1;
-  font-size: 22px;
-  transform: translate(-200%, -75%);
+  font-size: 30px;
+  transform: translate(-250%, -100%);
   color: #000000;
 }
 
 .btn-slice:hover .slice-right .ai-link {
-  opacity: 1;
-  font-size: 22px;
-  transform: translate(225%, -25%);
+  color: #ffffff;
+  transform: translate(300%, 20%);
 }
