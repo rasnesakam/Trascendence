@@ -2,6 +2,7 @@
 import json
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponseNotFound, JsonResponse
+from django.db.models import Q
 from trascendence.api.models.tournament_models import Tournaments
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.match_models import Matches
@@ -32,10 +33,10 @@ def create_profile_view(user: UserModel, matches: list, tournament_matches: list
 @require_http_methods(['GET'])
 def get_user_profile(request: HttpRequest, username: str):
     try:
-        user = UserModel.objects.get(username=username)
-        matches = Matches.objects.filter(home=user).values() | Matches.objects.filter(away=user).values()
-        tournament_matches = TournamentMatches.objects.filter(match__home__exact=user.id).values() | TournamentMatches.objects.filter(match__away__exact=user.id)
-        tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id)
+        user = UserModel.objects.get(Q(username__exact=username))
+        matches = Matches.objects.filter(Q(home=user) | Q(away=user)).values()
+        tournament_matches = TournamentMatches.objects.filter(Q(match__home__exact=user.id) | Q(match__away__exact=user.id)).values()
+        tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id).values()
         profile = create_profile_view(
             user,
             [match for match in matches],
@@ -43,5 +44,5 @@ def get_user_profile(request: HttpRequest, username: str):
             [tournament for tournament in tournaments]
         )
         return JsonResponse(profile, status=200)
-    except:
-        return HttpResponseNotFound(json.dumps({"message":f"user {username} not found"}), content_type="application/json")
+    except Exception as e:
+        return HttpResponseNotFound(json.dumps({"message":f"user '{username}' not found", "exception": str(e)}), content_type="application/json")
