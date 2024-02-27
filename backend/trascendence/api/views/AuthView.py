@@ -55,6 +55,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     code = content["code"]
     response = get_42_token(code)
     if response["ok"]:
+        created_new = False
         token = response["content"]["access_token"]
         info_response = get_user_info(token)
         user_42 = info_response["content"]
@@ -64,11 +65,12 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
         else:
             user_db = UserModel.objects.create(intraId=user_42["id"], username=user_42["login"], email=user_42["email"],
                                                avatarURI=user_42["image"]["link"])
+            created_new = True
         token = generate_token({"sub": user_db.username})
         user_json = serialize_json(user_db)
         user_json.update({"access_token": token})
-        return JsonResponse(user_json, status=201)
-    return HttpResponseForbidden({"message": "code is invalid"}, content_type='application/json')
+        return JsonResponse(user_json, status=201 if created_new else 200)
+    return HttpResponseForbidden(str({"message": "code is invalid", "response": response}), content_type='application/json', status=200)
 
 
 @require_http_methods(['POST'])
