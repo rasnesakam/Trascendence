@@ -77,10 +77,10 @@ def get_tournaments(request: HttpRequest, tournamentcode: str) -> JsonResponse:
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournaments_for_user(request: HttpRequest) -> JsonResponse:
-    tournaments_user_query = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=request.auth_info["sub"])
+def get_tournaments_for_user(request: HttpRequest, user: str) -> JsonResponse:
+    tournaments_user_query = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=user)
     user_tournaments = [tournament for tournament in tournaments_user_query.values()]
-    return JsonResponse({"message": f"There is {len(user_tournaments)} tournaments that {username} joined",
+    return JsonResponse({"message": f"There is {len(user_tournaments)} tournaments that {user} joined",
                          "content": user_tournaments}, status=200)
 
 
