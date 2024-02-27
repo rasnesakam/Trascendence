@@ -1,8 +1,8 @@
-.font-size {
+.match-font-size {
     font-size: 140%;
 }
 
-.img-circle {
+.match-img-circle {
     width: 100%;
     height: 10%;
     border-radius: 100%;

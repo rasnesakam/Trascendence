@@ -1,13 +1,13 @@
-.head_size {
+.login-head_size {
 	font-size: 55px;
 }
 
-.button-42 {
+.login-button-42 {
 	width: 200px;
 	height: 100px;
 }
 
-.rush_logo_size {
+.login-rush_logo_size {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -16,13 +16,13 @@
 	height: 450px;
 }
 
-.card-size {
+.login-card-size {
 	width: 450px;
 	height: 450px;
 	background-color: red;
 }
 
-.card-position {
+.login-card-position {
 	border: 5px solid;
 	position: absolute;
 	top: 50%;
@@ -31,6 +31,6 @@
 	padding: 10px;
 }
 
-.modal-backdrop {
+.login-modal-backdrop {
 	z-index: -1;
   }
