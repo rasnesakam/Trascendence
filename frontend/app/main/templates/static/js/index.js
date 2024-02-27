@@ -1,8 +1,8 @@
 const search = document.querySelector(".special-search");
 
-search.addEventListener("focus", function() {
-    search.style.backgroundColor = "#535353";
-    search.style.color = "#efefef";
+search.addEventListener("focus", function () {
+  search.style.backgroundColor = "#535353";
+  search.style.color = "#efefef";
 });
 
 
@@ -160,12 +160,19 @@ const changePhoto = () => {
   }
 };
 
-function outLogin()
-{
+function outLogin() {
   localStorage.removeItem(0);
   window.location.href = "/login";
 
 }
+
+function redirectToPvP() {
+  window.location.href = "pvp.html";
+};
+
+function redirectToAI() {
+  window.location.href = "ai.html";
+};
 
 //livechat.js
 people = {
@@ -437,8 +444,8 @@ function newMessage() {
   }
   $(
     '<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' +
-      message +
-      "</p></li>"
+    message +
+    "</p></li>"
   ).appendTo($(".messages ul"));
   $(".message-input input").val(null);
   $(".contact.active .preview").html("<span>You: </span>" + message);
@@ -553,7 +560,7 @@ document.addEventListener("keydown", function (event) {
 //controller.js
 
 (function () {
-  if (isLogin()) 
+  if (isLogin())
     isLogin();
 })();
 
@@ -564,9 +571,9 @@ function isLogin() {
 
   try {
     if (!url.includes("/login")) {
-        login = JSON.parse(loginStr);
+      login = JSON.parse(loginStr);
 
-      if (login.access_token == undefined)  throw new Error("is not login");
+      if (login.access_token == undefined) throw new Error("is not login");
     }
   } catch (error) {
     window.location.href = "login";
@@ -574,5 +581,297 @@ function isLogin() {
     return false;
   }
   return true;
+}
+
+
+
+
+
+// GAME JS
+
+// import Ball from "./ball.js";
+// import { Paddle, LeftPaddle } from "./paddle.js";
+
+const ballElem = document.getElementById("ball");
+const frameElem = document.querySelector('.frame');
+const player1PaddleElem = document.getElementById("player1-paddle");
+const player2PaddleElem = document.getElementById("player2-paddle");
+
+const ball = new Ball(ballElem, frameElem);
+const player1Paddle = new LeftPaddle(player1PaddleElem, frameElem.clientHeight);
+const player2Paddle = new Paddle(player2PaddleElem, frameElem.clientHeight);
+
+const player1ScoreElem = document.getElementById("player1-score");
+const player2ScoreElem = document.getElementById("player2-score");
+
+let lastTime;
+
+function update(time) {
+  if (lastTime != null) {
+    const delta = time - lastTime;
+
+    ball.update(delta, [player1Paddle.rect(), player2Paddle.rect()]);
+
+    player1Paddle.update(delta);
+    player2Paddle.update(delta);
+
+    const hue = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--hue")
+    );
+
+    document.documentElement.style.setProperty("--hue", hue + delta * 0.01);
+
+    if (isLose()) handleLose();
+  }
+
+  lastTime = time;
+
+  window.requestAnimationFrame(update);
+}
+
+function isLose() {
+  const rect = ball.rect();
+
+  return rect.right >= frameElem.clientWidth || rect.left <= frameElem.clientLeft;
+}
+
+function scoreReset() {
+  player1ScoreElem.textContent = "0";
+  player2ScoreElem.textContent = "0";
+}
+
+function handleLose() {
+  const rect = ball.rect();
+
+  if (rect.right >= frameElem.clientWidth) {
+    player1ScoreElem.textContent = parseInt(player1ScoreElem.textContent) + 1;
+  } else {
+    player2ScoreElem.textContent = parseInt(player2ScoreElem.textContent) + 1;
+  }
+
+  if (player1ScoreElem.textContent == 12) {
+    alert("EMAKAS WINNER!\nBTEKINLI LOSER!");
+    scoreReset();
+  } else if (player2ScoreElem.textContent == 12) {
+    alert("BTEKINLI WINNER!\nEMAKAS LOSER!");
+    scoreReset();
+  }
+
+  ball.reset();
+  player1Paddle.reset();
+  player2Paddle.reset();
+}
+
+document.body.addEventListener("keydown", (e) => {
+  if (e.key === "w" || e.key === "W") {
+    player1Paddle.moveUp();
+  }
+  if (e.key === "s" || e.key === "S") {
+    player1Paddle.moveDown();
+  }
+  if (e.key === "ArrowUp") {
+    player2Paddle.moveUp();
+  }
+  if (e.key === "ArrowDown") {
+    player2Paddle.moveDown();
+  }
+});
+
+document.body.addEventListener("keyup", (e) => {
+  if ((e.key === "W" || e.key === "w" || e.key === "S" || e.key === "s") && !(e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    player1Paddle.stop();
+  }
+  if ((e.key === "ArrowUp" || e.key === "ArrowDown") && !(e.key === "W" || e.key === "w" || e.key === "s" || e.key === "S")) {
+    player2Paddle.stop();
+  }
+});
+
+window.requestAnimationFrame(update);
+
+
+// BALL.JS
+
+const SPEED = 0.092;
+
+class Paddle {
+  constructor(paddleElem) {
+    this.paddleElem = paddleElem;
+    this.reset();
+  }
+
+  get position() {
+    return parseFloat(this.paddleElem.style.getPropertyValue("--position"));
+  }
+
+  set position(value) {
+    this.paddleElem.style.setProperty("--position", value);
+  }
+
+  rect() {
+    return this.paddleElem.getBoundingClientRect();
+  }
+
+  reset() {
+    this.position = 50;
+    this.speed = 0;
+  }
+
+  update(delta) {
+    if (this.speed !== 0) {
+      const newPosition = this.position + this.speed * delta;
+
+      if (newPosition >= 0 && newPosition <= 100) {
+        this.position = newPosition;
+      }
+    }
+  }
+
+  moveUp() {
+    this.speed = -SPEED;
+  }
+
+  moveDown() {
+    this.speed = SPEED;
+  }
+
+  stop() {
+    this.speed = 0;
+  }
+}
+
+class LeftPaddle extends Paddle {
+  constructor(paddleElem) {
+    super(paddleElem);
+  }
+
+  update(delta) {
+    if (this.speed !== 0) {
+      const newPosition = this.position + this.speed * delta;
+
+      if (newPosition >= 0 && newPosition <= 100) {
+        this.position = newPosition;
+      }
+    }
+  }
+}
+
+// export { Paddle, LeftPaddle };
+
+
+// PADDLE.JS
+
+const INITIAL_SPEED = 0.020;
+const SPEED_INCREASE = 0.00001;
+
+export default class Ball {
+  constructor(ballElem) {
+    this.ballElem = ballElem;
+    this.initialColor = getComputedStyle(this.ballElem).getPropertyValue("--initial-color").trim();
+    this.finalColor = getComputedStyle(this.ballElem).getPropertyValue("--final-color").trim();
+    this.reset();
+  }
+
+  get x() {
+    return parseFloat(this.ballElem.style.getPropertyValue("--x"));
+  }
+
+  set x(value) {
+    this.ballElem.style.setProperty("--x", value);
+  }
+
+  get y() {
+    return parseFloat(this.ballElem.style.getPropertyValue("--y"));
+  }
+
+  set y(value) {
+    this.ballElem.style.setProperty("--y", value);
+  }
+
+  rect() {
+    return this.ballElem.getBoundingClientRect();
+  }
+
+  reset() {
+    this.x = 50;
+    this.y = 50;
+    this.direction = this.calculateRandomDirection();
+    this.speed = INITIAL_SPEED;
+    this.updateColor();
+  }
+
+  update(delta, paddleRects) {
+    this.x += this.direction.x * this.speed * delta;
+    this.y += this.direction.y * this.speed * delta;
+
+    this.speed += SPEED_INCREASE * delta;
+
+    const rect = this.rect();
+
+    if (rect.bottom >= window.innerHeight || rect.top <= 0) {
+      this.direction.y *= -1;
+    }
+
+    if (paddleRects.some((r) => this.isCollision(r, rect))) {
+      this.direction.x *= -1;
+    }
+
+    this.updateColor();
+  }
+
+  calculateRandomDirection() {
+    let direction = { x: 0 };
+    while (
+      Math.abs(direction.x) <= 0.2 ||
+      Math.abs(direction.x) >= 0.9
+    ) {
+      const heading = this.randomNumberBetween(0, 2 * Math.PI);
+      direction = { x: Math.cos(heading), y: Math.sin(heading) };
+    }
+
+    return direction;
+  }
+
+  updateColor() {
+    const speedPercentage = Math.min((this.speed - INITIAL_SPEED) / (INITIAL_SPEED * 10), 1);
+    const newColor = this.interpolateColor(this.initialColor, this.finalColor, speedPercentage);
+    this.ballElem.style.backgroundColor = newColor;
+  }
+
+  interpolateColor(color1, color2, factor) {
+    const color1Arr = this.hexToRgb(color1);
+    const color2Arr = this.hexToRgb(color2);
+
+    const resultColor = color1Arr.map((channel, index) => {
+      const blendedChannel = Math.round(channel + factor * (color2Arr[index] - channel));
+      return Math.min(Math.max(blendedChannel, 0), 255);
+    });
+
+    return `rgb(${resultColor.join(",")})`;
+  }
+
+  randomNumberBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  hexToRgb(hex) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    return result ? [
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16)
+    ] : [0, 0, 0];
+  }
+
+  isCollision(rect1, rect2) {
+    return (
+      rect1.left <= rect2.right &&
+      rect1.right >= rect2.left &&
+      rect1.top <= rect2.bottom &&
+      rect1.bottom >= rect2.top
+    );
+  }
 }
 
