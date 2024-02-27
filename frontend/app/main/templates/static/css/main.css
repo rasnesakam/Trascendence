@@ -1,0 +1,41 @@
+.big-text
+{
+	font-size: 350%;
+}
+
+.my-margin-center {
+	margin-left: 55%;
+}
+
+.card-size
+{
+	width: 45%;
+	padding: 5px;
+	
+	@media (max-width: 992px) {
+		width: 85%;
+		padding: 10px;
+	}	
+}
+
+.btn-size
+{
+	@media (max-width: 992px) {
+		width: 165%;
+	}
+}
+
+.click
+{
+	cursor: pointer;
+}
+
+
+  .darken-on-hover:hover {
+	display: block;
+	width: 120%; /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
+	height: auto; /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
+	transition: opacity 0.5s ease; /* Animasyon efekti ekler (isteğe bağlı) */
+	opacity: 0.6;
+  }
+  

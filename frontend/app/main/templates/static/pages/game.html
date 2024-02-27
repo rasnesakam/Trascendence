@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/game.css" />
+
+    <title>42 RUSH</title>
+  </head>
+
+  <body>
+    <div class="scoreboard">
+      <div class="scoreboard__container">
+        <div class="scoreboard__teams">
+          <div class="scoreboard__team scoreboard__team--align-right">
+            <button class="btn btn-warning" type="button" disabled>
+              <span
+                class="spinner-grow spinner-grow-sm"
+                aria-hidden="true"
+              ></span>
+              <span role="status">Emakas</span>
+            </button>
+            <div class="scoreboard__badge">
+              <img
+                class="rounded-4"
+                src="/static/assets/profile-photos/emakas.jpg"
+                alt="player-2"
+              />
+            </div>
+          </div>
+
+          <div class="scoreboard__result mx-5 my-1">
+            <span class="scoreboard__result-home">3</span>
+            <img src="/static/assets/tr-logo.png" class="rush-size" />
+            <span class="scoreboard__result-home">2</span>
+          </div>
+          <div class="scoreboard__team scoreboard__team--align-left">
+            <button class="btn btn-secondary" type="button" disabled>
+              <span role="status">Ayumusak</span>
+              <span
+                class="spinner-grow spinner-grow-sm"
+                aria-hidden="false"
+              ></span>
+            </button>
+            <div class="scoreboard__badge">
+              <img
+                class="rounded-4"
+                src="/static/assets/pp.png"
+                alt="player-2"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="game-container">
+        <div class="player-bar"></div>
+        <div class="player-bar player-bar-2"></div>
+        <div class="ball"></div>
+        <div class="middle-line"></div>
+      </div>
+    </div>
+  </body>
+</html>

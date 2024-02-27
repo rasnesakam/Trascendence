@@ -1,9 +1,7 @@
-import urllib.request
-import json
-from urllib.error import URLError
-from urllib.request import Request
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from django.http import HttpResponse
+
+from trascendence.core import validate_token
 
 
 def get_token(request: HttpRequest) -> str | None:
@@ -16,22 +14,16 @@ def get_token(request: HttpRequest) -> str | None:
 
 
 def authorize(request_view):
-    def middleware(request: HttpRequest):
+    def middleware(request: HttpRequest, *args, **kwargs):
         token = get_token(request)
         if token is None:
-            return HttpResponse(json.dumps({"message": "this content is not allowed"}), content_type="application/json",
-                                status=401)
-        token_verifier_uri = "https://api.intra.42.fr/oauth/token/info"
-        token_verifier_headers = {
-            "Authorization": f"Bearer {token}"
-        }
-        token_request = Request(token_verifier_uri, headers=token_verifier_headers, method="GET")
+            return JsonResponse({"message": "this content is not allowed"}, status=401)
         try:
-            response = urllib.request.urlopen(token_request)
-            if response.status == 200:
-                return request_view(request)
-        except URLError as e:
-            return HttpResponse(json.dumps({"message": "Token couldn't verified"}), content_type="application/json",
-                                status=401)
+            print(f">{token}<")
+            auth_info = validate_token(token)
+            setattr(request, "auth_info", auth_info)
+            return request_view(request, *args, **kwargs)
+        except Exception as e:
+            return JsonResponse({"message": f"Token couldn't verified. Reason is: {str(e)}"}, status=401)
 
     return middleware
