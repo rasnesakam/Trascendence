@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse,  HttpResponseBadRequest, \
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, JsonResponse,  HttpResponseBadRequest, \
     HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
@@ -34,7 +34,7 @@ def create_user_data(usermodel: UserModel, token: str) -> dict:
 def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
     query = UserModel.objects.filter(username=content['username'])
     if not query.exists():
-        return HttpResponseBadRequest(json.dumps({'message': 'user not found'}), content_type="application/json")
+        return HttpResponseNotFound(json.dumps({'message': 'user not found'}), content_type="application/json")
     user = query.first()
     hasher = BCryptPasswordHasher()
     if hasher.verify(content.get('password'), user.password):
@@ -63,14 +63,21 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
         if user_db_query.exists():
             user_db = user_db_query.first()
         else:
-            user_db = UserModel.objects.create(intraId=user_42["id"], username=user_42["login"], email=user_42["email"],
-                                               avatarURI=user_42["image"]["link"])
+            user_db = UserModel.objects.create(
+                intraId=user_42["id"],
+                name=user_42["first_name"],
+                surname=user_42["last_name"],
+                username=user_42["login"],
+                email=user_42["email"],
+                avatarURI=user_42["image"]["link"],
+                intra_login=True
+            )
             created_new = True
         token = generate_token({"sub": user_db.username})
         user_json = serialize_json(user_db)
         user_json.update({"access_token": token})
         return JsonResponse(user_json, status=201 if created_new else 200)
-    return HttpResponseForbidden(str({"message": "code is invalid", "response": response}), content_type='application/json', status=200)
+    return HttpResponseForbidden(json.dumps({"message": "code is invalid", "response": response}), content_type='application/json')
 
 
 @require_http_methods(['POST'])
