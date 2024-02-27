@@ -8,6 +8,7 @@ volumes:
   backend:
     driver: local
     name: volume_backend
+  db:
 
 services:
   gateway:
@@ -20,18 +21,41 @@ services:
       - "443:443"
     networks:
       - my_network
-
+    depends_on:
+      - db
+      - backend
+      - frontend
+      - adminer
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: r00T1453!
+      PGDATA: /var/lib/postgresql/data/db-files/
+    volumes:
+      - db:/var/lib/postgresql/data/db-files/
+    networks:
+      - my_network
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my_network
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: my_backend
+    restart: always
     expose:
       - 8000
     volumes:
       - backend:/app/media
     networks:
       - my_network
+    depends_on:
+      - db
   frontend:
     build:
       context: ./frontend
