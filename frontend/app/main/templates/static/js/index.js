@@ -31,7 +31,7 @@ async function winCount(data, username) {
 
 async function whichEvent(id) {
   if (id == "/") {
-    loadUserInformation();
+    loadUserInformation(0);
   } else if (id == "/livechat") {
     disableChat();
     loadContact();
@@ -151,7 +151,8 @@ function showTournament(tournaments) {
 //showMatch();
 
 async function loadUserInformation(id) {
-  var userAccess = JSON.parse(localStorage.getItem(id));
+  var userAccess = JSON.parse(localStorage.getItem(0));
+  console.log("userAccess: " + userAccess.access_token);
   var access_token = userAccess.access_token;
   var userIdentity = await pushFetch(
     "http://localhost/api/profile/" + userAccess.username,
@@ -159,27 +160,28 @@ async function loadUserInformation(id) {
       access_token: access_token,
     }
   );
-  console.log("push fetch giricek");
+  console.log("user " + userAccess.username);
   var dataTournament = await pushFetch(
-    "http://localhost/api/tournament/" + userIdentity.username,
+    "http://localhost/api/tournament/" + userAccess.username,
     {
       access_token: access_token,
     }
   );
 
   localStorage.setItem(id + 1, JSON.stringify(userIdentity));
-
+  console.log("identity: " + userIdentity);
+  alert("push fetch giricek");
   document.getElementById("nickname").innerHTML = userAccess.username;
-  document.getElementById("pr-name").innerHTML = userAccess.name; //username html
-  document.getElementById("pr-surname").innerHTML = userAccess.surname; //surname add html
-  document.getElementById("profile-photo").src = userAccess.avatarURI;
+  document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
+  document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
+  document.getElementById("profile-photo").src = userIdentity.avatarURI;
   document.getElementById("total_tournament").innerHTML =
     dataTournament.content.size(); //Torunament add html
   document.getElementById("total_match").innerHTML = 3; //match added html
   document.getElementById("enemy").innerHTML = user.enemy;
 
   if (id == 2) {
-    let tournamentWin = winCount(dataTournament, userAccess.username);
+    let tournamentWin = winCount(dataTournament, userIdentity.username);
     let tournamentLose = dataTournament.content.size() - tournamentWin;
     let matchWin = 2;
     let matchLose = 3 - matchWin;
