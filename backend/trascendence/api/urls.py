@@ -5,6 +5,7 @@ from trascendence.api.views import InteractionsView
 from trascendence.api.views import TorunamentsView
 from trascendence.api.views import Uploads
 from trascendence.api.views import profile_views
+from trascendence.api.views import MatchesView
 
 # Write decorator to restrict http methods for requests
 # auth_redirect -> 42/oauth -> auth/token/code -> page
@@ -39,6 +40,11 @@ urlpatterns = [
     path('tournaments/<tournamentcode>/matches', TorunamentsView.get_tournament_matches),
     path('tournaments/create', TorunamentsView.create_tournament),
     path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user),
+
+    # Matches
+    path('matches/<user>', MatchesView.get_matches_for_user)
+    path('matches/<user1>/<user2>', MatchesView.get_matches_for_users)
+    path('matches/submit', MatchesView.submit_matches_for_users)
 
     # Uploads
     path('uploads/upload', Uploads.upload_file),

@@ -1,4 +1,3 @@
-//login.js
 var myUrl;
 
 (function () {
