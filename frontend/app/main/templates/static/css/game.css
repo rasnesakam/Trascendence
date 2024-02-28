@@ -1,185 +1,92 @@
-.game-header {
-    background-color: black;
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
-.game-header .player {
-    display: flex;
-    align-items: center;
+:root {
+  --hue: 200;
+  --saturation: 70%;
+  --foreground-color: #e2e2e2;
+  --background-color: #242424;
+  /* --foreground-color: hsl(var(--hue), var(--saturation), 75%); */
+  /* --background-color: hsl(var(--hue), var(--saturation), 20%); */
 }
 
-.game-header .player img {
-    width: 60px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
+body {
+  margin: 0;
+  background-color: var(--background-color);
+  font-family: "Kode Mono", monospace;
+  font-style: normal;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
 }
 
-.game-container {
-    background-color: black;
-    height: 600px;
-    position: relative;
-}
-
-.player-bar {
-    background-color: orange;
-    width: 20px;
-    height: 100px;
-    position: absolute;
-}
-
-.player-bar:first-child {
-    left: 0;
-}
-
-.player-bar-2 {
-    right: 0;
+.frame {
+  width: 80vw;
+  height: 80vh;
+  border: 2px dashed var(--foreground-color);
+  position: relative;
+  overflow: hidden;
 }
 
 .ball {
-    background-color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  --x: 50;
+  --y: 50;
+  --initial-color: var(--foreground-color);
+  --final-color: #ff0000;
+
+  position: absolute;
+  background-color: var(--initial-color);
+  left: calc(var(--x) * (80vw / 100));
+  top: calc(var(--y) * (80vh / 100));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  width: 2.5vh;
+  height: 2.5vh;
 }
 
-.middle-line {
-    position: absolute;
-    left: 50%;
-    height: 100%;
-    border-left: 4px dashed white;
+.score {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 8vh;
+  color: var(--foreground-color);
 }
 
-.rush-size {
-    width: 100px;
-    height: 100px;
+.score > p {
+  padding-top: 20px;
+  font-size: 6vh;
 }
 
-.score-board {
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    text-align: center;
-    color: white;
-    font-size: 24px;
+.score > div {
+  padding: 0 2vh;
+  margin: 1vh 0;
+  opacity: 0.5;
+  text-align: center;
 }
 
-.scoreboard {
-    background: black;
-    margin-bottom: 20px;
-    border-radius: 5px;
+.paddle {
+  --position: 50;
+
+  position: absolute;
+  background-color: var(--foreground-color);
+  top: calc(var(--position) * 1vh);
+  transform: translateY(-50%);
+  width: 1vh;
+  height: 10vh;
 }
 
-.scoreboard__container {
-    padding-bottom: 10px;
+.paddle.left {
+  left: 1vw;
 }
 
-.scoreboard__result {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.scoreboard__result-home,
-.scoreboard__result-away,
-.scoreboard__result-separator {
-    color: white;
-    font-size: 26px;
-}
-
-.scoreboard__result-separator {
-    margin: 0 20px;
-}
-
-.scoreboard__badge {
-    margin: 0 48px;
-    width: 70px;
-    height: 70px;
-}
-
-.scoreboard__badge img {
-    height: 100%;
-}
-
-.scoreboard__teams {
-    display: flex;
-    justify-content: center;
-}
-
-.scoreboard__team {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-grow: 1;
-}
-
-.scoreboard__team--align-right {
-    flex-direction: row-reverse;
-}
-
-.scoreboard__team--align-right .scoreboard__name {
-    text-align: right;
-}
-
-.scoreboard__team--align-left .scoreboard__name {
-    text-align: left;
-}
-
-.scoreboard__name {
-    display: block;
-    color: white;
-    width: 100px;
-    margin: 0 10px;
-}
-
-.scoreboard__nav {
-    border-top: 1px solid #cccccc;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 10px;
-    margin: 0;
-}
-
-.scoreboard__nav-el {
-    list-style: none;
-}
-
-.scoreboard__nav-el.is-active a {
-    color: #ff6347;
-    position: relative;
-}
-
-.scoreboard__nav-el.is-active a:after {
-    display: block;
-    height: 2px;
-    width: 100%;
-    content: "";
-    background: #ff6347;
-    border-top-left-radius: 2.5px;
-    border-top-right-radius: 2.5px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-.scoreboard__nav-el a {
-    padding: 15px 10px;
-    color: #999999;
-    text-decoration: none;
-    display: block;
-    line-height: 0;
-}
-
-.scoreboard__basics {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.paddle.right {
+  right: 1vw;
 }

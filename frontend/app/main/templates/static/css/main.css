@@ -1,3 +1,33 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --hue: 200;
+  --saturation: 70%;
+  --foreground-color: #e2e2e2;
+  --background-color: #242424;
+}
+
+body {
+    margin: 0;
+    background-color: var(--background-color);
+    font-family: "Kode Mono", monospace;
+    font-style: normal;
+}
+
+.big-text {
+  font-size: 350%;
+}
+
+.my-margin-center {
+  margin-left: 55%;
+
 .big-text-main
 {
 	font-size: 350%;
@@ -26,6 +56,112 @@
 	cursor: pointer;
 }
 
+.card-size {
+  width: 45%;
+  padding: 5px;
+
+  @media (max-width: 992px) {
+    width: 85%;
+    padding: 10px;
+  }
+}
+
+
+.btn-size {
+  @media (max-width: 992px) {
+    width: 165%;
+  }
+}
+
+.click {
+  cursor: pointer;
+}
+
+.btn-slice {
+  width: 400px;
+  height: 150px;
+  padding: 12px 32px;
+  background: #ffffff;
+  color: #000000;
+  border-radius: 18px;
+  margin: 1rem;
+  border: 1px solid;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s, background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-slice:hover {
+  color: #c0c9d5;
+  background: linear-gradient(to left top, #000000 50%, #ffffff 50%);
+}
+
+.btn-slice:hover .game {
+  display: none;
+}
+
+.btn-slice .game {
+  font-size: 22px;
+}
+
+.slice-left,
+.slice-right {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.slice-left {
+  left: 0;
+}
+
+.slice-right {
+  right: 0;
+}
+
+.btn-slice:hover .slice-left,
+.btn-slice:hover .slice-right {
+  opacity: 1;
+}
+
+.slice-left .pvp-link,
+.slice-right .ai-link {
+  /* text-decoration: none; */
+  color: #efefef;
+  line-height: 40px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-slice:hover .slice-left .pvp-link,
+.slice-right .ai-link {
+  opacity: 1;
+  font-size: 30px;
+  transform: translate(-250%, -100%);
+  color: #000000;
+}
+
+.btn-slice:hover .slice-right .ai-link {
+  color: #ffffff;
+  transform: translate(300%, 20%);
+}
 
 .darken-on-hover:hover {
 	display: block;
@@ -35,3 +171,4 @@
 	opacity: 0.6;
 }
   
+

@@ -1,3 +1,4 @@
+
 //İndex.js
 
 var user = {
