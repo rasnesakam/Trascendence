@@ -1,3 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --hue: 200;
+  --saturation: 70%;
+  --foreground-color: #e2e2e2;
+  --background-color: #242424;
+}
+
+body {
+    margin: 0;
+    background-color: var(--background-color);
+    font-family: "Kode Mono", monospace;
+    font-style: normal;
+}
+
 .big-text {
   font-size: 350%;
 }
@@ -70,7 +92,7 @@
   overflow: hidden;
   z-index: 1;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.5s;
 }
 
 .slice-left {
@@ -86,9 +108,9 @@
   opacity: 1;
 }
 
-.pvp-link,
-.ai-link {
-  text-decoration: none;
+.slice-left .pvp-link,
+.slice-right .ai-link {
+  /* text-decoration: none; */
   color: #efefef;
   line-height: 40px;
   opacity: 0;
@@ -99,7 +121,8 @@
   transform: translate(-50%, -50%);
 }
 
-.btn-slice:hover .slice-left .pvp-link, .slice-right .ai-link{
+.btn-slice:hover .slice-left .pvp-link,
+.slice-right .ai-link {
   opacity: 1;
   font-size: 30px;
   transform: translate(-250%, -100%);
