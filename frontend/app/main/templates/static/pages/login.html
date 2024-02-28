@@ -1,28 +1,18 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/static/css/login.css" />
-  <title id="head-title">Login</title>
-</head>
 
 <body class="bg-dark">
-  <div>
-    <img src="/frontend/src/assets/tr-logo.png" alt="Welcome" class="rush_logo_size" />
-    <div class="card bg-dark-subtle card-position rounded-5 card-size mt-5">
-      <div class="card-body d-flex flex-column align-items-center">
-        <h5 class="head_size mt-5 mb-5">
-          Login<br />
-          <span class="d-flex flex-column align-items-center mt-1">With</span>
-        </h5>
-        <a
-          href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c&redirect_uri=http%3A%2F%2Flocalhost%2Flogin&response_type=code">
-          <img src="/static/assets/42-button_.png" class="button-42 img-fluid rounded-4" />
-        </a>
-      </div>
+	<div>
+		<title id="head-title">Login</title>
+		<img src="/frontend/src/assets/tr-logo.png" alt="Welcome" class="login-rush_logo_size">
+		<div class="card bg-dark-subtle login-card-position rounded-5 login-card-size mt-5">
+			<div class="card-body d-flex flex-column align-items-center">
+				<h5 class="login-head_size mt-5 mb-5">Login<br>
+					<span class="d-flex flex-column align-items-center mt-1">With</span>
+				</h5>
+				<a
+					href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c&redirect_uri=http%3A%2F%2Flocalhost%2Flogin&response_type=code">
+					<img src="/static/assets/42-button_.png" class="login-button-42 img-fluid rounded-4">
+				</a>
+			</div>
 
       <div class="d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="#exampleModal"
         data-bs-whatever="@mdo">
@@ -78,5 +68,3 @@
 
   <script src="/static/js/login.js"></script>
 </body>
-
-</html>

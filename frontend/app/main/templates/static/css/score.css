@@ -1,14 +1,14 @@
 html,
-body {
+.score-body {
     height: 100%;
 }
 
-img {
+.score-img {
     max-width:50%;
     height: auto;
 }
 
-.bg-score-page
+.score-bg-page
 {
     background: rgb(221,221,221);
 }
@@ -17,7 +17,7 @@ img {
     display: none;
 }
 
-.rush {
+.score-rush {
     top: 5%;
     right: 5%;
 

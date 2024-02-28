@@ -10,4 +10,11 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["daphne", "trascendence.asgi:application", "-b", "0.0.0.0"]
+CMD [\
+    "/bin/bash", "-c",\
+    "\
+    python manage.py makemigrations api && \
+    python manage.py migrate api &&\
+    daphne trascendence.asgi:application -b 0.0.0.0\
+    "\
+]

@@ -1,1 +1,1 @@
-from .Matches import MATCH_WINNERS, Matches
+from .Matches import Matches
