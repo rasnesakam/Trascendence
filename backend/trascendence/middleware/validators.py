@@ -71,3 +71,12 @@ def number_field(**kwargs):
     if kwargs.get("min_length", None) is not None:
         checklist.append(lambda x: x >= kwargs["min_length"])
     return validator(checklist, kwargs.get("required", False))
+
+def list_field(**kwargs):
+    """
+        Keys:
+            required: Indicates whether it is required or not
+    """
+    checklist = list()
+    checklist.append(lambda x: type(x) == list)
+    return validator(checklist, kwargs.get("required", False))
