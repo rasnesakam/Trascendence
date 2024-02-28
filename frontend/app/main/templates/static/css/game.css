@@ -1,10 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
 
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-}
+
 
 :root {
   --hue: 200;
@@ -15,7 +11,7 @@
   /* --background-color: hsl(var(--hue), var(--saturation), 20%); */
 }
 
-body {
+.game-body {
   margin: 0;
   background-color: var(--background-color);
   font-family: "Kode Mono", monospace;
