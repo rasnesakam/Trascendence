@@ -161,36 +161,25 @@
       <div class="btn-slice">
         <span class="game">
           <img src="/static/assets/pvp.png" style="padding-right: 15px; width: 90px; height: 80px;">
-          Play Game
+          Play Gamec
           <img src="/static/assets/ai.png" style="padding-left: 20px; width: 75px; height: 70px;">
         </span>
 
         <div class="slice-left">
-          <a href="pvp.html" class="pvp-link">PVP</a>
+          <a href="/static/pages/pvp.html" class="pvp-link">PVP</a>
         </div>
         <div class="slice-right">
-          <a href="ai.html" class="ai-link">AI</a>
+          <a href="/static/pages/ai.html" class="ai-link">AI</a>
         </div>
       </div>
 
-      <!-- <div class="buttons d-flex flex-column justify-content-center gap-5 col-6 my-5">
-        <a href="/static/pages/pvp.html" class="big-text btn-size btn py-4 px-5 btn-danger btn rounded-5"
-          id="pvp-button">
-          <div class="button-left">
-            <img
-              src="data:image/png;base64,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" />
-              </div>
-            <div class="button-right">
-              AI 🤖
-            </div>
-        </a>
-
+      <div class="buttons d-flex flex-column justify-content-center gap-5 col-6 my-5">
         <a type="button" class="big-text btn-size py-4 px-5 bg-warning rounded-5 big-text-lg">
           <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACV0lEQVR4nO2awWobMRCGP0O9l9JTbPISeYLQQiDtofTUOvR1nBBo3fYN/Bi9tIfmkuJbC6H0FZxDCnGT+hCSlA2CMQiztnctyyPJ+4MOO97R/2tWI+2OBf4xAPIl23cSQO7YokEGfADOVzSQoj6GQE+4gkNvxU9yXl+GKzgMRdzulN01ADaeWjMhOPwTcY89BuCJ2K4JEGcibs9jAJ6L7ScB4ljEffYUgIZsi8Z2SIBoA1ci8J0IXlUAGtYi+xdoESg6wH8R+gXYB27keqtCPy3xuZE+vsq16fs1gaMDjAq2LpO/ZfGiwP8yhsHb6dAFfgBja0aUxeSJj6WPbsjTfhG2JW/LLl5Hcu9IfJPAW2tt+AbsFNxjbCdWrptUSgoH1i5xC7y0fnsF3Fmr/BsSRRvoy0B/WfbfYuvHnOtlkclg7y3bvdiabAjyqZej6L79XbGxAWgCH+d855uCyiMSxqcSJTAThGTxZ0bRxC52XJAw8tQKoVUx+Z6f104r91qjRrQYpPLvz7JIftFbhDoA1DOAOgWIGIMKb3e+muoukgfS1AOwqfxoC9DmR1uANj/aAtbKny04A+T7DI82P4vOAPk+w6PNz6wzQOs6w6PNT9l885WX2vxoC9DmZzIFzTSbhWdrSAEtfqosQu8T5CcTEUPFbVCTvxAb9SIUogBtfrQFaPOjLcA7/6DCyuujYqPNjyu56xPS5mdVA4jVH20B2v5oC9D2R1vAWv0zx4pL7P64Vlxi98e14hK7P2XzZdZ9sfujLUDbH9eKS+z+uFZcYvfHteISpf8DKkj1RFT77AUAAAAASUVORK5CYII=" />
+            src="/static/assets/tournament.png" class="me-4" />
           Tournament
         </a>
-      </div> -->
+      </div>
     </div>
   </main>
   <!-- MAIN END -->
