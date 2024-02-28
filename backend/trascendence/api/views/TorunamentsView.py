@@ -68,9 +68,9 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 
 @require_http_methods(['GET'])
 @authorize
-def get_tournaments(request: HttpRequest, tournamentcode: str) -> JsonResponse:
+def get_tournaments(request: HttpRequest) -> JsonResponse:
     tournaments = [tournament for tournament in
-                   Tournaments.objects.filter(tournament_code__exact=tournamentcode).values()]
+                   Tournaments.objects.all().values()]
     return JsonResponse({"message": f"There is {len(tournaments)} users in tournament", "content": tournaments},
                         status=200)
 
