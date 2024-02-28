@@ -7,3 +7,17 @@
     height: 10%;
     border-radius: 100%;
 }
+
+.match-button
+{
+    width: 100%;
+    height: 75px;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    @media (max-width: 600px) {
+        width: 100%;
+        height: 45px;
+        margin-top: 10%;
+        margin-bottom: 10%;
+    }
+}
