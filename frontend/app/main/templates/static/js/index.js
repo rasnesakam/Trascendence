@@ -1,18 +1,5 @@
 //İndex.js
-
-var user = {
-  id: 1,
-  nickname: "ayumusak",
-  username: "ayumusak",
-  name: "Ahmet Kaan",
-  surname: "Yumuşakdiken",
-  photo: "static/assets/profile-photos/aydemir.jpg",
-
-  total_time: 120,
-  total_tournament: 3,
-  total_match: 20,
-  enemy: "emakas",
-};
+//sayısal değerlere define değerler atanabilir
 
 const webRoute = {
   404: "/static/pages/error.html",
@@ -20,21 +7,45 @@ const webRoute = {
   "/about": "/static/pages/about.html",
   "/game": "/static/pages/game.html",
   "/match": "/static/pages/match.html",
-  "/profile-detail": "/static/pages/profile-detail.html",
   "/tournament": "/static/pages/tournament.html",
   "/livechat": "/static/pages/livechat.html",
 };
 
-function whichEvent(id) {
+//  "/profile-detail": "/static/pages/profile-detail.html",
+
+function error_404() {
+  pageTxt = fetch(webRoute[404])
+    .then((response) => response.text())
+    .catch((error) => alert(error));
+  document.getElementById("index-navbar").style.display = "none";
+}
+
+async function winCount(data, username) {
+  var win = 0;
+
+  for (let i = 0; i < data.size(); i++) {
+    if (data.winner.username == username) win++;
+  }
+  return win;
+}
+
+async function whichEvent(id) {
   if (id == "/") {
     loadUserInformation();
   } else if (id == "/livechat") {
     disableChat();
     loadContact();
-  }
-  else if (id == "login")
-  {
+  } else if (id == "login") {
     takeUrl();
+  } else if (id.includes("/users/")) {
+    const path = window.location.pathname.split("/");
+    profileDetail = await fetch("http://localhost/api/profile/" + path[1])
+      .then((response) => response.json())
+      .then((data) => {
+        localStorage.setItem(2, JSON.stringify(data));
+        loadUserInformation(2);
+      })
+      .catch(error_404());
   }
 }
 
@@ -49,9 +60,7 @@ function isPassageEvent(eventId) {
 var isEventListenerAdded = false;
 
 const router = () => {
-  if (isEventListenerAdded) {
-    return;
-  }
+  if (isEventListenerAdded) return;
   var body = document.body;
 
   body.addEventListener("click", function (event) {
@@ -62,44 +71,130 @@ const router = () => {
       switchPages(event.target.id);
     }
   });
-
   isEventListenerAdded = true;
 };
 
 const switchPages = async (eventId) => {
   const path = window.location.pathname;
   const route = webRoute[path] || webRoute[404];
-  console.log("route: ", route, eventId);
-  const html = await fetch(route).then((response) => response.text()).catch((error) => alert("hatam nerde " + error));
-  console.log("html: ", html, eventId);
 
-  parser = new DOMParser();
-  xmlDoc = parser.parseFromString(html, "text/html");
+  if (path.includes("/users/")) route = "/static/pages/profile-detail.html";
 
-  const xmlHead = xmlDoc.head.innerHTML;
-  const xmlBody = xmlDoc.body.innerHTML;
-  document.getElementById("index-head").innerHTML = xmlHead;
-  document.getElementById("index-body").innerHTML = xmlBody;
+  const html = await fetch(route)
+    .then((response) => response.text())
+    .catch((error) => alert(error));
+
+  document.getElementById("index-body").innerHTML = html;
   whichEvent(eventId);
 };
 
 //main.js
-function loadUserInformation() {
-  document.getElementById("nickname").innerHTML = user.nickname || "Nickname";
-  document.getElementById("pr-name").innerHTML = "Name: " + user.name;
-  document.getElementById("pr-surname").innerHTML = "Surname: " + user.surname;
-  document.getElementById("profile-photo").src = user.photo;
+async function pushFetch(url, data, pushMethod = "GET") {
+  var pushResult = await fetch(url, {
+    method: pushMethod,
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("Respone is not ok");
+      return response.json();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-  document.getElementById("total_time").innerHTML = user.total_time + " Min";
+  return pushResult;
+}
+
+function showTournament(tournaments) {
+  document.getElementById("tournament").innerHTML = "";
+  for (let i = 0; i < tournament.content.size(); i++) {
+    // Örnek veri
+    var sendType =
+      "list-group-item d-flex justify-content-between align-items-center" +
+      "bg-warning";
+    var sendText = tournaments[i].title;
+
+    // Yeni li elementi oluştur
+    var table = document.createElement("li");
+    table.classList.add(
+      "list-group-item",
+      "d-flex",
+      "justify-content-between",
+      "align-items-center",
+      "bg-warning"
+    );
+
+    // İlk span (kullanıcı adı ve mesaj)
+    var span1 = document.createElement("span");
+    span1.classList.add("text-white");
+    span1.textContent = sendText;
+
+    // İkinci span (skor)
+    var span2 = document.createElement("span");
+    span2.classList.add("text-white");
+    span2.textContent = score;
+
+    // İlk span'i li elementine ekle
+    table.appendChild(span1);
+
+    // İkinci span'i li elementine ekle
+    table.appendChild(span2);
+
+    // Doküman içerisindeki "table" ID'li div'e li elementini ekle
+    document.getElementById("show_tournament").appendChild(table);
+  }
+}
+
+//showMatch();
+
+async function loadUserInformation(id) {
+  var userAccess = JSON.parse(localStorage.getItem(id));
+  var access_token = userAccess.access_token;
+  var userIdentity = await pushFetch(
+    "http://localhost/api/profile/" + userAccess.username,
+    {
+      access_token: access_token,
+    }
+  );
+  console.log("push fetch giricek");
+  var dataTournament = await pushFetch(
+    "http://localhost/api/tournament/" + userIdentity.username,
+    {
+      access_token: access_token,
+    }
+  );
+
+  localStorage.setItem(id + 1, JSON.stringify(userIdentity));
+
+  document.getElementById("nickname").innerHTML = userAccess.username;
+  document.getElementById("pr-name").innerHTML = userAccess.name; //username html
+  document.getElementById("pr-surname").innerHTML = userAccess.surname; //surname add html
+  document.getElementById("profile-photo").src = userAccess.avatarURI;
   document.getElementById("total_tournament").innerHTML =
-    user.total_tournament + " Tournament";
-  document.getElementById("total_match").innerHTML =
-    user.total_match + " Match";
+    dataTournament.content.size(); //Torunament add html
+  document.getElementById("total_match").innerHTML = 3; //match added html
   document.getElementById("enemy").innerHTML = user.enemy;
+
+  if (id == 2) {
+    let tournamentWin = winCount(dataTournament, userAccess.username);
+    let tournamentLose = dataTournament.content.size() - tournamentWin;
+    let matchWin = 2;
+    let matchLose = 3 - matchWin;
+
+    setRate(tournamentWin, tournamentLose, "myPieChart");
+    setRate(matchWin, matchLose, "myPieChart2");
+    showTournament(dataTournament);
+    //showMatch();
+  }
 }
 
 function saveUserInformation() {
-  user.nickname = document.getElementById("nicknameInput").value;
+  //user save is not enough because you have to send it to backend
+  var user = JSON.parse(localStorage.getItem(1));
+  user.username = document.getElementById("nicknameInput").value;
 
   user.name = document.getElementById("nameInput").value;
   user.surname = document.getElementById("surnameInput").value;
@@ -112,6 +207,7 @@ function removeSubstring(originalString, substringToRemove) {
 }
 
 const updateProfile = () => {
+  var user = JSON.parse(localStorage.getItem(1));
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";
   document.getElementById("save-icon").style.display = "block";
@@ -122,7 +218,7 @@ const updateProfile = () => {
   document.getElementById("information").style.display = "block";
   document.getElementById("questions").style.display = "block";
 
-  document.getElementById("nicknameInput").value = user.nickname;
+  document.getElementById("nicknameInput").value = user.username;
   document.getElementById("nameInput").value = user.name;
   document.getElementById("surnameInput").value = user.surname;
 
@@ -474,8 +570,8 @@ const searchAlgorithm = () => {
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
+*/
 
-/*
 //profile-detail.js
 function setRate(win, lose, elementId) {
   var matchesCount = win + lose;
@@ -499,12 +595,13 @@ function setRate(win, lose, elementId) {
     },
   });
   return myPieChart;
-}*/
+}
+/*
 
 /*(function () {
   setRate(37, 63, "myPieChart");
   setRate(2, 1, "myPieChart2");
-})();*/
+})();
 
 //game.js
 /*
@@ -599,13 +696,10 @@ async function takeUrl() {
         return response.json();
       })
       .then((data) => {
-        alert("You are logged in: " + myUrl);
-        localStorage.setItem(0, JSON.stringify(data));
+        console.log(data);
 
-        console.log("data: ", window.location.href);
-        window.history.pushState({}, "", "/");
-        console.log("data2: ", window.location.href);
-        router();
+        localStorage.setItem(0, JSON.stringify(data));
+        window.location.href = "/";
         return data;
       })
       .catch((error) => {
@@ -615,8 +709,8 @@ async function takeUrl() {
 }
 
 //back-transition
-
 window.onpopstate = async function (event) {
+  alert("url degsiti");
   if (event.state) {
     var currentUrl = window.location.pathname;
     event.preventDefault();
