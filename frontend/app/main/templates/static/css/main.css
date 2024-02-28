@@ -1,5 +1,5 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
+@import url('./index.css');
 
 *,
 *::after,
@@ -15,10 +15,10 @@
 }
 
 body {
-    margin: 0;
-    background-color: var(--background-color);
-    font-family: "Kode Mono", monospace;
-    font-style: normal;
+  margin: 0;
+  background-color: var(--background-color);
+  font-family: "Kode Mono", monospace;
+  font-style: normal;
 }
 
 .big-text {
@@ -28,147 +28,144 @@ body {
 .my-margin-center {
   margin-left: 55%;
 
-.big-text-main
-{
-	font-size: 350%;
-}
-
-.card-size-main
-{
-	width: 45%;
-	padding: 5px;
-	
-	@media (max-width: 992px) {
-		width: 85%;
-		padding: 10px;
-	}	
-}
-
-.btn-size-main
-{
-	@media (max-width: 992px) {
-		width: 165%;
-	}
-}
-
-.click-main
-{
-	cursor: pointer;
-}
-
-.card-size {
-  width: 45%;
-  padding: 5px;
-
-  @media (max-width: 992px) {
-    width: 85%;
-    padding: 10px;
+  .big-text-main {
+    font-size: 350%;
   }
-}
 
+  .card-size-main {
+    width: 45%;
+    padding: 5px;
 
-.btn-size {
-  @media (max-width: 992px) {
-    width: 165%;
+    @media (max-width: 992px) {
+      width: 85%;
+      padding: 10px;
+    }
   }
-}
 
-.click {
-  cursor: pointer;
-}
+  .btn-size-main {
+    @media (max-width: 992px) {
+      width: 165%;
+    }
+  }
 
-.btn-slice {
-  width: 400px;
-  height: 150px;
-  padding: 12px 32px;
-  background: #ffffff;
-  color: #000000;
-  border-radius: 18px;
-  margin: 1rem;
-  border: 1px solid;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: color 0.3s, background 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .click-main {
+    cursor: pointer;
+  }
 
-.btn-slice:hover {
-  color: #c0c9d5;
-  background: linear-gradient(to left top, #000000 50%, #ffffff 50%);
-}
+  .card-size {
+    width: 45%;
+    padding: 5px;
 
-.btn-slice:hover .game {
-  display: none;
-}
+    @media (max-width: 992px) {
+      width: 85%;
+      padding: 10px;
+    }
+  }
 
-.btn-slice .game {
-  font-size: 22px;
-}
 
-.slice-left,
-.slice-right {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
+  .btn-size {
+    @media (max-width: 992px) {
+      width: 165%;
+    }
+  }
 
-.slice-left {
-  left: 0;
-}
+  .click {
+    cursor: pointer;
+  }
 
-.slice-right {
-  right: 0;
-}
+  .btn-slice {
+    width: 400px;
+    height: 150px;
+    padding: 12px 32px;
+    background: #ffffff;
+    color: #000000;
+    border-radius: 18px;
+    margin: 1rem;
+    border: 1px solid;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s, background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.btn-slice:hover .slice-left,
-.btn-slice:hover .slice-right {
-  opacity: 1;
-}
+  .btn-slice:hover {
+    color: #c0c9d5;
+    background: linear-gradient(to left top, #000000 50%, #ffffff 50%);
+  }
 
-.slice-left .pvp-link,
-.slice-right .ai-link {
-  /* text-decoration: none; */
-  color: #efefef;
-  line-height: 40px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+  .btn-slice:hover .game {
+    display: none;
+  }
 
-.btn-slice:hover .slice-left .pvp-link,
-.slice-right .ai-link {
-  opacity: 1;
-  font-size: 30px;
-  transform: translate(-250%, -100%);
-  color: #000000;
-}
+  .btn-slice .game {
+    font-size: 22px;
+  }
 
-.btn-slice:hover .slice-right .ai-link {
-  color: #ffffff;
-  transform: translate(300%, 20%);
-}
+  .slice-left,
+  .slice-right {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
 
-.darken-on-hover:hover {
-	display: block;
-	width: 120%; /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
-	height: auto; /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
-	transition: opacity 0.5s ease; /* Animasyon efekti ekler (isteğe bağlı) */
-	opacity: 0.6;
-}
-  
+  .slice-left {
+    left: 0;
+  }
 
+  .slice-right {
+    right: 0;
+  }
+
+  .btn-slice:hover .slice-left,
+  .btn-slice:hover .slice-right {
+    opacity: 1;
+  }
+
+  .slice-left .pvp-link,
+  .slice-right .ai-link {
+    /* text-decoration: none; */
+    color: #efefef;
+    line-height: 40px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .btn-slice:hover .slice-left .pvp-link,
+  .slice-right .ai-link {
+    opacity: 1;
+    font-size: 30px;
+    transform: translate(-250%, -100%);
+    color: #000000;
+  }
+
+  .btn-slice:hover .slice-right .ai-link {
+    color: #ffffff;
+    transform: translate(300%, 20%);
+  }
+
+  .darken-on-hover:hover {
+    display: block;
+    width: 120%;
+    /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
+    height: auto;
+    /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
+    transition: opacity 0.5s ease;
+    /* Animasyon efekti ekler (isteğe bağlı) */
+    opacity: 0.6;
+  }
