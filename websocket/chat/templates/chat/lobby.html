@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,10 +20,12 @@
 
     <div id="messages"></div>
 
+    <script src="{% static 'reconnecting-websocket.js' %}"></script>
+
     <script type="text/javascript">
         let url = `ws://localhost:8000/ws/socket-server/`
 
-        const chatSocket = new WebSocket(url)
+        const chatSocket = new ReconnectingWebSocket(url)
 
         chatSocket.onmessage = function(e){
             let data = JSON.parse(e.data)
@@ -43,7 +46,8 @@
             e.preventDefault()
             let message = e.target.message.value
             chatSocket.send(JSON.stringify({
-                'message':message
+                'message':message,
+                'command':'new_message'
             }))
             form.reset()
         })
