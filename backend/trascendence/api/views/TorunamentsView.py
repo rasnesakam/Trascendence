@@ -1,11 +1,11 @@
 from django.views.decorators.http import require_http_methods
-
+import json
 from trascendence.api.models import TournamentMatches
 from trascendence.middleware.auth import authorize
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseServerError
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.tournament_models import TournamentPlayers, TournamentInvitations, Tournaments
-from trascendence.middleware.validators import request_body, str_field
+from trascendence.middleware.validators import request_body, str_field, list_field
 
 
 @require_http_methods(['GET'])
@@ -97,10 +97,10 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 @require_http_methods(['GET'])
 @authorize
 def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
-    tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode).values()
-    if tournament_matches is None:
+    tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode)
+    if tournament_matches.exists():
         return HttpResponseNotFound()
-    return JsonResponse({"message": "", "content": [tm for tm in tournament_matches]})
+    return JsonResponse({"message": "", "content": [tm for tm in tournament_matches.values()]})
 
 
 # TODO: Add post body validation
@@ -110,11 +110,36 @@ def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonRes
     content_type="application/json",
     fields={
         "tournamentName": str_field(max_length=30, required=True),
-        #"users": list_field
+        "users": list_field(required=True),
+        "capacity": number_field(max_length=8, min_length=4, required=True)
     }
 )
-def create_tournament(request: HttpRequest) -> JsonResponse:
-    return JsonResponse({"message": "under construction"}, status=500)
+def create_tournament(request: HttpRequest, content) -> JsonResponse:
+    try:
+        founder_user = UserModel.objects.get(username=request.auth_info["sub"])
+        participated_users = list()
+        usernames = content.get("users", [])
+        if len(usernames) != content["capacity"]:
+            return JsonResponse(json.dumps({"message":f"Unmatched user list. capacity is {content["capacity"]} but {len(usernames)} user invited"}), status=400)
+        for username in usernames:
+            try:
+                participated_user = UserModel.objects.get(username__exact=username)
+                participated_users.append(participated_user)
+            except UserModel.DoesNotExist:
+                return JsonResponse(json.dumps({"message": f"User {username} not found"}), 404)
+        tournament_name = content["tournamentName"]
+        # create tournament
+        tournament = Tournaments.objects.create(tournament_name=tournament_name, created_user=founder_user, players_capacity=content["capacity"])
+        # Invite userlist
+        for user in participated_users:
+            invitation = TournamentInvitations.objects.create(
+                target_user=user,
+                tournament=tournament,
+                message=f"You have been invited to {tournament.tournament_name}!"
+            )
+            # notify users about this invitations
+    except UserModel.DoesNotExist:
+        return JsonResponse(json.dumps({"message": "User not found"}), status=404)
 
 
 @require_http_methods(['DELETE'])

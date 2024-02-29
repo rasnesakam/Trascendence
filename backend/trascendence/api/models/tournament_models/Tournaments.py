@@ -13,8 +13,7 @@ class Tournaments(models.Model, SerializableModel):
     tournament_name = models.CharField(max_length=50)
     tournament_code = models.CharField(max_length=6, default=id_generator)
     created_user = models.ForeignKey(UserModel, related_name="%(class)s_created_user", on_delete=models.CASCADE)
-    starts_on = models.DateTimeField
-    players_capacity = models.IntegerField(default=8, validators=[
+    players_capacity = models.IntegerField(default=4, validators=[
         MaxValueValidator(8),
         MinValueValidator(4)
     ])
