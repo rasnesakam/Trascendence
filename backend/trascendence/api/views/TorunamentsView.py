@@ -135,7 +135,7 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
             invitation = TournamentInvitations.objects.create(
                 target_user=user,
                 tournament=tournament,
-                message=f"You have invited to {tournament.tournament_name}!"
+                message=f"You have been invited to {tournament.tournament_name}!"
             )
             # notify users about this invitations
     except UserModel.DoesNotExist:
