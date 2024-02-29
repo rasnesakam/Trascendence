@@ -12,7 +12,6 @@ const webRoute = {
 };
 
 //  "/profile-detail": "/static/pages/profile-detail.html",
-
 function error_404() {
   pageTxt = fetch(webRoute[404])
     .then((response) => response.text())
@@ -88,13 +87,12 @@ const switchPages = async (eventId) => {
   whichEvent(eventId);
 };
 
+
 //main.js
-async function pushFetch(url, data, pushMethod = "GET") {
+async function pushFetch(url, data, header = {"Content-type": "application/json"} , pushMethod = "GET") {
   var pushResult = await fetch(url, {
     method: pushMethod,
-    headers: {
-      "Content-type": "application/json",
-    },
+    headers: header,
     body: JSON.stringify(data),
   })
     .then((response) => {
@@ -154,23 +152,28 @@ async function loadUserInformation(id) {
   var userAccess = JSON.parse(localStorage.getItem(0));
   console.log("userAccess: " + userAccess.access_token);
   var access_token = userAccess.access_token;
-  var userIdentity = await pushFetch(
-    "http://localhost/api/profile/" + userAccess.username,
-    {
-      access_token: access_token,
-    }
-  );
-  console.log("user " + userAccess.username);
-  var dataTournament = await pushFetch(
-    "http://localhost/api/tournament/" + userAccess.username,
-    {
-      access_token: access_token,
-    }
-  );
+  var userIdentity = await fetch("http://localhost/api/profile/" + userAccess.username, {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  });
+  
+  console.log("user *" + userAccess.username + "***");
+  var dataTournament = await fetch(
+    "http://localhost/api/tournaments/" + userAccess.username, {
+      headers: {
+        "Authorization": "Bearer " + access_token,
+      },
+    });
 
+    var dataTournament = await fetch(
+      "http://localhost/api/matches/" + userAccess.username, {
+        headers: {
+          "Authorization": "Bearer " + access_token,
+        },
+      });
+    
   localStorage.setItem(id + 1, JSON.stringify(userIdentity));
-  console.log("identity: " + userIdentity);
-  alert("push fetch giricek");
   document.getElementById("nickname").innerHTML = userAccess.username;
   document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
   document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
