@@ -32,3 +32,4 @@ class TournamentPlayers(models.Model, SerializableModel):
         null=True,
         default=None
     )
+    stage = models.IntegerField(default=1)

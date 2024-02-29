@@ -5,7 +5,7 @@ from trascendence.middleware.auth import authorize
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseServerError
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.tournament_models import TournamentPlayers, TournamentInvitations, Tournaments
-from trascendence.middleware.validators import request_body, str_field, list_field
+from trascendence.middleware.validators import request_body, str_field, list_field, number_field
 
 
 @require_http_methods(['GET'])
