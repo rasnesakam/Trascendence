@@ -11,20 +11,8 @@ from trascendence.api.models import (
     Uploads
 )
 
-# User dto
-def create_user_data(usermodel: UserModel, token: str) -> dict:
-    userdata = dict()
-    userdata['username'] = usermodel.username
-    userdata['email'] = usermodel.email
-    userdata['avatarURI'] = usermodel.avatarURI
-    userdata['token'] = token
-    return userdata
-
+# User Dto
 def user_dto(usermodel: UserModel) -> dict:
-    userdata = dict()
-    userdata['username'] = usermodel.username
-    userdata['email'] = usermodel.email
-    userdata['avatarURI'] = usermodel.avatarURI
     return {
         "name": usermodel.name,
         "surname": usermodel.surname,
@@ -128,4 +116,20 @@ def uploads_dto(upload: Uploads) -> dict:
         "full_name": f"{upload.name}.{upload.extension}",
         "created_at": upload.created_at,
         "owner": user_dto(upload.owner)
+	}
+
+
+# Auth dto
+def auth_dto(usermodel: UserModel, token: str) -> dict:
+    return {
+        "user": user_dto(usermodel),
+        "token": token
+	}
+
+def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments]) -> dict:
+    return {
+        "user": user_dto(user),
+        "matches": [match_dto(match) for match in matches],
+        "tournament_matches": [match_dto(match.match) for match in tournament_matches[:5]],
+        "tournaments": [tournament_dto(tournament) for tournament in tournaments[:5]] 
 	}
