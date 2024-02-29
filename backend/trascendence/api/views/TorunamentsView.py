@@ -97,10 +97,10 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 @require_http_methods(['GET'])
 @authorize
 def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
-    tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode).values()
-    if tournament_matches is None:
+    tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode)
+    if tournament_matches.exists():
         return HttpResponseNotFound()
-    return JsonResponse({"message": "", "content": [tm for tm in tournament_matches]})
+    return JsonResponse({"message": "", "content": [tm for tm in tournament_matches.values()]})
 
 
 # TODO: Add post body validation
@@ -131,6 +131,13 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
         # create tournament
         tournament = Tournaments.objects.create(tournament_name=tournament_name, created_user=founder_user, players_capacity=content["capacity"])
         # Invite userlist
+        for user in participated_users:
+            invitation = TournamentInvitations.objects.create(
+                target_user=user,
+                tournament=tournament,
+                message=f"You have invited to {tournament.tournament_name}!"
+            )
+            # notify users about this invitations
     except UserModel.DoesNotExist:
         return JsonResponse(json.dumps({"message": "User not found"}), status=404)
 
