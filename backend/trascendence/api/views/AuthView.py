@@ -11,16 +11,7 @@ from ..serializers import serialize_json
 from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
 from django.contrib.auth.hashers import BCryptPasswordHasher
-
-
-def create_user_data(usermodel: UserModel, token: str) -> dict:
-    userdata = dict()
-    userdata['username'] = usermodel.username
-    userdata['email'] = usermodel.email
-    userdata['avatarURI'] = usermodel.avatarURI
-    userdata['token'] = token
-    return userdata
-
+from trascendence.api.dto import auth_dto
 
 @require_http_methods(['POST'])
 @authorize
@@ -39,7 +30,7 @@ def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
     hasher = BCryptPasswordHasher()
     if hasher.verify(content.get('password'), user.password):
         token = generate_token({'sub': user.username})
-        user_data = create_user_data(user, token)
+        user_data = auth_dto(user, token)
         return JsonResponse({"content": user_data})
     return HttpResponseForbidden(json.dumps({'message': 'Invalid credentials.'}), content_type='application.json')
 
@@ -74,9 +65,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
             )
             created_new = True
         token = generate_token({"sub": user_db.username})
-        user_json = serialize_json(user_db)
-        user_json.update({"access_token": token})
-        return JsonResponse(user_json, status=201 if created_new else 200)
+        return JsonResponse(auth_dto(user_db, token), status=201 if created_new else 200)
     return HttpResponseForbidden(json.dumps({"message": "code is invalid", "response": response}), content_type='application/json')
 
 
@@ -114,7 +103,8 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
         email=content['email'],
         avatarURI="default.jpeg"
     )
-    return JsonResponse({"message:": "User created", "content": create_user_data(user)}, status=201)
+    token = generate_token({"sub": user.username})
+    return JsonResponse({"message:": "User created", "content": auth_dto(user, token)}, status=201)
 
 
 @require_http_methods(['POST'])
