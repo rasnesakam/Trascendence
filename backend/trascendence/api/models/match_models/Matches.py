@@ -12,7 +12,7 @@ class Matches(models.Model, SerializableModel):
     score_home = models.IntegerField(default=0)
     away = models.ForeignKey(UserModel, related_name="%(class)s_away", on_delete=models.CASCADE)
     score_away = models.IntegerField(default=0)
-    winner = models.ForeignKey(UserModel, related_name="%(class)s_home", on_delete=models.CASCADE, blank=True, null=True, default=None)
+    winner = models.ForeignKey(UserModel, related_name="%(class)s_winner", on_delete=models.CASCADE, blank=True, null=True, default=None)
     is_played = models.BooleanField(default=False)
     home_signature = models.CharField()
     away_signature = models.CharField()
