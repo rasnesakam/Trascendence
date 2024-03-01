@@ -4,8 +4,8 @@ from trascendence.api.models import UserModel
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.api.models.InteractionModels import Friends, FriendInvitation, BlackList
-from django.views.decorators.csrf import csrf_exempt
-
+from trascendence.api.dto import friend_dto, friend_invitation_dto, blacklist_dto
+from django.db.models import Q
 
 """ NOTE:
 
@@ -27,10 +27,15 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
         user = UserModel.objects.get(username=request.auth_info["sub"])
     except UserModel.DoesNotExist as e:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
-    friends1 = [friend for friend in UserModel.objects.filter(friends_user_pair_1__user_pair_2__exact=user.id).values()]
-    friends2 = [friend for friend in UserModel.objects.filter(friends_user_pair_2__user_pair_1__exact=user.id).values()]
-    content = {"content": friends1 + friends2}
-    return JsonResponse(content, status=200)
+    friends = UserModel.objects.filter(
+        Q(friends_user_pair_1__user_pair_2=user.id) | 
+        Q(friends_user_pair_2__user_pair_1=user.id)
+	).values()
+    response = {
+        "length": len(friends),
+        "content": [friend_dto(friend) for friend in friends]
+	}
+    return JsonResponse(response, status=200)
 
 
 @require_http_methods(['POST'])
@@ -116,10 +121,12 @@ def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = UserModel.objects.get(username=request.auth_info["sub"])
     if user is None:
         return HttpResponseNotFound(str({"message": "User not found"}), content_type="application/json")
-    print(UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id).query)
-    blacklist = [blacklist for blacklist in UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id).values()]
-
-    return JsonResponse({"message": "", "content": blacklist}, status=200)
+    blacklists = UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id).values()
+    response = {
+        "length": len(blacklists),
+        "content": [blacklist_dto(blacklist) for blacklist in blacklists]
+    }
+    return JsonResponse(response, status=200)
 
 
 @require_http_methods(['POST'])
