@@ -1,11 +1,3 @@
-const search = document.getElementsByClassName("special-search");
-
-search.addEventListener("focus", function () {
-    search.style.backgroundColor = "#535353";
-    search.style.color = "#efefef";
-});
-
-
 people = {
     0: {
         name: "Harvey Specter",
