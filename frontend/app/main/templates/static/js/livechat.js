@@ -1,4 +1,4 @@
-people = {
+/*people = {
     0: {
         name: "Harvey Specter",
         messages: [
