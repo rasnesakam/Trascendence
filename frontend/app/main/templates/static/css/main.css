@@ -1,12 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
-
-:root {
-  --hue: 200;
-  --saturation: 70%;
-  --foreground-color: #e2e2e2;
-  --background-color: #242424;
-}
-
 .main-body {
   margin: 0;
   background-color: var(--background-color);
