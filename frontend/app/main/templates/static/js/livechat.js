@@ -1,4 +1,4 @@
-const search = document.querySelector(".special-search");
+const search = document.getElementsByClassName("special-search");
 
 search.addEventListener("focus", function () {
     search.style.backgroundColor = "#535353";
