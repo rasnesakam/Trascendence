@@ -1,6 +1,6 @@
-/*people = {
+people = {
     0: {
-        name: "Harvey Specter",
+        name: "Aiden Chavez",
         messages: [
             {
                 message: "Merhaba",
@@ -29,11 +29,11 @@
                 type: "sent",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/harveyspecter.png",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
         status: "online",
     },
     1: {
-        name: "Charles Forstman",
+        name: "mthomas",
         messages: [
             {
                 message: "Merhaba",
@@ -48,7 +48,7 @@
                 type: "replies",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/charlesforstman.png",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
         status: "offline",
     },
     2: {
@@ -111,8 +111,8 @@ function disableChat() {
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
-    clearMessages();
-    document.getElementById("message-input").style.display = "block";
+    //clearMessages();
+    //document.getElementById("message-input").style.display = "block";
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
             document.getElementById(people[i].name).classList.add("active");
@@ -121,13 +121,14 @@ function selectedPerson(name) {
                 .setAttribute("src", people[i].profile_photo);
             document.getElementById("contact-selected-profile-name").innerHTML =
                 people[i].name;
+            /*
             for (j = 0; j < Object.keys(people[i].messages).length; j++) {
                 sendMessage(
                     people[i].messages[j].type,
                     people[i].profile_photo,
                     people[i].messages[j].message
                 );
-            }
+            }*/
         } else {
             document.getElementById(people[i].name).classList.remove("active");
         }
@@ -274,7 +275,7 @@ function newMessage() {
     $(".contact.active .preview").html("<span>You: </span>" + message);
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 }
-
+/*
 $(".submit").click(function () {
     newMessage();
 });
@@ -284,7 +285,7 @@ $(window).on("keydown", function (e) {
         newMessage();
         return false;
     }
-});
+});*/
 
 const searchAlgorithm = () => {
     var search = document.querySelector("#search input").value;
@@ -330,4 +331,5 @@ function setRate(win, lose, elementId) {
 /*(function () {
   setRate(37, 63, "myPieChart");
   setRate(2, 1, "myPieChart2");
-})();*/
+})();
+*/
