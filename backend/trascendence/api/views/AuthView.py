@@ -30,8 +30,7 @@ def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
     hasher = BCryptPasswordHasher()
     if hasher.verify(content.get('password'), user.password):
         token = generate_token({'sub': user.username})
-        user_data = auth_dto(user, token)
-        return JsonResponse({"content": user_data})
+        return JsonResponse(auth_dto(user, token), status=200)
     return HttpResponseForbidden(json.dumps({'message': 'Invalid credentials.'}), content_type='application.json')
 
 
@@ -104,24 +103,13 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
         avatarURI="default.jpeg"
     )
     token = generate_token({"sub": user.username})
-    return JsonResponse({"message:": "User created", "content": auth_dto(user, token)}, status=201)
+    return JsonResponse(auth_dto(user, token), status=201)
 
 
 @require_http_methods(['POST'])
 @authorize
 def sign_out(request: HttpRequest) -> HttpResponse:
-    return JsonResponse({"message": "Not Supported Yet."})
-
-
-@require_http_methods(['GET'])
-def OAuth(request: HttpRequest):
-    """
-    DEPRECATED: Will be removed
-    """
-    response = HttpResponse(status=302)
-    response[
-        "Location"] = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fauth%2Ftoken%2Fcode&response_type=code"
-    return response
+    return JsonResponse({"message": "Not Supported Yet."}, status=500)
 
 
 @require_http_methods(['GET'])
