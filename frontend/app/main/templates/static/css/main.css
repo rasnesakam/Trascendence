@@ -1,7 +1,6 @@
 .main-body {
   margin: 0;
   background-color: var(--background-color);
-  font-family: "Kode Mono", monospace;
   font-style: normal;
 }
 
@@ -9,11 +8,16 @@
   margin-left: 55%;
 }
 
-.main-big-text {
-  font-size: 350%;
+.big-text {
+  width: 400px;
+  height: 150px;
+  padding: 12px 32px;
+  font-size: 30px;
+  text-decoration: none;
+  color: #000000;
 }
 
-.main-card-size {
+.card-size {
   width: 45%;
   padding: 5px;
 
@@ -23,16 +27,9 @@
   }
 }
 
-.main-btn-size {
-  @media (max-width: 992px) {
-    width: 165%;
-  }
-}
-
-.main-click {
+.click {
   cursor: pointer;
 }
-
 
 .btn-slice {
   width: 400px;
@@ -66,8 +63,7 @@
   font-size: 22px;
 }
 
-.slice-left,
-.slice-right {
+.slice-twice {
   position: absolute;
   top: 0;
   width: 100%;
@@ -94,9 +90,8 @@
   opacity: 1;
 }
 
-.slice-left .pvp-link,
-.slice-right .ai-link {
-  /* text-decoration: none; */
+.slice-twice-link {
+  text-decoration: none;
   color: #efefef;
   line-height: 40px;
   opacity: 0;
@@ -107,8 +102,7 @@
   transform: translate(-50%, -50%);
 }
 
-.btn-slice:hover .slice-left .pvp-link,
-.slice-right .ai-link {
+.btn-slice:hover .slice-left .pvp-link {
   opacity: 1;
   font-size: 30px;
   transform: translate(-250%, -100%);
@@ -116,17 +110,8 @@
 }
 
 .btn-slice:hover .slice-right .ai-link {
+  opacity: 1;
+  font-size: 30px;
   color: #ffffff;
   transform: translate(300%, 20%);
-}
-
-.darken-on-hover:hover {
-  display: block;
-  width: 120%;
-  /* İsteğe bağlı: Genişlik ayarını resmin orijinal genişliğine göre düzenleyebilirsiniz */
-  height: auto;
-  /* İsteğe bağlı: Yükseklik ayarını resmin orijinal yüksekliğine göre düzenleyebilirsiniz */
-  transition: opacity 0.5s ease;
-  /* Animasyon efekti ekler (isteğe bağlı) */
-  opacity: 0.6;
 }
