@@ -7,13 +7,14 @@ from trascendence.api.models import Matches, UserModel
 from django.db.models import Q
 from trascendence.core import validate_token
 from trascendence.middleware.validators import request_body, str_field, number_field
+from trascendence.api.dto import match_dto
 
 
 @require_http_methods(['GET'])
 @authorize
 def get_matches_for_user(request: HttpRequest, username: str):
     matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username)).values()
-    matches_list = [match for match in matches]
+    matches_list = [match_dto(match) for match in matches]
     return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
 
 
@@ -22,7 +23,7 @@ def get_matches_for_user(request: HttpRequest, username: str):
 def get_matches_for_users(request: HttpRequest, user1: str, user2: str):
     matches = Matches.objects.filter((Q(home__username=user1) & Q(away__username=user2)) |
                                      (Q(home__username=user2) & Q(away__username=user1))).values()
-    matches_list = [match for match in matches]
+    matches_list = [match_dto(match) for match in matches]
     return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
 
 
@@ -60,6 +61,6 @@ def submit_matches_for_users(request: HttpRequest, content):
             home_signature=token_home,
             away_signature=token_away
         )
-        return JsonResponse({"message":"Match saved", "content": saved_match.to_json()})
+        return JsonResponse({"message":"Match saved", "content": match_dto(saved_match)})
     except:
         return HttpResponseForbidden("Not allowed")
