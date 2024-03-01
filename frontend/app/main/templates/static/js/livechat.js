@@ -1,6 +1,6 @@
 people = {
     0: {
-        name: "achavez",
+        name: "vporter",
         messages: [
             {
                 message: "Merhaba",
@@ -29,11 +29,11 @@ people = {
                 type: "other-message",
             },
         ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
-        status: "online",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar1.png",
+        status: "offile",
     },
     1: {
-        name: "mthomas",
+        name: "achavez",
         messages: [
             {
                 message: "Merhaba",
@@ -48,11 +48,11 @@ people = {
                 type: "my-message",
             },
         ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
-        status: "offline",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
+        status: "online",
     },
     2: {
-        name: "clearfix",
+        name: "mthomas",
         messages: [
             {
                 message: "Merhaba",
@@ -67,7 +67,7 @@ people = {
                 type: "my-message",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/jonathansidwell.png",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
         status: "online",
     },
 };
@@ -280,7 +280,7 @@ $(window).on("keydown", function (e) {
     }
 });*/
 
-const searchAlgorithm = () => {
+function searchAlgorithm() {
     var search = document.querySelector("#search input").value;
 
     for (var i = 0; i < Object.keys(people).length; i++) {
