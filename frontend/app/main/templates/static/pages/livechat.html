@@ -12,16 +12,16 @@
             </div>
             <ul class="list-unstyled chat-list mt-2 mb-0">
               <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" />
+                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" onclick="selectedPerson()" />
                 <div class="about">
                   <div class="name">Vincent Porter</div>
                   <div class="status">
-                    <i class="fa fa-circle offline"></i> left 7 mins ago
+                    <i class="fa fa-circle offline"></i> offline
                   </div>
                 </div>
               </li>
-              <li class="clearfix active">
-                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
+              <li id="achavez" class="clearfix active" onclick="selectedPerson(id)">
+                <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
                 <div class="about">
                   <div class="name">Aiden Chavez</div>
                   <div class="status">
@@ -29,8 +29,8 @@
                   </div>
                 </div>
               </li>
-              <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar" />
+              <li id="mthomas" class="clearfix" onclick="selectedPerson(id)">
+                <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar"/>
                 <div class="about">
                   <div class="name">Mike Thomas</div>
                   <div class="status">
@@ -43,7 +43,7 @@
                 <div class="about">
                   <div class="name">Christian Kelly</div>
                   <div class="status">
-                    <i class="fa fa-circle offline"></i> left 10 hours ago
+                    <i class="fa fa-circle offline"></i> offline
                   </div>
                 </div>
               </li>
@@ -61,22 +61,22 @@
                 <div class="about">
                   <div class="name">Dean Henry</div>
                   <div class="status">
-                    <i class="fa fa-circle offline"></i> offline since Oct 28
+                    <i class="fa fa-circle offline"></i> offline
                   </div>
                 </div>
               </li>
             </ul>
           </div>
+          <!-- Contanct -->
           <div class="chat">
             <div class="chat-header clearfix">
               <div class="row">
                 <div class="col-lg-6">
                   <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
+                    <img id="contact-selected-profile-photo" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
                   </a>
                   <div class="chat-about">
-                    <h6 class="m-b-0">Aiden Chavez</h6>
-                    <small>Last seen: 2 hours ago</small>
+                    <h6 id="contact-selected-profile-name" class="m-b-0">Aiden Chavez</h6>
                   </div>
                 </div>
               </div>
