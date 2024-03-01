@@ -164,14 +164,64 @@
           </div>
         </div>
 
-        <a type="button" class="big-text py-4 px-5 bg-warning rounded-5 big-text-lg" href="/static/pages/tournament.html">
+
+        <a type="button" class="big-text py-4 px-5 bg-warning rounded-5 big-text-lg" data-bs-toggle="modal"
+          data-bs-target="#playPage" href="/static/pages/tournament.html">
           <img src="/static/assets/tournament.png" class="me-4" />
           Tournament
         </a>
       </div>
+
+
+      <div class="modal fade" id="playPage" aria-hidden="true" aria-labelledby="playTournament"
+        tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-dark">
+              <h1 class="modal-title fs-5" id="playTournament">Tournament</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <button class="btn btn-danger my-3" data-bs-target="#createPage"
+                  data-bs-toggle="modal">CREATE</button>
+                <button class="btn btn-light">JOIN</button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="createPage" aria-hidden="true" aria-labelledby="createTournament"
+        tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="createTournament">Create</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
+                  aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-dark" data-bs-target="#playPage" data-bs-toggle="modal">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
   <!-- MAIN END -->
+
+
 
   <script src="/static/js/main.js"></script>
 </body>
