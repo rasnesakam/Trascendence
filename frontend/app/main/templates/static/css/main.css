@@ -31,7 +31,7 @@
   cursor: pointer;
 }
 
-.bg-color {
+.bg-color-black {
   background-color: #000000;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .list-group > li {
-  height: 50px;
+  height: 70px;
 }
 
 .btn-slice {
