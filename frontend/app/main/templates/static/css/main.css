@@ -96,21 +96,20 @@
   opacity: 0;
   transition: opacity 0.3s;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
-.btn-slice:hover .slice-left .pvp-link {
+.pvp-link {
   opacity: 1;
   font-size: 30px;
-  transform: translate(-250%, -100%);
+  top: 25%;
+  left: 8%;
   color: #000000;
 }
 
-.btn-slice:hover .slice-right .ai-link {
+.ai-link {
   opacity: 1;
   font-size: 30px;
   color: #ffffff;
-  transform: translate(300%, 20%);
+  bottom: 20%;
+  right: 10%;
 }
