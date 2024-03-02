@@ -42,6 +42,7 @@ async function whichEvent(id) {
       .then((response) => response.json())
       .then((data) => {
         localStorage.setItem(2, JSON.stringify(data));
+        document.getElementById("index-navbar").style.display = "block";
         loadUserInformation(2);
       })
       .catch(error_404());
