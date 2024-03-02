@@ -31,6 +31,10 @@
   cursor: pointer;
 }
 
+.bg-color {
+  background-color: #efefef;
+}
+
 .btn-slice {
   width: 100%;
   height: 150px;
