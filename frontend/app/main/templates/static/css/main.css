@@ -40,7 +40,11 @@
 }
 
 .bg-color-green {
-  background-color: #04A96C;
+  background-color: #00ce78;
+}
+
+.list-group > li {
+  height: 50px;
 }
 
 .btn-slice {
