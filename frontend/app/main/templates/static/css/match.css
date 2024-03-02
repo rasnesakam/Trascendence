@@ -21,3 +21,24 @@
         margin-bottom: 10%;
     }
 }
+
+.match-spinner-response
+{
+    @media (max-width: 500px) {
+        width: 50px;
+        height: 50px;
+    }
+    @media (max-width: 700px) {
+        width: 100px;
+        height: 100px;
+    }
+    @media (min-width: 900px) {
+        width: 150px;
+        height: 150px;
+    }
+    @media (min-width: 1200px) {
+        width: 200px;
+        height: 200px;
+    }
+    
+}

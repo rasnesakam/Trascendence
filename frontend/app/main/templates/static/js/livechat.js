@@ -1,108 +1,95 @@
-const search = document.querySelector(".special-search");
-
-search.addEventListener("focus", function () {
-    search.style.backgroundColor = "#535353";
-    search.style.color = "#efefef";
-});
-
-
 people = {
     0: {
-        name: "Harvey Specter",
+        name: "vporter",
         messages: [
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "sent",
+                type: "other-message",
             },
             {
                 message:
                     "What are you talking about? You do what they say or they shoot you.",
                 date: "2021-01-01",
                 time: "13:00",
-                type: "replies",
+                type: "my-message",
             },
             {
                 message:
                     "What are you talking about? You do what they say or they shoot you.",
                 date: "2021-01-01",
                 time: "15:00",
-                type: "sent",
+                type: "other-message",
             },
             {
                 message: "get off",
                 date: "2021-01-01",
                 time: "17:00",
-                type: "sent",
+                type: "other-message",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/harveyspecter.png",
-        status: "online",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar1.png",
+        status: "offile",
     },
     1: {
-        name: "Charles Forstman",
+        name: "achavez",
         messages: [
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "sent",
+                type: "other-message",
             },
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "replies",
+                type: "my-message",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/charlesforstman.png",
-        status: "offline",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
+        status: "online",
     },
     2: {
-        name: "Jonathan Sidwell",
+        name: "mthomas",
         messages: [
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "sent",
+                type: "my-message",
             },
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "replies",
+                type: "my-message",
             },
         ],
-        profile_photo: "http://emilcarlsson.se/assets/jonathansidwell.png",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
         status: "online",
     },
 };
 
-function sendMessage(sendType, photoWho, sendText) {
+function sendMessage(sendType, sendText) {
     var message = document.createElement("li");
-    message.classList.add(sendType);
+    message.classList.add("clearfix");
 
-    var img = document.createElement("img");
-    img.src = photoWho;
-    message.appendChild(img);
+    var div = document.createElement("div");
+    div.classList.add("message");
+    div.classList.add(sendType);
+    if (sendType == "other-message")
+        div.classList.add("float-right");
+    div.textContent = sendText;
+    message.appendChild(div);
 
-    var para = document.createElement("p");
-    para.textContent = sendText;
-    message.appendChild(para);
-
-    document.getElementById("message").appendChild(message);
+    document.getElementById("all-message").appendChild(message);
     console.log(message);
-    document.querySelector(".messages").scrollTop =
-        document.querySelector(".messages").scrollHeight;
 }
 
 function clearMessages() {
-    var message = document.getElementById("message");
-    while (message.firstChild) {
-        message.removeChild(message.firstChild);
-    }
+    document.getElementById("all-message").innerHTML = " ";
 }
 
 function disableChat() {
@@ -119,7 +106,7 @@ function disableChat() {
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
-    clearMessages();
+    clearMessages()
     document.getElementById("message-input").style.display = "block";
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
@@ -132,7 +119,6 @@ function selectedPerson(name) {
             for (j = 0; j < Object.keys(people[i].messages).length; j++) {
                 sendMessage(
                     people[i].messages[j].type,
-                    people[i].profile_photo,
                     people[i].messages[j].message
                 );
             }
@@ -282,7 +268,7 @@ function newMessage() {
     $(".contact.active .preview").html("<span>You: </span>" + message);
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 }
-
+/*
 $(".submit").click(function () {
     newMessage();
 });
@@ -292,9 +278,9 @@ $(window).on("keydown", function (e) {
         newMessage();
         return false;
     }
-});
+});*/
 
-const searchAlgorithm = () => {
+function searchAlgorithm() {
     var search = document.querySelector("#search input").value;
 
     for (var i = 0; i < Object.keys(people).length; i++) {
@@ -338,4 +324,5 @@ function setRate(win, lose, elementId) {
 /*(function () {
   setRate(37, 63, "myPieChart");
   setRate(2, 1, "myPieChart2");
-})();*/
+})();
+*/

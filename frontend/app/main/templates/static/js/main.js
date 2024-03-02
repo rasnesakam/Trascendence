@@ -81,12 +81,6 @@ const changePhoto = () => {
     }
 };
 
-function outLogin() {
-    localStorage.removeItem(0);
-    window.location.href = "/login";
-
-}
-
 function redirectToPvP() {
     window.location.href = "pvp.html";
 };
