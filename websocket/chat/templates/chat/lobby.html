@@ -27,7 +27,12 @@
         let url = `ws://localhost:8000/ws/socket-server/`
 
         const chatSocket = new ReconnectingWebSocket(url)
-
+        chatSocket.addEventListener('open', function(){
+            chatSocket.send(JSON.stringify({
+                "type": "new_message",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0Ml9ydXNoIiwic3ViIjoiaGFlcmlzIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3MTA5NDY4OTR9.YaQ-SKmxVJ0X2so970Wut_Q1coisP9XMPDCANu92QZc"
+            }))
+        })
         chatSocket.onmessage = function(e){
             let data = JSON.parse(e.data)
             console.log('Data:', data)
@@ -62,7 +67,7 @@
             let message = document.getElementById('message').value
             chatSocket.send(JSON.stringify({
                 'message':message,
-                'command':'new_message'
+                'type':'new_message'
             }))
             document.getElementById('message').value = '';
         })
