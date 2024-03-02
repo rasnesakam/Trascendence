@@ -72,6 +72,8 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
 @request_body(
     content_type="application/json",
     fields={
+        "name": str_field(max_length=25, required=True),
+        "surname": str_field(max_length=25, required=True),
         "username": str_field(min_length=9, required=True),
         "email": str_field(required=True, max_length=50),
         "password": str_field(required=True)
@@ -80,12 +82,12 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
 @authorize
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
     """
-    Authorize: Bearer <token>
+    
     {
-        intraId: "string",
+        name: "string",
+        surname: "string",
         userName: "string",
-        email: "string",
-        avatarURI: "string"
+        email: "string"
     }
 
     200: Ok
@@ -96,11 +98,15 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
     if usernamecheck.exists():
         return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
     password_hasher = BCryptPasswordHasher()
-    #encoded_password = password_hasher.encode()
+    encoded_password = password_hasher.encode(content["password"], password_hasher.salt())
     user = UserModel.objects.create(
+        name=content["name"],
+        surname=content["surname"],
         username=content['username'],
         email=content['email'],
-        avatarURI="default.jpeg"
+        avatarURI="default.jpeg",
+        password=encoded_password,
+        intra_login=False
     )
     token = generate_token({"sub": user.username})
     return JsonResponse(auth_dto(user, token), status=201)
