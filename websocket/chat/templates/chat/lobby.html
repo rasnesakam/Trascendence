@@ -9,13 +9,14 @@
 <body>
     <h1>Lets chat!</h1>
 
-    <form onsubmit="letsChat">
-        <input type="text" name="from" placeholder="username"/>
-        <input type="text" name="to" placeholder="target username"/>
+    <form id="chatForm">
+        <input type="text" id="from" placeholder="username"/>
+        <input type="text" id="to" placeholder="target username"/>
         <button type="submit">Let's Chat!</button>
     </form>
-    <form id="form" style="display: none;">
-        <input type="text" name="message"/>
+    <form id="messageForm" style="display: none;">
+        <input type="text" id="message"/>
+        <button type="submit">Send</button>
     </form>
 
     <div id="messages"></div>
@@ -41,19 +42,30 @@
             }
         }
         
-        let form = document.getElementById('form')
-        form.addEventListener('submit', (e)=> {
+        let chatForm = document.getElementById('chatForm')
+        chatForm.addEventListener('submit', (e)=> {
             e.preventDefault()
-            let message = e.target.message.value
+            let from = document.getElementById('from').value
+            let to = document.getElementById('to').value
+            // Burada 'to' alanının kullanımını belirtmek için bir yorum ekleyebilirsiniz.
+            // Örneğin, bu alanı chat odasına katılımcıları belirtmek için kullanabilirsiniz.
+            console.log(`Chatting from ${from} to ${to}`);
+            // Burada, 'to' alanını kullanarak belirli bir chat odasına katılabilirsiniz.
+            // Ancak, bu örnekte 'to' alanının kullanımı gösterilmiyor.
+            document.getElementById('messageForm').style.display = 'block';
+            chatForm.style.display = 'none';
+        })
+
+        let messageForm = document.getElementById('messageForm')
+        messageForm.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            let message = document.getElementById('message').value
             chatSocket.send(JSON.stringify({
                 'message':message,
                 'command':'new_message'
             }))
-            form.reset()
+            document.getElementById('message').value = '';
         })
-        function letsChat(){
-            console.log(this);
-        }
     </script>
 </body>
 </html>

@@ -43,13 +43,18 @@ INSTALLED_APPS = [
     'chat',
 ]
 
-ASGI_APPLICATION = 'websocket.asgi.application'
-
 CHANNEL_LAYERS = {
     'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
+        'BACKEND':'channels.layers.InMemoryChannelLayer',
+    },
 }
+
+ASGI_APPLICATION = 'websocket.asgi.application'
+
+CHANNELS_MIDDLEWARE = [
+    'channels.middleware.AuthMddlewareStack',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'websocket.urls'
 

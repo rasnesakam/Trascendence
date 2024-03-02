@@ -1,11 +1,12 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
+from django.contrib.auth.models import AnonymousUser
 from .models import Message
-
+from django.utils.dateformat import DateFormat
+import request
 
 class ChatConsumer(WebsocketConsumer):
-    
     def fetch_messages(self, data):
         messages = Message.last_10_messages()
         content = {
@@ -13,13 +14,33 @@ class ChatConsumer(WebsocketConsumer):
         }
         self.send_chat_message(content)
 
+    # def new_message(self, data):
+    #     author = self.scope['user']
+    #     message = Message.objects.create(
+    #         author=author, 
+    #         content=data['message'])
+    #     content = {
+    #         'type': 'new_message',
+    #         'message': self.message_to_json(message)
+    #     }
+    #     return self.send_chat_message(content)
     def new_message(self, data):
-        author = self.scope['user']
+        user = self.scope['user']
+        if isinstance(user, AnonymousUser):
+            token = data.get('token', None)
+            if token is None:
+                # Kullanıcı oturum açmamış, hata mesajı gönder veya kullanıcıyı oturum açma sayfasına yönlendir
+                self.send(text_data=json.dumps({
+                    'error': 'You must be logged in to send a message.'
+                }))
+                return
+            #kullanıcı oluşuturulacak database
+            # token doğrulanacak -backend
         message = Message.objects.create(
-            author=author, 
+            author=user, 
             content=data['message'])
         content = {
-            'command': 'new_message',
+            'type': 'new_message',
             'message': self.message_to_json(message)
         }
         return self.send_chat_message(content)
@@ -31,17 +52,16 @@ class ChatConsumer(WebsocketConsumer):
         return result
     
     def message_to_json(self, message):
-        print('deneme')
+        if isinstance(message.author, AnonymousUser):
+            author = "Anonymous"
+        else:
+            author = message.author.username
+        timestamp = DateFormat(message.timestamp).format('Y-m-d H:i:s')
         return {
-            'author': message.author,
+            'author': author,
             'content': message.content,
-            'timestamp': message.timestamp
+            'timestamp': timestamp
         }
-
-    commands = {
-        'fetch_messages': fetch_messages,
-        'new_message': new_message
-    }
     
     def connect(self):
         self.room_group_name = 'test'
@@ -59,9 +79,13 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+    types = {
+        'fetch_messages': fetch_messages,
+        'new_message': new_message
+    }
     def receive(self, text_data):
         data = json.loads(text_data)
-        self.commands[data['command']](self, data)
+        self.types[data['type']](self, data)
         
     def send_chat_message(self, message): 
         async_to_sync(self.channel_layer.group_send)(
@@ -72,14 +96,9 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-    def send_message(self, message):
-        self.send(text_data=json.dumps(message))
+    # def send_message(self, message):
+    #     self.send(text_data=json.dumps(message))
 
     def chat_message(self, event):
         message = event['message']
-        #self.send(text_data=json.dumps(message))
-
-        # self.send(text_data=json.dumps({
-        #     'type':'chat',
-        #     'message':message
-        # }))
+        self.send(text_data=json.dumps(message))
