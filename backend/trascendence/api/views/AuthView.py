@@ -115,4 +115,8 @@ def sign_out(request: HttpRequest) -> HttpResponse:
 @require_http_methods(['GET'])
 @authorize
 def verify_token(request):
-    return JsonResponse(json.dumps({"message": "Token is valid."}), status=200)
+    try:
+        user = UserModel.objects.get(username=request.auth_info["sub"])
+        return JsonResponse(json.dumps(auth_dto(user)), status=200)
+    except UserModel.DoesNotExist:
+        return HttpResponseForbidden()
