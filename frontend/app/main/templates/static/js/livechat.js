@@ -1,100 +1,95 @@
 people = {
     0: {
-        name: "Aiden Chavez",
+        name: "vporter",
         messages: [
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "sent",
+                type: "other-message",
             },
             {
                 message:
                     "What are you talking about? You do what they say or they shoot you.",
                 date: "2021-01-01",
                 time: "13:00",
-                type: "replies",
+                type: "my-message",
             },
             {
                 message:
                     "What are you talking about? You do what they say or they shoot you.",
                 date: "2021-01-01",
                 time: "15:00",
-                type: "sent",
+                type: "other-message",
             },
             {
                 message: "get off",
                 date: "2021-01-01",
                 time: "17:00",
-                type: "sent",
+                type: "other-message",
+            },
+        ],
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar1.png",
+        status: "offile",
+    },
+    1: {
+        name: "achavez",
+        messages: [
+            {
+                message: "Merhaba",
+                date: "2021-01-01",
+                time: "12:00",
+                type: "other-message",
+            },
+            {
+                message: "Merhaba",
+                date: "2021-01-01",
+                time: "12:00",
+                type: "my-message",
             },
         ],
         profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
         status: "online",
     },
-    1: {
+    2: {
         name: "mthomas",
         messages: [
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "sent",
+                type: "my-message",
             },
             {
                 message: "Merhaba",
                 date: "2021-01-01",
                 time: "12:00",
-                type: "replies",
+                type: "my-message",
             },
         ],
         profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
-        status: "offline",
-    },
-    2: {
-        name: "Jonathan Sidwell",
-        messages: [
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "sent",
-            },
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "replies",
-            },
-        ],
-        profile_photo: "http://emilcarlsson.se/assets/jonathansidwell.png",
         status: "online",
     },
 };
 
-function sendMessage(sendType, photoWho, sendText) {
+function sendMessage(sendType, sendText) {
     var message = document.createElement("li");
-    message.classList.add(sendType);
+    message.classList.add("clearfix");
 
-    var img = document.createElement("img");
-    img.src = photoWho;
-    message.appendChild(img);
+    var div = document.createElement("div");
+    div.classList.add("message");
+    div.classList.add(sendType);
+    if (sendType == "other-message")
+        div.classList.add("float-right");
+    div.textContent = sendText;
+    message.appendChild(div);
 
-    var para = document.createElement("p");
-    para.textContent = sendText;
-    message.appendChild(para);
-
-    document.getElementById("message").appendChild(message);
+    document.getElementById("all-message").appendChild(message);
     console.log(message);
-    document.querySelector(".messages").scrollTop =
-        document.querySelector(".messages").scrollHeight;
 }
 
 function clearMessages() {
-    var message = document.getElementById("message");
-    while (message.firstChild) {
-        message.removeChild(message.firstChild);
-    }
+    document.getElementById("all-message").innerHTML = " ";
 }
 
 function disableChat() {
@@ -106,13 +101,15 @@ function disableChat() {
         );
     document.getElementById("contact-selected-profile-name").innerHTML = "";
     document.getElementById("message-input").style.display = "none";
+    document.getElementById("chat").style.display = "none";
 }
 
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
-    //clearMessages();
-    //document.getElementById("message-input").style.display = "block";
+    clearMessages()
+    document.getElementById("chat").style.display = "block";
+    document.getElementById("message-input").style.display = "block";
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
             document.getElementById(people[i].name).classList.add("active");
@@ -121,59 +118,60 @@ function selectedPerson(name) {
                 .setAttribute("src", people[i].profile_photo);
             document.getElementById("contact-selected-profile-name").innerHTML =
                 people[i].name;
-            /*
             for (j = 0; j < Object.keys(people[i].messages).length; j++) {
                 sendMessage(
                     people[i].messages[j].type,
-                    people[i].profile_photo,
                     people[i].messages[j].message
                 );
-            }*/
+            }
         } else {
             document.getElementById(people[i].name).classList.remove("active");
         }
     }
 }
 
-function loadContact() {
+
+function loadContent() {
     var contact = document.getElementById("add-contacts");
-
+  
+    contact.innerHTML = " ";
     for (var i = 0; i < Object.keys(people).length; i++) {
-        var add = document.createElement("li");
-        add.classList.add("add");
-
-        var wrapDiv = document.createElement("div");
-        wrapDiv.classList.add("wrap");
-
-        var statusSpan = document.createElement("span");
-        statusSpan.classList.add(("contact-status", people[i].status));
-        wrapDiv.appendChild(statusSpan);
-
         var img = document.createElement("img");
-        img.setAttribute("src", people[i].profile_photo);
-        img.setAttribute("alt", "");
-        wrapDiv.appendChild(img);
-
-        var metaDiv = document.createElement("div");
-        metaDiv.classList.add("meta");
-
-        var namePara = document.createElement("p");
-        namePara.classList.add("name");
-        namePara.textContent = people[i].name;
-        metaDiv.appendChild(namePara);
-
-        wrapDiv.appendChild(metaDiv);
-        add.appendChild(wrapDiv);
-
-        contact.innerHTML +=
-            '<li id="' +
-            people[i].name +
-            '"' +
-            "class='contact' onclick=selectedPerson(id)>" +
-            add.innerHTML +
-            "</li>";
+        img.id = "profile-img";
+        img.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
+        img.alt = "avatar";
+        listItem.appendChild(img);
+        
+        // <div class="about"> öğesini oluştur
+        var aboutDiv = document.createElement("div");
+        aboutDiv.classList.add("about");
+        
+        // <div class="name"> öğesini oluştur
+        var nameDiv = document.createElement("div");
+        nameDiv.classList.add("name");
+        nameDiv.textContent = people[i].name;
+        aboutDiv.appendChild(nameDiv);
+        
+        // <div class="status"> öğesini oluştur
+        var statusDiv = document.createElement("div");
+        statusDiv.classList.add("status");
+        
+        // <i class="fa fa-circle offline"></i> öğesini oluştur
+        var circleIcon = document.createElement("i");
+        circleIcon.classList.add("fa", "fa-circle", people);
+        statusDiv.appendChild(circleIcon);
+        statusDiv.appendChild(document.createTextNode(" offline"));
+        
+        aboutDiv.appendChild(statusDiv);
+        
+        // <div class="about"> öğesini <li> öğesine ekle
+        listItem.appendChild(aboutDiv);
+        
+        // Oluşturulan <li> öğesini bir başka elemana ekleyin veya kullanın
+        var container = document.getElementById("container"); // Değiştirilecek olan container elemanını seçin
+        container.appendChild(listItem); // Oluşturulan <li> öğesini container'a ekleyin
     }
-}
+  }
 
 function connectWebSocket() {
     var socket = new WebSocket("ws://localhost:8080");
@@ -258,8 +256,6 @@ Array.from(document.querySelectorAll("#status-options ul li")).forEach(
     }
 );
 
-
-
 function newMessage() {
     //mesaj göndermek için
     message = $(".message-input input").val();
@@ -275,19 +271,8 @@ function newMessage() {
     $(".contact.active .preview").html("<span>You: </span>" + message);
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 }
-/*
-$(".submit").click(function () {
-    newMessage();
-});
 
-$(window).on("keydown", function (e) {
-    if (e.which == 13) {
-        newMessage();
-        return false;
-    }
-});*/
-
-const searchAlgorithm = () => {
+function searchAlgorithm() {
     var search = document.querySelector("#search input").value;
 
     for (var i = 0; i < Object.keys(people).length; i++) {

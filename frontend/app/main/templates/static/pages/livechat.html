@@ -4,67 +4,44 @@
       <div class="col-lg-12">
         <div class="card chat-app bg-dark">
           <div id="plist" class="people-list">
-            <div class="input-group">
+            <div id="search" class="input-group">
               <div class="input-group-prepend">
                 <span class="input-group-text icons"><i class="fa fa-search"></i></span>
               </div>
-              <input type="text" class="form-control icons icon-search special-search" style="background-color: #535353; color: #efefef;" placeholder="Search..." />
+              <input oninput="searchAlgorithm()" type="text" class="form-control icons icon-search special-search"
+                style="background-color: #535353; color: #efefef;" placeholder="Search..." />
             </div>
-            <ul class="list-unstyled chat-list mt-2 mb-0">
-              <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" onclick="selectedPerson()" />
+            <ul id="add-contacts" class="list-unstyled chat-list mt-2 mb-0">
+              
+              <li id="vporter" class="clearfix" onclick="selectedPerson(id)">
+                <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" />
                 <div class="about">
-                  <div class="name">Vincent Porter</div>
+                  <div class="name">vporter</div>
                   <div class="status">
                     <i class="fa fa-circle offline"></i> offline
                   </div>
                 </div>
               </li>
+
               <li id="achavez" class="clearfix active" onclick="selectedPerson(id)">
                 <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
                 <div class="about">
-                  <div class="name">Aiden Chavez</div>
+                  <div class="name">achavez</div>
                   <div class="status">
                     <i class="fa fa-circle online"></i> online
                   </div>
                 </div>
               </li>
               <li id="mthomas" class="clearfix" onclick="selectedPerson(id)">
-                <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar"/>
+                <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar" />
                 <div class="about">
-                  <div class="name">Mike Thomas</div>
+                  <div class="name">mthomas</div>
                   <div class="status">
                     <i class="fa fa-circle online"></i> online
                   </div>
                 </div>
               </li>
-              <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar" />
-                <div class="about">
-                  <div class="name">Christian Kelly</div>
-                  <div class="status">
-                    <i class="fa fa-circle offline"></i> offline
-                  </div>
-                </div>
-              </li>
-              <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar" />
-                <div class="about">
-                  <div class="name">Monica Ward</div>
-                  <div class="status">
-                    <i class="fa fa-circle online"></i> online
-                  </div>
-                </div>
-              </li>
-              <li class="clearfix">
-                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar" />
-                <div class="about">
-                  <div class="name">Dean Henry</div>
-                  <div class="status">
-                    <i class="fa fa-circle offline"></i> offline
-                  </div>
-                </div>
-              </li>
+
             </ul>
           </div>
           <!-- Contanct -->
@@ -73,7 +50,8 @@
               <div class="row">
                 <div class="col-lg-6">
                   <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                    <img id="contact-selected-profile-photo" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
+                    <img id="contact-selected-profile-photo" src="https://bootdey.com/img/Content/avatar/avatar2.png"
+                      alt="avatar" />
                   </a>
                   <div class="chat-about">
                     <h6 id="contact-selected-profile-name" class="m-b-0">Aiden Chavez</h6>
@@ -81,25 +59,20 @@
                 </div>
               </div>
             </div>
+
             <div class="chat-history">
-              <ul class="m-b-0">
+              <ul id="all-message" class="m-b-0">
                 <li class="clearfix">
                   <div class="message other-message float-right">
                     Hi Aiden, how are you? How is the project coming along?
                   </div>
                 </li>
                 <li class="clearfix">
-                  <div class="message-data">
-                    <span class="message-data-time">10:12 AM, Today</span>
-                  </div>
                   <div class="message my-message">
                     Are we meeting today?
                   </div>
                 </li>
                 <li class="clearfix">
-                  <div class="message-data">
-                    <span class="message-data-time">10:15 AM, Today</span>
-                  </div>
                   <div class="message my-message">
                     Project has been already finished and I have results to
                     show you.
@@ -107,13 +80,14 @@
                 </li>
               </ul>
             </div>
+
             <div class="chat-message clearfix">
               <div class="input-group mb-0">
                 <div class="input-group-prepend">
                   <span class="input-group-text icons"><i class="fa fa-send"></i></span>
                 </div>
-                <input type="text" class="form-control icon-search" placeholder="Enter text here..."
-                  style="background-color: #535353; color: #efefef;" />
+                <input id="message-input" type="text" class="form-control icon-search" placeholder="Enter text here..."
+                  style="background-color: #535353; color: #efefef; display: none;" />
               </div>
             </div>
           </div>

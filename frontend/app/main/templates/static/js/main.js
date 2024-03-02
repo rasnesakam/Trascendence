@@ -27,7 +27,7 @@ function removeSubstring(originalString, substringToRemove) {
     return originalString.replace(substringToRemove, "");
 }
 
-const updateProfile = () => {
+function updateProfile() {
     document.getElementById("close-icon").style.display = "block";
     document.getElementById("setting-icon").style.display = "none";
     document.getElementById("save-icon").style.display = "block";
@@ -45,7 +45,7 @@ const updateProfile = () => {
     document.getElementById("profile-photo").style.cursor = "pointer";
 };
 
-const closeUpdateProfile = () => {
+function closeUpdateProfile() {
     var profil_photo = document.getElementById("profile-photo");
 
     document.getElementById("close-icon").style.display = "none";
@@ -60,7 +60,7 @@ const closeUpdateProfile = () => {
     profil_photo.style.cursor = "default";
 };
 
-const clickOpcity = (section, othSection) => {
+function clickOpcity(section, othSection) {
     let target = document.getElementById(section);
     let event = document.getElementById("under-" + section);
     let othTarget = document.getElementById(othSection);
@@ -74,7 +74,7 @@ const clickOpcity = (section, othSection) => {
     othEvent.style.display = "none";
 };
 
-const changePhoto = () => {
+function changePhoto() {
     let control = document.getElementById("close-icon").style;
     if (control.display == "block") {
         document.getElementById("fileInput").click();
@@ -88,3 +88,5 @@ function redirectToPvP() {
 function redirectToAI() {
     window.location.href = "ai.html";
 };
+
+
