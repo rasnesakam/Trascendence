@@ -140,7 +140,7 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
         participated_users = list()
         usernames = content.get("users", [])
         if len(usernames) != content["capacity"]:
-            return JsonResponse(json.dumps({"message":f"Unmatched user list. capacity is {content["capacity"]} but {len(usernames)} user invited"}), status=400)
+            return JsonResponse(json.dumps({"message":f"Unmatched user list. capacity is {content['capacity']} but {len(usernames)} user invited"}), status=400)
         for username in usernames:
             try:
                 participated_user = UserModel.objects.get(username__exact=username)
