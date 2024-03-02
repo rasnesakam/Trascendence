@@ -26,22 +26,22 @@ services:
       - backend
       - frontend
       - adminer
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: r00T1453!
-      PGDATA: /var/lib/postgresql/data/db-files/
-    volumes:
-      - db:/var/lib/postgresql/data/db-files/
-    networks:
-      - my_network
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    networks:
-      - my_network
+  #db:
+  #  image: postgres
+  #  environment:
+  #    POSTGRES_PASSWORD: r00T1453!
+  #    PGDATA: /var/lib/postgresql/data/db-files/
+  #  volumes:
+  #    - db:/var/lib/postgresql/data/db-files/
+  #  networks:
+  #    - my_network
+  #adminer:
+  #  image: adminer
+  #  restart: always
+  #  ports:
+  #    - 8080:8080
+  #  networks:
+  #    - my_network
   backend:
     build:
       context: ./backend
