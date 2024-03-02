@@ -22,10 +22,10 @@ services:
     networks:
       - my_network
     depends_on:
-      - db
+      #- db
       - backend
       - frontend
-      - adminer
+      #- adminer
   #db:
   #  image: postgres
   #  environment:
@@ -54,8 +54,8 @@ services:
       - backend:/app/media
     networks:
       - my_network
-    depends_on:
-      - db
+    #depends_on:
+    #  - db
   frontend:
     build:
       context: ./frontend
