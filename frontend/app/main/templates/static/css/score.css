@@ -4,8 +4,18 @@ html,
 }
 
 .score-img {
-    max-width:50%;
+    width:50px;
     height: auto;
+    @median (min-width: 370px)
+    {
+        width: 100px;
+    }
+    @media (min-width: 990px) {
+        width: 150px;
+    }
+    @media (min-width: 1200px) {
+        width: 200px;
+    }
 }
 
 .score-bg-page
@@ -27,4 +37,9 @@ div.animate {
     display: inline-flex;
     position: relative;
     transition: all 1s ease-out;
+}
+
+.bg-info-size
+{
+    height: 100px;
 }
