@@ -44,7 +44,7 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
 @request_body(
     content_type="application/json",
     fields={
-        "username": str_field(required=True, max_length=8),
+        "username": str_field(required=True),
         "message": str_field(max_length=400)
     }
 )
