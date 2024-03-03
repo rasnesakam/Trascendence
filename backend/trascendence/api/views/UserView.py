@@ -11,8 +11,8 @@ def search_user(request, username: str):
     user_query = UserModel.objects.filter(username__startswith=username)
     if user_query.exists():
         response = {
-            "length": len(user_query.values()),
-            "content": [user_dto(user) for user in user_query.values()]
+            "length": len(user_query),
+            "content": [user_dto(user) for user in user_query]
         }
         return JsonResponse(response, status=200)
     return HttpResponseNotFound(json.dumps({"message": f"no match for keyword {username}"}))
