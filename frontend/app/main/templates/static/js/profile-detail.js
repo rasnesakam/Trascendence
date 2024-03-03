@@ -22,7 +22,7 @@ function setRate(win, lose, elementId) {
     return myPieChart;
 }
 
- 
+
 /*(function () {
   setRate(37, 63, "myPieChart");
   setRate(2, 1, "myPieChart2");
