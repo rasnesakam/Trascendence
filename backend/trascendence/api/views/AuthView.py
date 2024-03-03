@@ -12,18 +12,18 @@ from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
 from django.contrib.auth.hashers import BCryptPasswordHasher
 from trascendence.api.dto import auth_dto
+from django.db.models import Q
 
 @require_http_methods(['POST'])
-@authorize
 @request_body(
     content_type="application/json",
     fields={
-        "username": str_field(required=True),
+        "usernameOrEmail": str_field(required=True),
         "password": str_field(required=True)
     }
 )
 def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
-    query = UserModel.objects.filter(username=content['username'])
+    query = UserModel.objects.filter(Q(username=content['usernameOrEmail']) | Q(email=content['usernameOrEmail']))
     if not query.exists():
         return HttpResponseNotFound(json.dumps({'message': 'user not found'}), content_type="application/json")
     user = query.first()
@@ -72,35 +72,27 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
 @request_body(
     content_type="application/json",
     fields={
+        "name": str_field(max_length=25, required=True),
+        "surname": str_field(max_length=25, required=True),
         "username": str_field(min_length=9, required=True),
         "email": str_field(required=True, max_length=50),
         "password": str_field(required=True)
     }
 )
-@authorize
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
-    """
-    Authorize: Bearer <token>
-    {
-        intraId: "string",
-        userName: "string",
-        email: "string",
-        avatarURI: "string"
-    }
-
-    200: Ok
-    401: Not authorized
-    403: bad request. invalid inputs
-    """
     usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
     if usernamecheck.exists():
         return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
     password_hasher = BCryptPasswordHasher()
-    #encoded_password = password_hasher.encode()
+    encoded_password = password_hasher.encode(content["password"], password_hasher.salt())
     user = UserModel.objects.create(
+        name=content["name"],
+        surname=content["surname"],
         username=content['username'],
         email=content['email'],
-        avatarURI="default.jpeg"
+        avatarURI="default.jpeg",
+        password=encoded_password,
+        intra_login=False
     )
     token = generate_token({"sub": user.username})
     return JsonResponse(auth_dto(user, token), status=201)
