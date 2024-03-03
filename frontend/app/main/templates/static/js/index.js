@@ -42,6 +42,7 @@ async function whichEvent(id) {
       .then((response) => response.json())
       .then((data) => {
         localStorage.setItem(2, JSON.stringify(data));
+        document.getElementById("index-navbar").style.display = "block";
         loadUserInformation(2);
       })
       .catch(error_404());
@@ -58,7 +59,7 @@ function isPassageEvent(eventId) {
 
 var isEventListenerAdded = false;
 
-const router = () => {
+function router() {
   if (isEventListenerAdded) return;
   var body = document.body;
 
@@ -73,7 +74,7 @@ const router = () => {
   isEventListenerAdded = true;
 };
 
-const switchPages = async (eventId) => {
+async function switchPages(eventId) {
   const path = window.location.pathname;
   const route = webRoute[path] || webRoute[404];
 
@@ -89,7 +90,7 @@ const switchPages = async (eventId) => {
 
 
 //main.js
-async function pushFetch(url, data, header = {"Content-type": "application/json"} , pushMethod = "GET") {
+async function pushFetch(url, data, header = { "Content-type": "application/json" }, pushMethod = "GET") {
   var pushResult = await fetch(url, {
     method: pushMethod,
     headers: header,
@@ -157,22 +158,22 @@ async function loadUserInformation(id) {
       "Authorization": "Bearer " + access_token,
     },
   });
-  
+
   console.log("user *" + userAccess.username + "***");
   var dataTournament = await fetch(
     "http://localhost/api/tournaments/" + userAccess.username, {
-      headers: {
-        "Authorization": "Bearer " + access_token,
-      },
-    });
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  });
 
-    var dataTournament = await fetch(
-      "http://localhost/api/matches/" + userAccess.username, {
-        headers: {
-          "Authorization": "Bearer " + access_token,
-        },
-      });
-    
+  var dataTournament = await fetch(
+    "http://localhost/api/matches/" + userAccess.username, {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  });
+
   localStorage.setItem(id + 1, JSON.stringify(userIdentity));
   document.getElementById("nickname").innerHTML = userAccess.username;
   document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
@@ -211,7 +212,7 @@ function removeSubstring(originalString, substringToRemove) {
   return originalString.replace(substringToRemove, "");
 }
 
-const updateProfile = () => {
+function updateProfile() {
   var user = JSON.parse(localStorage.getItem(1));
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";
@@ -230,7 +231,7 @@ const updateProfile = () => {
   document.getElementById("profile-photo").style.cursor = "pointer";
 };
 
-const closeUpdateProfile = () => {
+function closeUpdateProfile() {
   var profil_photo = document.getElementById("profile-photo");
 
   document.getElementById("close-icon").style.display = "none";
@@ -245,7 +246,7 @@ const closeUpdateProfile = () => {
   profil_photo.style.cursor = "default";
 };
 
-const clickOpcity = (section, othSection) => {
+function clickOpcity(section, othSection) {
   let target = document.getElementById(section);
   let event = document.getElementById("under-" + section);
   let othTarget = document.getElementById(othSection);
@@ -259,7 +260,7 @@ const clickOpcity = (section, othSection) => {
   othEvent.style.display = "none";
 };
 
-const changePhoto = () => {
+function changePhoto() {
   let control = document.getElementById("close-icon").style;
   if (control.display == "block") {
     document.getElementById("fileInput").click();

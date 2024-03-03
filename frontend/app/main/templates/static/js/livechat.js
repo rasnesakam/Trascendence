@@ -101,12 +101,14 @@ function disableChat() {
         );
     document.getElementById("contact-selected-profile-name").innerHTML = "";
     document.getElementById("message-input").style.display = "none";
+    document.getElementById("chat").style.display = "none";
 }
 
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
     clearMessages()
+    document.getElementById("chat").style.display = "block";
     document.getElementById("message-input").style.display = "block";
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
@@ -128,43 +130,46 @@ function selectedPerson(name) {
     }
 }
 
-function loadContact() {
+
+function loadContent() {
     var contact = document.getElementById("add-contacts");
 
+    contact.innerHTML = " ";
     for (var i = 0; i < Object.keys(people).length; i++) {
-        var add = document.createElement("li");
-        add.classList.add("add");
-
-        var wrapDiv = document.createElement("div");
-        wrapDiv.classList.add("wrap");
-
-        var statusSpan = document.createElement("span");
-        statusSpan.classList.add(("contact-status", people[i].status));
-        wrapDiv.appendChild(statusSpan);
-
         var img = document.createElement("img");
-        img.setAttribute("src", people[i].profile_photo);
-        img.setAttribute("alt", "");
-        wrapDiv.appendChild(img);
+        img.id = "profile-img";
+        img.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
+        img.alt = "avatar";
+        listItem.appendChild(img);
 
-        var metaDiv = document.createElement("div");
-        metaDiv.classList.add("meta");
+        // <div class="about"> öğesini oluştur
+        var aboutDiv = document.createElement("div");
+        aboutDiv.classList.add("about");
 
-        var namePara = document.createElement("p");
-        namePara.classList.add("name");
-        namePara.textContent = people[i].name;
-        metaDiv.appendChild(namePara);
+        // <div class="name"> öğesini oluştur
+        var nameDiv = document.createElement("div");
+        nameDiv.classList.add("name");
+        nameDiv.textContent = people[i].name;
+        aboutDiv.appendChild(nameDiv);
 
-        wrapDiv.appendChild(metaDiv);
-        add.appendChild(wrapDiv);
+        // <div class="status"> öğesini oluştur
+        var statusDiv = document.createElement("div");
+        statusDiv.classList.add("status");
 
-        contact.innerHTML +=
-            '<li id="' +
-            people[i].name +
-            '"' +
-            "class='contact' onclick=selectedPerson(id)>" +
-            add.innerHTML +
-            "</li>";
+        // <i class="fa fa-circle offline"></i> öğesini oluştur
+        var circleIcon = document.createElement("i");
+        circleIcon.classList.add("fa", "fa-circle", people);
+        statusDiv.appendChild(circleIcon);
+        statusDiv.appendChild(document.createTextNode(" offline"));
+
+        aboutDiv.appendChild(statusDiv);
+
+        // <div class="about"> öğesini <li> öğesine ekle
+        listItem.appendChild(aboutDiv);
+
+        // Oluşturulan <li> öğesini bir başka elemana ekleyin veya kullanın
+        var container = document.getElementById("container"); // Değiştirilecek olan container elemanını seçin
+        container.appendChild(listItem); // Oluşturulan <li> öğesini container'a ekleyin
     }
 }
 
@@ -251,8 +256,6 @@ Array.from(document.querySelectorAll("#status-options ul li")).forEach(
     }
 );
 
-
-
 function newMessage() {
     //mesaj göndermek için
     message = $(".message-input input").val();
@@ -268,17 +271,6 @@ function newMessage() {
     $(".contact.active .preview").html("<span>You: </span>" + message);
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 }
-/*
-$(".submit").click(function () {
-    newMessage();
-});
-
-$(window).on("keydown", function (e) {
-    if (e.which == 13) {
-        newMessage();
-        return false;
-    }
-});*/
 
 function searchAlgorithm() {
     var search = document.querySelector("#search input").value;

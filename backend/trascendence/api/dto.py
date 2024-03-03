@@ -131,14 +131,13 @@ def uploads_dto(upload: Uploads) -> dict:
 # Auth dto
 def auth_dto(usermodel: UserModel, token: str) -> dict:
     return {
-        "id": usermodel.id,
         "user": user_dto(usermodel),
-        "token": token
+        "access_token": token
 	}
 
+# Profile dto
 def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments]) -> dict:
     return {
-        "id": user.id,
         "user": user_dto(user),
         "matches": [match_dto(match) for match in matches],
         "tournament_matches": [match_dto(match.match) for match in tournament_matches[:5]],
