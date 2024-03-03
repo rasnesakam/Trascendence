@@ -131,7 +131,6 @@ def uploads_dto(upload: Uploads) -> dict:
 # Auth dto
 def auth_dto(usermodel: UserModel, token: str) -> dict:
     return {
-        "id": usermodel.id,
         "user": user_dto(usermodel),
         "token": token
 	}
