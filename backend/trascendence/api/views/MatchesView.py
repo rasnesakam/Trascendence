@@ -13,7 +13,7 @@ from trascendence.api.dto import match_dto
 @require_http_methods(['GET'])
 @authorize
 def get_matches_for_user(request: HttpRequest, username: str):
-    matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username)).values()
+    matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username))
     matches_list = [match_dto(match) for match in matches]
     return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
 
@@ -22,7 +22,7 @@ def get_matches_for_user(request: HttpRequest, username: str):
 @authorize
 def get_matches_for_users(request: HttpRequest, user1: str, user2: str):
     matches = Matches.objects.filter((Q(home__username=user1) & Q(away__username=user2)) |
-                                     (Q(home__username=user2) & Q(away__username=user1))).values()
+                                     (Q(home__username=user2) & Q(away__username=user1)))
     matches_list = [match_dto(match) for match in matches]
     return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
 
