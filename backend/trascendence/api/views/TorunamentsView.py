@@ -18,7 +18,7 @@ from trascendence.api.dto import (
 def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     try:
         user = UserModel.objects.get(username=request.auth_info["sub"])
-        tournament_invitations = TournamentInvitations.objects.filter(target_user=user).values()
+        tournament_invitations = TournamentInvitations.objects.filter(target_user=user)
         response = {
             "length": len(tournament_invitations),
             "content": [tournament_invitation_dto(invite) for invite in tournament_invitations]
@@ -83,7 +83,7 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 @require_http_methods(['GET'])
 @authorize
 def get_tournaments(request: HttpRequest) -> JsonResponse:
-    tournaments = Tournaments.objects.all().values()
+    tournaments = Tournaments.objects.all()
     response = {
         "length": len(tournaments),
         "content": [tournament_dto(tournament) for tournament in tournaments]
@@ -94,7 +94,7 @@ def get_tournaments(request: HttpRequest) -> JsonResponse:
 @require_http_methods(['GET'])
 @authorize
 def get_tournaments_for_user(request: HttpRequest, user: str) -> JsonResponse:
-    tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=user).values()
+    tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=user)
     response = {
         "length": len(tournaments),
         "content": [tournament_dto(tournament) for tournament in tournaments]
