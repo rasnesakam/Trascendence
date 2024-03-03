@@ -1,7 +1,7 @@
 //İndex.js
 //sayısal değerlere define değerler atanabilir
-
-loadUserInformation(0);
+if (window.location.pathname == "/")
+  loadUserInformation(0);
 
 const webRoute = {
   404: "/static/pages/error.html",
@@ -658,44 +658,6 @@ document.addEventListener("keydown", function (event) {
 
 //login.js
 
-async function registerUser() {
-  let _password = form.elements.register - password.value;
-  let is_password = form.elements.is_register - password.value
-
-  if (_password != is_password) {
-    alert("Is not same password\nTry again");
-    exit(1);
-  }
-  let url = "http://localhost/api/auth/sign-up"
-
-  responseBody = {
-    username: form.elements.username.value,
-    name: form.elements.name.value,
-    surname: form.elements.surname.value,
-    email: form.elements.register - email.value,
-    password: _password
-  }
-
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(responseBody),
-  })
-    .then(async (response) => {
-      if (!response.ok) return new Error("Respone is not ok");
-      return response.json();
-    })
-    .then((data) => {
-      localStorage.setItem(0, JSON.stringify(data));
-      window.location.href = "/";
-      return data;
-    })
-    .catch((error) => {
-      alert(error);
-    });
-}
 
 //back-transition
 window.onpopstate = async function (event) {
