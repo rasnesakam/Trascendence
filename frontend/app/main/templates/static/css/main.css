@@ -83,6 +83,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  width: 50%;
   z-index: 1;
   opacity: 0;
   transition: opacity 0.5s;
@@ -96,7 +97,10 @@
   right: 0;
 }
 
-.btn-slice:hover .slice-left,
+.btn-slice:hover .slice-left {
+  opacity: 1;
+}
+
 .btn-slice:hover .slice-right {
   opacity: 1;
 }
@@ -113,8 +117,8 @@
 .pvp-link {
   opacity: 1;
   font-size: 30px;
-  top: 25%;
-  left: 8%;
+  top: 15%;
+  left: 15%;
   color: #000000;
 }
 
@@ -122,6 +126,6 @@
   opacity: 1;
   font-size: 30px;
   color: #ffffff;
-  bottom: 20%;
-  right: 10%;
+  bottom: 15%;
+  right: 15%;
 }
