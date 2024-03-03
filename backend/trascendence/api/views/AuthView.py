@@ -15,7 +15,6 @@ from trascendence.api.dto import auth_dto
 from django.db.models import Q
 
 @require_http_methods(['POST'])
-@authorize
 @request_body(
     content_type="application/json",
     fields={
@@ -80,7 +79,6 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
         "password": str_field(required=True)
     }
 )
-@authorize
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
     usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
     if usernamecheck.exists():
