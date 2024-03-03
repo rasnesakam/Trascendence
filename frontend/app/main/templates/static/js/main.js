@@ -80,13 +80,3 @@ function changePhoto() {
         document.getElementById("fileInput").click();
     }
 };
-
-function redirectToPvP() {
-    window.location.href = "pvp.html";
-};
-
-function redirectToAI() {
-    window.location.href = "ai.html";
-};
-
-

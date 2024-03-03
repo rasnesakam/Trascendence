@@ -15,15 +15,17 @@
 
 			<!-- Button trigger modal -->
 			<div class="d-grid gap-2 col-6 mx-auto" style="width: 45%;">
-				<button type="button" class="btn btn-secondary mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#signInModal">
+				<button type="button" class="btn btn-secondary mb-1 btn-sm" data-bs-toggle="modal"
+					data-bs-target="#signInModal">
 					Sign In
 				</button>
-	
-				<button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">
+
+				<button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal"
+					data-bs-target="#registerModal">
 					Register
 				</button>
 			</div>
-			
+
 
 		</div>
 
@@ -38,10 +40,14 @@
 					</div>
 					<div class="modal-body">
 
-						<form>
+						<form onsubmit="registerUser()">
 							<div>
-								<label for="register-nickname" class="col-form-label text-dark">Username:</label>
-								<input type="text" class="form-control" id="register-name">
+								<label for="register-nickname" class="col-form-label text-dark"
+									minlength="9">Username:</label>
+								<input type="text" class="form-control" id="register-nickname">
+								<div class="password-hint">
+									Username should be at least 8 characters long.
+								</div>
 							</div>
 							<div>
 								<label for="register-name" class="col-form-label text-dark">Name:</label>
@@ -49,18 +55,27 @@
 							</div>
 							<div>
 								<label for="register-surname" class="col-form-label text-dark">Surname:</label>
-								<input type="text" class="form-control" id="register-name">
+								<input type="text" class="form-control" id="register-surname">
 							</div>
 							<div>
 								<label for="register-password" class="col-form-label text-dark"
 									autocomplete="new-password">Password:</label>
-								<input type="password" class="form-control" id="register-password">
+								<input id="register-password" oninput="control_password(id)" type="password"
+									class="form-control" minlength="6">
+							</div>
+							<div id="input-password" class="password-hint login-hide">
+								Password should be at least 6 characters long.
+								<br />
 							</div>
 							<div>
-								<label for="is_register-password" class="col-form-label text-dark"
-									autocomplete="new-password">Is
-									Same Password?</label>
-								<input type="password" class="form-control" id="is_register-password">
+								<label for="register-password-too" class="col-form-label text-dark"
+									autocomplete="new-password">Password Again?</label>
+								<input id="register-password-too" oninput="control_password(id)" type="password"
+									class="form-control" minlength="6">
+							</div>
+							<div id="input-password-too" class="password-hint login-hide">
+								Password should be at same!
+								<br />
 							</div>
 							<div>
 								<label for="register-email" class="col-form-label text-dark">Email:</label>
@@ -71,7 +86,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-light">Register</button>
+						<button id="register-submit" type="submit" class="btn btn-light register-turn" onclick="registerUser()">Register</button>
 					</div>
 
 				</div>
@@ -91,25 +106,25 @@
 
 						<form>
 							<div>
-								<label for="register-nickname" class="col-form-label text-dark">Username:</label>
-								<input type="text" class="form-control" id="register-name">
+								<label for="sign-nickname" class="col-form-label text-dark">Username:</label>
+								<input type="text" class="form-control" id="sign-name">
 							</div>
 							<div>
-								<label for="register-password" class="col-form-label text-dark"
+								<label for="sign-password" class="col-form-label text-dark"
 									autocomplete="new-password">Password:</label>
-								<input type="password" class="form-control" id="register-password">
+								<input type="password" class="form-control" id="sign-password">
 							</div>
 						</form>
 
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-light">Sign In</button>
+						<button type="button" class="btn btn-light" onclick="signUpUser()">Sign In</button>
 					</div>
 				</div>
 			</div>
 		</div>
-
+		<!--js değişecek register and sign-->
 
 
 	</div>

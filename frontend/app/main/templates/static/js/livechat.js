@@ -29,11 +29,11 @@ people = {
                 type: "other-message",
             },
         ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar1.png",
-        status: "offile",
+        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
+        status: "online",
     },
     1: {
-        name: "achavez",
+        name: "mthomas",
         messages: [
             {
                 message: "Merhaba",
@@ -107,9 +107,8 @@ function disableChat() {
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
-    clearMessages()
-    document.getElementById("chat").style.display = "block";
-    document.getElementById("message-input").style.display = "block";
+    //clearMessages();
+    //document.getElementById("message-input").style.display = "block";
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
             document.getElementById(people[i].name).classList.add("active");
@@ -118,12 +117,13 @@ function selectedPerson(name) {
                 .setAttribute("src", people[i].profile_photo);
             document.getElementById("contact-selected-profile-name").innerHTML =
                 people[i].name;
+            /*
             for (j = 0; j < Object.keys(people[i].messages).length; j++) {
                 sendMessage(
                     people[i].messages[j].type,
                     people[i].messages[j].message
                 );
-            }
+            }*/
         } else {
             document.getElementById(people[i].name).classList.remove("active");
         }
@@ -272,7 +272,7 @@ function newMessage() {
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 }
 
-function searchAlgorithm() {
+const searchAlgorithm = () => {
     var search = document.querySelector("#search input").value;
 
     for (var i = 0; i < Object.keys(people).length; i++) {
