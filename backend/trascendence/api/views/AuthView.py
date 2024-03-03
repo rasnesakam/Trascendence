@@ -12,18 +12,19 @@ from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
 from django.contrib.auth.hashers import BCryptPasswordHasher
 from trascendence.api.dto import auth_dto
+from django.db.models import Q
 
 @require_http_methods(['POST'])
 @authorize
 @request_body(
     content_type="application/json",
     fields={
-        "username": str_field(required=True),
+        "usernameOrEmail": str_field(required=True),
         "password": str_field(required=True)
     }
 )
 def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
-    query = UserModel.objects.filter(username=content['username'])
+    query = UserModel.objects.filter(Q(username=content['usernameOrEmail']) | Q(email=content['usernameOrEmail']))
     if not query.exists():
         return HttpResponseNotFound(json.dumps({'message': 'user not found'}), content_type="application/json")
     user = query.first()
@@ -81,19 +82,6 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
 )
 @authorize
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
-    """
-    
-    {
-        name: "string",
-        surname: "string",
-        userName: "string",
-        email: "string"
-    }
-
-    200: Ok
-    401: Not authorized
-    403: bad request. invalid inputs
-    """
     usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
     if usernamecheck.exists():
         return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
