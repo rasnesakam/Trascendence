@@ -35,7 +35,7 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
             "content": [user_dto(friend) for friend in friends]
         }
         return JsonResponse(response, status=200)
-    except UserModel.DoesNotExist as e:
+    except UserModel.DoesNotExist:
         return HttpResponseForbidden(json.dumps({"message": "You have no permission to do this."}), content_type="application/json")
 
 
