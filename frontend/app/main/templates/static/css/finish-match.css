@@ -1,6 +1,5 @@
-.black-ground-color-two
-{
-	background: linear-gradient(to top left , rgb(44,11,14) 45%, rgb(3,22,51) 0%) bottom left/470% 6400%;
+.black-ground-color-two {
+	background: linear-gradient(to top left, rgb(44, 11, 14) 45%, rgb(3, 22, 51) 0%) bottom left/470% 6400%;
 }
 
 .text-winner-head-render {
@@ -21,14 +20,12 @@
 	height: 60%;
 }
 
-.text-loser-head-render
-{
+.text-loser-head-render {
 	color: red;
 	font-size: 177%
 }
 
-.loser-profile-render
-{
+.loser-profile-render {
 	position: absolute;
 	border-radius: 100%;
 	width: 15%;
@@ -36,8 +33,7 @@
 	transform: translate(0%, 100%);
 }
 
-.flower-photo-render
-{
+.flower-photo-render {
 	position: absolute;
 	width: 38%;
 	height: 40%;
@@ -45,8 +41,7 @@
 
 }
 
-.rip-photo-render
-{
+.rip-photo-render {
 	position: absolute;
 	width: 45%;
 	height: 65%;
