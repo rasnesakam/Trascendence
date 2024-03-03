@@ -34,9 +34,9 @@ def create_profile_view(user: UserModel, matches: list, tournament_matches: list
 def get_user_profile(request: HttpRequest, username: str):
     try:
         user = UserModel.objects.get(Q(username__exact=username))
-        matches = Matches.objects.filter(Q(home=user) | Q(away=user)).values()
-        tournament_matches = TournamentMatches.objects.filter(Q(match__home__exact=user.id) | Q(match__away__exact=user.id)).values()
-        tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id).values()
+        matches = Matches.objects.filter(Q(home=user) | Q(away=user))
+        tournament_matches = TournamentMatches.objects.filter(Q(match__home__exact=user.id) | Q(match__away__exact=user.id))
+        tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id)
         profile = create_profile_view(
             user,
             [match for match in matches],
