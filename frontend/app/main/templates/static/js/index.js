@@ -1,6 +1,8 @@
 //İndex.js
 //sayısal değerlere define değerler atanabilir
 
+loadUserInformation(0);
+
 const webRoute = {
   404: "/static/pages/error.html",
   "/": "/static/pages/main.html",
@@ -151,38 +153,35 @@ function showTournament(tournaments) {
 
 async function loadUserInformation(id) {
   var userAccess = JSON.parse(localStorage.getItem(0));
-  console.log("userAccess: " + userAccess.access_token);
   var access_token = userAccess.access_token;
-  var userIdentity = await fetch("http://localhost/api/profile/" + userAccess.username, {
+  var userIdentity = await fetch(`http://localhost/api/profile/${userAccess.user.username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
-  });
-
-  console.log("user *" + userAccess.username + "***");
-  var dataTournament = await fetch(
-    "http://localhost/api/tournaments/" + userAccess.username, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
-  });
+  }).then(data => data.json());
 
   var dataTournament = await fetch(
-    "http://localhost/api/matches/" + userAccess.username, {
+    `http://localhost/api/tournaments/${userAccess.user.username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
-  });
+  }).then(data => data.json());
+
+  var dataMatches = await fetch(
+    `http://localhost/api/matches/${userAccess.user.username}` , {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  }).then(data => data.json());
 
   localStorage.setItem(id + 1, JSON.stringify(userIdentity));
-  document.getElementById("nickname").innerHTML = userAccess.username;
+  document.getElementById("nickname").innerHTML = userIdentity.username;
   document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
   document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
   document.getElementById("profile-photo").src = userIdentity.avatarURI;
-  document.getElementById("total_tournament").innerHTML =
-    dataTournament.content.size(); //Torunament add html
-  document.getElementById("total_match").innerHTML = 3; //match added html
-  document.getElementById("enemy").innerHTML = user.enemy;
+  document.getElementById("total_tournament").innerHTML = dataTournament.length; //Torunament add html
+  document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
+  document.getElementById("enemy").innerHTML = userIdentity.rival;
 
   if (id == 2) {
     let tournamentWin = winCount(dataTournament, userIdentity.username);
@@ -658,35 +657,44 @@ document.addEventListener("keydown", function (event) {
 */
 
 //login.js
-async function takeUrl() {
-  myUrl = window.location.search;
-  searchParams = new URLSearchParams(myUrl);
 
-  if (myUrl.includes("/login") && searchParams.has("code")) {
-    await fetch("http://localhost/api/auth/sign-in/42", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        code: searchParams.get("code"),
-      }),
-    })
-      .then(async (response) => {
-        if (!response.ok) return new Error("Respone is not ok");
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
+async function registerUser() {
+  let _password = form.elements.register - password.value;
+  let is_password = form.elements.is_register - password.value
 
-        localStorage.setItem(0, JSON.stringify(data));
-        window.location.href = "/";
-        return data;
-      })
-      .catch((error) => {
-        alert(error);
-      });
+  if (_password != is_password) {
+    alert("Is not same password\nTry again");
+    exit(1);
   }
+  let url = "http://localhost/api/auth/sign-up"
+
+  responseBody = {
+    username: form.elements.username.value,
+    name: form.elements.name.value,
+    surname: form.elements.surname.value,
+    email: form.elements.register - email.value,
+    password: _password
+  }
+
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(responseBody),
+  })
+    .then(async (response) => {
+      if (!response.ok) return new Error("Respone is not ok");
+      return response.json();
+    })
+    .then((data) => {
+      localStorage.setItem(0, JSON.stringify(data));
+      window.location.href = "/";
+      return data;
+    })
+    .catch((error) => {
+      alert(error);
+    });
 }
 
 //back-transition
