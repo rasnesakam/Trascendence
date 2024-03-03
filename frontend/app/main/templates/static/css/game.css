@@ -56,12 +56,12 @@
   color: var(--foreground-color);
 }
 
-.score > p {
+.score>p {
   padding-top: 20px;
   font-size: 6vh;
 }
 
-.score > div {
+.score>div {
   padding: 0 2vh;
   margin: 1vh 0;
   opacity: 0.5;
