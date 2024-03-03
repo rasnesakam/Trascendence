@@ -42,7 +42,7 @@ urlpatterns = [
     path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user),
 
     # Matches
-    path('matches/<user>', MatchesView.get_matches_for_user),
+    path('matches/<username>', MatchesView.get_matches_for_user),
     path('matches/<user1>/<user2>', MatchesView.get_matches_for_users),
     path('matches/submit', MatchesView.submit_matches_for_users),
 
