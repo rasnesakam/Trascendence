@@ -4,7 +4,7 @@ from trascendence.api.models import UserModel
 from trascendence.middleware.auth import authorize
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.api.models.InteractionModels import Friends, FriendInvitation, BlackList
-from trascendence.api.dto import friend_dto, friend_invitation_dto, blacklist_dto
+from trascendence.api.dto import user_dto, friend_dto, friend_invitation_dto, blacklist_dto
 from django.db.models import Q
 import json
 
@@ -29,10 +29,10 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
         friends = UserModel.objects.filter(
             Q(friends_user_pair_1__user_pair_2=user.id) | 
             Q(friends_user_pair_2__user_pair_1=user.id)
-        ).values()
+        )
         response = {
             "length": len(friends),
-            "content": [friend_dto(friend) for friend in friends]
+            "content": [user_dto(friend) for friend in friends]
         }
         return JsonResponse(response, status=200)
     except UserModel.DoesNotExist as e:
@@ -87,7 +87,7 @@ def delete_friend(request: HttpRequest, user) -> JsonResponse | HttpResponseNotF
 def get_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     try:
         user = UserModel.objects.get(username=request.auth_info["sub"])
-        invitations = FriendInvitation.objects.filter(target=user).values()
+        invitations = FriendInvitation.objects.filter(target=user)
         response = {
             "length": len(invitations),
             "content": [friend_invitation_dto(invitation) for invitation in invitations]
@@ -136,7 +136,7 @@ def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | Http
 def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     try:
         user = UserModel.objects.get(username=request.auth_info["sub"])
-        blacklists = UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id).values()
+        blacklists = UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id)
         response = {
             "length": len(blacklists),
             "content": [blacklist_dto(blacklist) for blacklist in blacklists]
