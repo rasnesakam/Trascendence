@@ -47,12 +47,12 @@ class ChatConsumer(WebsocketConsumer):
             # token doğrulanacak -backend
             response = requests.get(f'http://{APP_NAME}/api/auth/token', headers={"Authorization": f"Bearer {token}"})
             print(response)
-            print(response.json())
+            print(response.text)
             if response.status_code == 200:
                 # Burada token geçerli
                 #kullanıcı oluşcak
                 try:
-                    user_id = jwt.decode(token, algorithms=['HS256'])
+                    user_id = response.json()["user"]["id"]
                     user = User.objects.get(id = user_id)
                 except (TypeError, ValueError, OverflowError, User.DoesNotExist):
                     self.send(text_data=json.dumps({

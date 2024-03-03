@@ -24,7 +24,7 @@
     <script src="{% static 'reconnecting-websocket.js' %}"></script>
 
     <script type="text/javascript">
-        let url = `ws://localhost:8000/ws/socket-server/`
+        let url = `ws://localhost:5353/ws/socket-server/`
 
         const chatSocket = new ReconnectingWebSocket(url)
         chatSocket.addEventListener('open', function(){
@@ -65,11 +65,16 @@
         messageForm.addEventListener('submit', (e)=> {
             e.preventDefault()
             let message = document.getElementById('message').value
-            chatSocket.send(JSON.stringify({
-                'message':message,
-                'type':'new_message'
-            }))
-            document.getElementById('message').value = '';
+            if (chatSocket.readyState === WebSocket.OPEN){
+                chatSocket.send(JSON.stringify({
+                    'message':message,
+                    'type':'new_message',
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0Ml9ydXNoIiwic3ViIjoiaGFlcmlzIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3MTA5NDY4OTR9.YaQ-SKmxVJ0X2so970Wut_Q1coisP9XMPDCANu92QZc"
+                }))
+                document.getElementById('message').value = '';
+            } else {
+                console.error("WebSocket is not open. Ready state: " + chatSocket.readyState);
+            }
         })
     </script>
 </body>

@@ -6,3 +6,4 @@ from django.shortcuts import render
 # @login_required
 def lobby(request):
     return render(request, 'chat/lobby.html')
+
