@@ -133,7 +133,7 @@ function selectedPerson(name) {
 
 function loadContent() {
     var contact = document.getElementById("add-contacts");
-  
+
     contact.innerHTML = " ";
     for (var i = 0; i < Object.keys(people).length; i++) {
         var img = document.createElement("img");
@@ -141,37 +141,37 @@ function loadContent() {
         img.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
         img.alt = "avatar";
         listItem.appendChild(img);
-        
+
         // <div class="about"> öğesini oluştur
         var aboutDiv = document.createElement("div");
         aboutDiv.classList.add("about");
-        
+
         // <div class="name"> öğesini oluştur
         var nameDiv = document.createElement("div");
         nameDiv.classList.add("name");
         nameDiv.textContent = people[i].name;
         aboutDiv.appendChild(nameDiv);
-        
+
         // <div class="status"> öğesini oluştur
         var statusDiv = document.createElement("div");
         statusDiv.classList.add("status");
-        
+
         // <i class="fa fa-circle offline"></i> öğesini oluştur
         var circleIcon = document.createElement("i");
         circleIcon.classList.add("fa", "fa-circle", people);
         statusDiv.appendChild(circleIcon);
         statusDiv.appendChild(document.createTextNode(" offline"));
-        
+
         aboutDiv.appendChild(statusDiv);
-        
+
         // <div class="about"> öğesini <li> öğesine ekle
         listItem.appendChild(aboutDiv);
-        
+
         // Oluşturulan <li> öğesini bir başka elemana ekleyin veya kullanın
         var container = document.getElementById("container"); // Değiştirilecek olan container elemanını seçin
         container.appendChild(listItem); // Oluşturulan <li> öğesini container'a ekleyin
     }
-  }
+}
 
 function connectWebSocket() {
     var socket = new WebSocket("ws://localhost:8080");

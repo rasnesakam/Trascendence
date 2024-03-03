@@ -90,7 +90,7 @@ async function switchPages(eventId) {
 
 
 //main.js
-async function pushFetch(url, data, header = {"Content-type": "application/json"} , pushMethod = "GET") {
+async function pushFetch(url, data, header = { "Content-type": "application/json" }, pushMethod = "GET") {
   var pushResult = await fetch(url, {
     method: pushMethod,
     headers: header,
@@ -158,22 +158,22 @@ async function loadUserInformation(id) {
       "Authorization": "Bearer " + access_token,
     },
   });
-  
+
   console.log("user *" + userAccess.username + "***");
   var dataTournament = await fetch(
     "http://localhost/api/tournaments/" + userAccess.username, {
-      headers: {
-        "Authorization": "Bearer " + access_token,
-      },
-    });
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  });
 
-    var dataTournament = await fetch(
-      "http://localhost/api/matches/" + userAccess.username, {
-        headers: {
-          "Authorization": "Bearer " + access_token,
-        },
-      });
-    
+  var dataTournament = await fetch(
+    "http://localhost/api/matches/" + userAccess.username, {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
+  });
+
   localStorage.setItem(id + 1, JSON.stringify(userIdentity));
   document.getElementById("nickname").innerHTML = userAccess.username;
   document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
