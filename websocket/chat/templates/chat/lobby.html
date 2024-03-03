@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,22 +9,30 @@
 <body>
     <h1>Lets chat!</h1>
 
-    <form onsubmit="letsChat">
-        <input type="text" name="from" placeholder="username"/>
-        <input type="text" name="to" placeholder="target username"/>
+    <form id="chatForm">
+        <input type="text" id="from" placeholder="username"/>
+        <input type="text" id="to" placeholder="target username"/>
         <button type="submit">Let's Chat!</button>
     </form>
-    <form id="form" style="display: none;">
-        <input type="text" name="message"/>
+    <form id="messageForm" style="display: none;">
+        <input type="text" id="message"/>
+        <button type="submit">Send</button>
     </form>
 
     <div id="messages"></div>
 
+    <script src="{% static 'reconnecting-websocket.js' %}"></script>
+
     <script type="text/javascript">
-        let url = `ws://localhost:8000/ws/socket-server/`
+        let url = `ws://localhost:5353/ws/socket-server/`
 
-        const chatSocket = new WebSocket(url)
-
+        const chatSocket = new ReconnectingWebSocket(url)
+        chatSocket.addEventListener('open', function(){
+            chatSocket.send(JSON.stringify({
+                "type": "new_message",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0Ml9ydXNoIiwic3ViIjoiaGFlcmlzIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3MTA5NDY4OTR9.YaQ-SKmxVJ0X2so970Wut_Q1coisP9XMPDCANu92QZc"
+            }))
+        })
         chatSocket.onmessage = function(e){
             let data = JSON.parse(e.data)
             console.log('Data:', data)
@@ -38,18 +47,35 @@
             }
         }
         
-        let form = document.getElementById('form')
-        form.addEventListener('submit', (e)=> {
+        let chatForm = document.getElementById('chatForm')
+        chatForm.addEventListener('submit', (e)=> {
             e.preventDefault()
-            let message = e.target.message.value
-            chatSocket.send(JSON.stringify({
-                'message':message
-            }))
-            form.reset()
+            let from = document.getElementById('from').value
+            let to = document.getElementById('to').value
+            // Burada 'to' alanının kullanımını belirtmek için bir yorum ekleyebilirsiniz.
+            // Örneğin, bu alanı chat odasına katılımcıları belirtmek için kullanabilirsiniz.
+            console.log(`Chatting from ${from} to ${to}`);
+            // Burada, 'to' alanını kullanarak belirli bir chat odasına katılabilirsiniz.
+            // Ancak, bu örnekte 'to' alanının kullanımı gösterilmiyor.
+            document.getElementById('messageForm').style.display = 'block';
+            chatForm.style.display = 'none';
         })
-        function letsChat(){
-            console.log(this);
-        }
+
+        let messageForm = document.getElementById('messageForm')
+        messageForm.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            let message = document.getElementById('message').value
+            if (chatSocket.readyState === WebSocket.OPEN){
+                chatSocket.send(JSON.stringify({
+                    'message':message,
+                    'type':'new_message',
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0Ml9ydXNoIiwic3ViIjoiaGFlcmlzIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3MTA5NDY4OTR9.YaQ-SKmxVJ0X2so970Wut_Q1coisP9XMPDCANu92QZc"
+                }))
+                document.getElementById('message').value = '';
+            } else {
+                console.error("WebSocket is not open. Ready state: " + chatSocket.readyState);
+            }
+        })
     </script>
 </body>
 </html>
