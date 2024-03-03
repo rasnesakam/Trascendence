@@ -15,7 +15,7 @@ from trascendence.api.dto import match_dto
 def get_matches_for_user(request: HttpRequest, username: str):
     matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username))
     matches_list = [match_dto(match) for match in matches]
-    return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
+    return JsonResponse({"length": len(matches_list), "matches": matches_list}, status=200)
 
 
 @require_http_methods(['GET'])
@@ -24,7 +24,7 @@ def get_matches_for_users(request: HttpRequest, user1: str, user2: str):
     matches = Matches.objects.filter((Q(home__username=user1) & Q(away__username=user2)) |
                                      (Q(home__username=user2) & Q(away__username=user1)))
     matches_list = [match_dto(match) for match in matches]
-    return JsonResponse(json.dumps({"length": len(matches_list), "matches": matches}))
+    return JsonResponse({"length": len(matches_list), "matches": matches_list}, status=200)
 
 
 @require_http_methods(['POST'])
@@ -61,6 +61,6 @@ def submit_matches_for_users(request: HttpRequest, content):
             home_signature=token_home,
             away_signature=token_away
         )
-        return JsonResponse({"message":"Match saved", "content": match_dto(saved_match)})
+        return JsonResponse({"message":"Match saved", "content": match_dto(saved_match)}, status=201)
     except:
         return HttpResponseForbidden("Not allowed")

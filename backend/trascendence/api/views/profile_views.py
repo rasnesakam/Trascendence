@@ -11,6 +11,7 @@ from trascendence.api.models.tournament_models import TournamentMatches
 
 def create_profile_view(user: UserModel, matches: list, tournament_matches: list, tournaments: list) ->dict:
     response = dict()
+    response['username'] = user.username
     response['name'] = user.name
     response['surname'] = user.surname
     response['email'] = user.email
@@ -27,6 +28,7 @@ def create_profile_view(user: UserModel, matches: list, tournament_matches: list
         "length": len(tournaments),
         "tournaments": tournaments
     }
+    response['rival'] = "emakas"
     return response
 
 
