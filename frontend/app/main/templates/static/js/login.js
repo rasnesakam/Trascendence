@@ -7,16 +7,25 @@ function control_password(name)
 {
     let in_pass = document.getElementById("register-password");
     let get = document.getElementById(name);
-    if (name == "")
+    if (name == "register-password-too")
+    {
+      document.getElementById("input-password-too").style.display = "block";
         if (in_pass.value == get.value)
-            document.getElementById("input-password-too").style.color = "green";
+        {
+          document.getElementById("register-submit").style.pointerEvents = "auto";
+          document.getElementById("input-password-too").style.color = "green";
+        }
         else
             document.getElementById("input-password-too").style.color = "red";
+    }
     else
-        if (get.value.size() > 6)
+    {
+      document.getElementById("input-password").style.display = "block";
+        if (get.value.lenght() > 6)
             document.getElementById("input-password").style.color = "green";
         else
             document.getElementById("input-password").style.color = "yellow";
+    }
 }
 
 
@@ -24,9 +33,7 @@ async function takeUrl() {
     let url = "http://localhost/api/auth/sign-in/42"
     let myUrl = window.location.search;
     searchParams = new URLSearchParams(myUrl);
-    alert(myUrl);
     if (searchParams.has("code")) {
-        alert("url girdi");
       await fetch(url, {
         method: "POST",
         headers: {
@@ -52,4 +59,75 @@ async function takeUrl() {
         });
     }
   }
+
   
+  async function registerUser() {
+    let url = "http://localhost/api/auth/sign-up"
+  
+    let username = document.getElementById("register-nickname").value;
+    let name = document.getElementById("register-name").value;
+    let surname = document.getElementById("register-surname").value;
+    let email = document.getElementById("register-email").value;
+    let password = document.getElementById("register-password").value;
+    
+    let responseBody = {
+      username,
+      name,
+      surname,
+      email,
+      password,
+    }
+  
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(responseBody),
+    })
+      .then(async (response) => {
+        if (!response.ok) return new Error("Respone is not ok");
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem(0, JSON.stringify(data));
+        window.location.href = "/";
+        return data;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+
+  async function signUpUser() {
+    let url = "http://localhost/api/auth/sign-in"
+  
+    let username = document.getElementById("sign-nickname").value;
+    let password = document.getElementById("sign-password").value;
+    
+    let responseBody = {
+      username,
+      password,
+    }
+  
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(responseBody),
+    })
+      .then(async (response) => {
+        if (!response.ok) return new Error("Respone is not ok");
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem(0, JSON.stringify(data));
+        window.location.href = "/";
+        return data;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }

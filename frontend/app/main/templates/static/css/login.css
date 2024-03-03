@@ -48,3 +48,8 @@
 {
 	display: none;
 }
+
+.register-turn
+{
+	pointer-events: none;
+}

@@ -44,7 +44,7 @@
 							<div>
 								<label for="register-nickname" class="col-form-label text-dark"
 									minlength="9">Username:</label>
-								<input type="text" class="form-control" id="register-username">
+								<input type="text" class="form-control" id="register-nickname">
 								<div class="password-hint">
 									Username should be at least 8 characters long.
 								</div>
@@ -86,7 +86,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-light">Register</button>
+						<button id="register-submit" type="submit" class="btn btn-light register-turn" onclick="registerUser()">Register</button>
 					</div>
 
 				</div>
@@ -106,7 +106,7 @@
 
 						<form>
 							<div>
-								<label for="register-nickname" class="col-form-label text-dark">Username:</label>
+								<label for="sign-nickname" class="col-form-label text-dark">Username:</label>
 								<input type="text" class="form-control" id="sign-name">
 							</div>
 							<div>
@@ -119,12 +119,12 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-light">Sign In</button>
+						<button type="button" class="btn btn-light" onclick="signUpUser()">Sign In</button>
 					</div>
 				</div>
 			</div>
 		</div>
-<!--js değişecek register and sign-->
+		<!--js değişecek register and sign-->
 
 
 	</div>
