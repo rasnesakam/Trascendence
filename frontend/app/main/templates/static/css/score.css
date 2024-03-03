@@ -4,23 +4,24 @@ html,
 }
 
 .score-img {
-    width:50px;
+    width: 50px;
     height: auto;
-    @median (min-width: 370px)
-    {
+
+    @median (min-width: 370px) {
         width: 100px;
     }
+
     @media (min-width: 990px) {
         width: 150px;
     }
+
     @media (min-width: 1200px) {
         width: 200px;
     }
 }
 
-.score-bg-page
-{
-    background: rgb(221,221,221);
+.score-bg-page {
+    background: rgb(221, 221, 221);
 }
 
 .example::-webkit-scrollbar {
@@ -39,7 +40,6 @@ div.animate {
     transition: all 1s ease-out;
 }
 
-.bg-info-size
-{
+.bg-info-size {
     height: 100px;
 }
