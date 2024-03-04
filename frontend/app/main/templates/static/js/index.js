@@ -78,9 +78,11 @@ function router() {
 
 async function switchPages(eventId) {
   const path = window.location.pathname;
-  const route = webRoute[path] || webRoute[404];
+  var route = webRoute[path] || webRoute[404];
 
-  if (path.includes("/users/")) route = "/static/pages/profile-detail.html";
+  if (path.includes("/users/")) {
+    route = "/static/pages/profile-detail.html";
+  }
 
   const html = await fetch(route)
     .then((response) => response.text())
@@ -168,7 +170,7 @@ async function loadUserInformation(id) {
   }).then(data => data.json());
 
   var dataMatches = await fetch(
-    `http://localhost/api/matches/${userAccess.user.username}` , {
+    `http://localhost/api/matches/${userAccess.user.username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
@@ -658,13 +660,20 @@ document.addEventListener("keydown", function (event) {
 
 //login.js
 
+document.getElementById("click-search").addEventListener("click", async function (event) {
+  profile = document.getElementById("input-search").value;
+  let newUrl = `/users/${profile}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+  event.preventDefault();
+  await switchPages(newUrl);
+});
 
 //back-transition
-window.onpopstate = async function (event) {
-  alert("url degsiti");
+window.addEventListener("popstate", async function (event) {
   if (event.state) {
-    var currentUrl = window.location.pathname;
+    let currentUrl = window.location.pathname;
     event.preventDefault();
+    alert("prevent Default knk: " + currentUrl);
     await switchPages(currentUrl);
   }
-};
+});
