@@ -1,17 +1,3 @@
-function loadUserInformation() {
-    document.getElementById("nickname").innerHTML = user.nickname || "Nickname";
-    document.getElementById("pr-name").innerHTML = "Name: " + user.name;
-    document.getElementById("pr-surname").innerHTML = "Surname: " + user.surname;
-    document.getElementById("profile-photo").src = user.photo;
-
-    document.getElementById("total_time").innerHTML = user.total_time + " Min";
-    document.getElementById("total_tournament").innerHTML =
-        user.total_tournament + " Tournament";
-    document.getElementById("total_match").innerHTML =
-        user.total_match + " Match";
-    document.getElementById("enemy").innerHTML = user.enemy;
-}
-
 function saveUserInformation() {
     user.nickname = document.getElementById("nicknameInput").value;
 

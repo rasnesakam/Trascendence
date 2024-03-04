@@ -1,3 +1,8 @@
+(function() 
+{
+    profile_load();
+})
+
 function setRate(win, lose, elementId) {
     var matchesCount = win + lose;
     var winsCount = win;

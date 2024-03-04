@@ -14,11 +14,12 @@ const webRoute = {
 };
 
 //  "/profile-detail": "/static/pages/profile-detail.html",
-function error_404() {
-  pageTxt = fetch(webRoute[404])
+async function error_404() {
+  pageTxt = await fetch(webRoute[404])
     .then((response) => response.text())
     .catch((error) => alert(error));
   document.getElementById("index-navbar").style.display = "none";
+  document.getElementById("index-body").innerHTML = pageTxt;
 }
 
 async function winCount(data, username) {
@@ -32,22 +33,14 @@ async function winCount(data, username) {
 
 async function whichEvent(id) {
   if (id == "/") {
-    loadUserInformation(0);
+    main_load();
   } else if (id == "/livechat") {
     disableChat();
     loadContact();
   } else if (id == "login") {
     takeUrl();
   } else if (id.includes("/users/")) {
-    const path = window.location.pathname.split("/");
-    profileDetail = await fetch("http://localhost/api/profile/" + path[1])
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem(2, JSON.stringify(data));
-        document.getElementById("index-navbar").style.display = "block";
-        loadUserInformation(2);
-      })
-      .catch(error_404());
+    profile_load();
   }
 }
 
@@ -157,30 +150,42 @@ function main_load()
 {
   let userAccess = JSON.parse(localStorage.getItem(0));
   let username = userAccess.user.username;
-  let access_token = userAccess.user.access_token;
+  let access_token = userAccess.access_token;
 
+  console.log("access_token: " + access_token);
   loadUserInformation(username, access_token);
 }
 
+function profile_load()
+{
+    let pathname = window.location.pathname;
+    let part = pathname.split('/');
+    let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+
+    console.log("myuser: " + part[1])
+    loadUserInformation(part[1], access_token);
+}
+
+
 async function loadUserInformation(username, access_token) {
   let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
+      headers: {
+          "Authorization": "Bearer " + access_token,
+      },
   }).then(data => data.json());
 
   let dataTournament = await fetch(
-    `http://localhost/api/tournaments/${username}`, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
+      `http://localhost/api/tournaments/${username}`, {
+      headers: {
+          "Authorization": "Bearer " + access_token,
+      },
   }).then(data => data.json());
 
   let dataMatches = await fetch(
-    `http://localhost/api/matches/${username}`, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
+      `http://localhost/api/matches/${username}`, {
+      headers: {
+          "Authorization": "Bearer " + access_token,
+      },
   }).then(data => data.json());
 
   localStorage.setItem(1, JSON.stringify(userIdentity));
@@ -192,9 +197,10 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
   document.getElementById("enemy").innerHTML = userIdentity.rival;
 
-  let resultData = {userIdentity, dataTournament, dataMatches};
+  let resultData = { userIdentity, dataTournament, dataMatches };
   return (resultData);
 }
+
 
 function saveUserInformation() {
   //user save is not enough because you have to send it to backend
