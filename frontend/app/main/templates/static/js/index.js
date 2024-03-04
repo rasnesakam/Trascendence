@@ -1,7 +1,7 @@
 //İndex.js
 //sayısal değerlere define değerler atanabilir
 if (window.location.pathname == "/")
-  loadUserInformation(0);
+  main_load()
 
 const webRoute = {
   404: "/static/pages/error.html",
@@ -78,9 +78,11 @@ function router() {
 
 async function switchPages(eventId) {
   const path = window.location.pathname;
-  const route = webRoute[path] || webRoute[404];
+  var route = webRoute[path] || webRoute[404];
 
-  if (path.includes("/users/")) route = "/static/pages/profile-detail.html";
+  if (path.includes("/users/")) {
+    route = "/static/pages/profile-detail.html";
+  }
 
   const html = await fetch(route)
     .then((response) => response.text())
@@ -151,30 +153,37 @@ function showTournament(tournaments) {
 
 //showMatch();
 
-async function loadUserInformation(id) {
-  var userAccess = JSON.parse(localStorage.getItem(0));
-  var access_token = userAccess.access_token;
-  var userIdentity = await fetch(`http://localhost/api/profile/${userAccess.user.username}`, {
+function main_load()
+{
+  let userAccess = JSON.parse(localStorage.getItem(0));
+  let username = userAccess.user.username;
+  let access_token = userAccess.user.access_token;
+
+  loadUserInformation(username, access_token);
+}
+
+async function loadUserInformation(username, access_token) {
+  let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
   }).then(data => data.json());
 
-  var dataTournament = await fetch(
-    `http://localhost/api/tournaments/${userAccess.user.username}`, {
+  let dataTournament = await fetch(
+    `http://localhost/api/tournaments/${username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
   }).then(data => data.json());
 
-  var dataMatches = await fetch(
-    `http://localhost/api/matches/${userAccess.user.username}` , {
+  let dataMatches = await fetch(
+    `http://localhost/api/matches/${username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
   }).then(data => data.json());
 
-  localStorage.setItem(id + 1, JSON.stringify(userIdentity));
+  localStorage.setItem(1, JSON.stringify(userIdentity));
   document.getElementById("nickname").innerHTML = userIdentity.username;
   document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
   document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
@@ -183,17 +192,8 @@ async function loadUserInformation(id) {
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
   document.getElementById("enemy").innerHTML = userIdentity.rival;
 
-  if (id == 2) {
-    let tournamentWin = winCount(dataTournament, userIdentity.username);
-    let tournamentLose = dataTournament.content.size() - tournamentWin;
-    let matchWin = 2;
-    let matchLose = 3 - matchWin;
-
-    setRate(tournamentWin, tournamentLose, "myPieChart");
-    setRate(matchWin, matchLose, "myPieChart2");
-    showTournament(dataTournament);
-    //showMatch();
-  }
+  let resultData = {userIdentity, dataTournament, dataMatches};
+  return (resultData);
 }
 
 function saveUserInformation() {
@@ -658,13 +658,20 @@ document.addEventListener("keydown", function (event) {
 
 //login.js
 
+document.getElementById("click-search").addEventListener("click", async function (event) {
+  profile = document.getElementById("input-search").value;
+  let newUrl = `/users/${profile}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+  event.preventDefault();
+  await switchPages(newUrl);
+});
 
 //back-transition
-window.onpopstate = async function (event) {
-  alert("url degsiti");
+window.addEventListener("popstate", async function (event) {
   if (event.state) {
-    var currentUrl = window.location.pathname;
+    let currentUrl = window.location.pathname;
     event.preventDefault();
+    alert("prevent Default knk: " + currentUrl);
     await switchPages(currentUrl);
   }
-};
+});
