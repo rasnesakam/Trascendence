@@ -113,7 +113,7 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 
 
 @require_http_methods(['GET'])
-#@authorize
+@authorize
 def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("stage")
     if tournament_players.exists():
