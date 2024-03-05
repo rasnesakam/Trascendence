@@ -109,6 +109,6 @@ def sign_out(request: HttpRequest) -> HttpResponse:
 def verify_token(request):
     try:
         user = UserModel.objects.get(username=request.auth_info["sub"])
-        return JsonResponse(json.dumps(auth_dto(user)), status=200)
+        return JsonResponse(auth_dto(user), status=200)
     except UserModel.DoesNotExist:
         return HttpResponseForbidden()

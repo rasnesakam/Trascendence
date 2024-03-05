@@ -37,6 +37,7 @@ urlpatterns = [
     path('tournaments/', TorunamentsView.get_tournaments),
     path('tournaments/<user>', TorunamentsView.get_tournaments_for_user),
     path('tournaments/<tournamentcode>', TorunamentsView.get_tournament),
+    path('tournaments/<tournamentcode>/players', TorunamentsView.get_tournament_players),
     path('tournaments/<tournamentcode>/matches', TorunamentsView.get_tournament_matches),
     path('tournaments/create', TorunamentsView.create_tournament),
     path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user),

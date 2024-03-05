@@ -111,6 +111,21 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
     except Tournaments.DoesNotExist:
         return HttpResponseNotFound()
 
+
+@require_http_methods(['GET'])
+#@authorize
+def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
+    tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("stage")
+    if tournament_players.exists():
+        return HttpResponseNotFound()
+    response = {
+        "length": len(tournament_players),
+        "content": [tournament_player_dto(match) for match in tournament_players]
+    }
+    return JsonResponse(response, status=200)
+
+
+
 @require_http_methods(['GET'])
 @authorize
 def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
