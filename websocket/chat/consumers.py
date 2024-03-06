@@ -16,6 +16,13 @@ import re
 # TODO: bu APP_NAME değerini .env dosyasından çek
 APP_NAME = "localhost"
 
+"""
+    Fiiller
+    fetch: mesajları çekme
+    send: mesaj gönderme
+    ping: durum görüntüleme
+"""
+
 class ChatConsumer(WebsocketConsumer):
 
     def send_chat_message(self, message, sendto): 
@@ -23,13 +30,17 @@ class ChatConsumer(WebsocketConsumer):
             sendto,
             {
                 'type':'chat_message',
-                'message':message
+                'message':{
+                    "message": message,
+                    "from": self.room_group_name
+                }
             }
         )
 
 
     def chat_message(self, event):
         message = event['message']
+
         self.send(text_data=json.dumps(message))
 
 
@@ -55,6 +66,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        #self.send(json.dumps({"message": data.get("message"), "to": data.get("to") }))
         message_type = data.get("type", None)
         if message_type is not None:
             self.send_chat_message(data.get("message"), data.get("to"))
