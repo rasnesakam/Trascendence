@@ -52,7 +52,7 @@ people = {
         status: "online",
     },
     2: {
-        name: "mthomas",
+        name: "achavez",
         messages: [
             {
                 message: "Merhaba",
@@ -104,32 +104,65 @@ function disableChat() {
     document.getElementById("chat").style.display = "none";
 }
 
+function submitSend()
+{
+    let name = document.getElementById("contact-selected-profile-name").value;
+
+}
+
+function showMessage(type, message)
+{
+    clearMessages();
+    for (j = 0; j < Object.keys(people[i].messages).length; j++) {
+        sendMessage(type, message);   
+    }
+}
+
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
     console.log(name);
-    //clearMessages();
-    //document.getElementById("message-input").style.display = "block";
+    clearMessages();
+    document.getElementById("message-input").style.display = "block";
+    let target = event.target;
+    //console.log(target.parent)
+    // load previous messages
     for (i = 0; i < Object.keys(people).length; i++) {
         if (people[i].name == name) {
+            console.log("name " + name);
             document.getElementById(people[i].name).classList.add("active");
             document
                 .getElementById("contact-selected-profile-photo")
                 .setAttribute("src", people[i].profile_photo);
             document.getElementById("contact-selected-profile-name").innerHTML =
                 people[i].name;
-            /*
+             
             for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-                sendMessage(
+                showMessage(
                     people[i].messages[j].type,
                     people[i].messages[j].message
                 );
-            }*/
+            }
+            
+            
         } else {
-            document.getElementById(people[i].name).classList.remove("active");
+            document.getElementById(name).classList.remove("active");
         }
     }
+    
 }
 
+(function(){
+    console.log("adding event listener to form");
+    let form = document.getElementsByClassName("livechat-send-message")[0]
+    let targetUser = document.querySelector("#add-contacts").querySelectorAll(".active")[0]
+    console.log(targetUser);
+    form.addEventListener("submit", function(e){
+        e.preventDefault();
+        let formData = new FormData(e.target);
+        console.log("emakas- ayumusak");
+        sendMessage("my-message", formData.get("content"));
+    })
+})();
 
 function loadContent() {
     var contact = document.getElementById("add-contacts");
@@ -274,15 +307,41 @@ function newMessage() {
 
 const searchAlgorithm = () => {
     var search = document.querySelector("#search input").value;
-
-    for (var i = 0; i < Object.keys(people).length; i++) {
-        if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
-            document.getElementById(people[i].name).style.display = "block";
-        } else {
-            document.getElementById(people[i].name).style.display = "none";
+    fetch(`http://localhost/api/users/search/${search}`)
+    .then(data => data.json())
+    .then(datas => {
+        console.log(datas)
+        let contacts = document.getElementById("add-contacts")
+        contacts.innerHTML = ""
+        for (let i = 0; i < datas.length; i++){
+            let user = datas.content[i];
+            let element = `
+            <li id="${user.id}" class="clearfix" onclick="selectedPerson(id)">
+                <img id="profile-img" src="${user.avatarURI}" alt="avatar" />
+                <div class="about">
+                <div class="name">${user.name}</div>
+                <div class="status">
+                    <i class="fa fa-circle online"></i> offline
+                </div>
+                </div>
+            </li>
+            `;
+            contacts.innerHTML += element
         }
-    }
+    });
 };
+
+//const searchAlgorithm = () => {
+//    var search = document.querySelector("#search input").value;
+    
+//    for (var i = 0; i < Object.keys(people).length; i++) {
+//        if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
+//            document.getElementById(people[i].name).style.display = "block";
+//        } else {
+//            document.getElementById(people[i].name).style.display = "none";
+//        }
+//    }
+//};
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
