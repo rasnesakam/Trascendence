@@ -146,6 +146,73 @@ function showTournament(tournaments) {
 
 //showMatch();
 
+async function setTournamentList(tournaments) {
+
+  let added = document.getElementById("torunamentList");
+  added.innerHTML = "";
+  for (let i = 0; i < tournaments.length; i++) {
+    let code = tournaments[i].tournament_code;
+    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
+    .then(data => data.json()).catch(error => console.log(error));
+
+    let accordionItem = document.createElement("div");
+    accordionItem.classList.add("accordion-item");
+    added.appendChild(accordionItem);
+
+    let accordionHeader = document.createElement("h2");
+    accordionHeader.classList.add("accordion-header");
+    accordionItem.appendChild(accordionHeader);
+
+    let button = document.createElement("button");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white");
+    button.setAttribute("type", "button");
+    button.setAttribute("data-bs-toggle", "collapse");
+    button.setAttribute("data-bs-target", "#tournamentList");
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", "tournamentList");
+    accordionHeader.appendChild(button);
+
+    let accordionBody = document.createElement("div");
+    accordionBody.classList.add("accordion-body");
+    accordionBody.textContent;
+    accordionHeader.appendChild(accordionBody);
+    console.log("nediyorsun: " + added);
+  }
+
+}
+
+
+function setMatches(matches, username) {
+
+  let added = document.getElementById("matchList");
+  added.innerHTML = "";
+  for (let i = 0; i < matches.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+    added.appendChild(li);
+
+    let span1 = document.createElement("span");
+    span1.textContent = matches.home + " - " + matches.score;//maçta oynayan kişiler
+    li.appendChild(span1);
+
+    let span2 = document.createElement("span");
+    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
+    li.appendChild(span2);
+
+    if (matches.matches.score_home > matches.score_away)
+      if (matches.home == username)
+        li.classList.add("bg-success");
+      else
+        li.classList.add("bg-danger");
+    else
+      if (matches.away == username)
+        li.classList.add("bg-success");
+      else
+        li.classList.add("bg-danger");
+  }
+
+}
+
 function main_load()
 {
   let userAccess = JSON.parse(localStorage.getItem(0));
@@ -153,7 +220,9 @@ function main_load()
   let access_token = userAccess.access_token;
 
   console.log("access_token: " + access_token);
-  loadUserInformation(username, access_token);
+  let data = loadUserInformation(username, access_token);
+  setTournamentList(data.dataTournament);
+  setMatches(data.dataMatches);
 }
 
 function profile_load()
@@ -269,6 +338,7 @@ function changePhoto() {
   let control = document.getElementById("close-icon").style;
   if (control.display == "block") {
     document.getElementById("fileInput").click();
+    
   }
 };
 

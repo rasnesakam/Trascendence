@@ -66,3 +66,20 @@ function changePhoto() {
         document.getElementById("fileInput").click();
     }
 };
+
+function handleFileSelect() {
+    
+   
+    var fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length > 0) {
+        var file = document.getElementById("fileInput").files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = function(e) {
+            console.log("target:" + e.target);
+            document.getElementById("profile-photo").src = e.target.result;
+        }
+    } else {
+        console.error("Please select file.");
+    }
+}
