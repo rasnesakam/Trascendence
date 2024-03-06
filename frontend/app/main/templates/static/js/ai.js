@@ -51,13 +51,8 @@ function scoreReset() {
 }
 
 function handleLose() {
-    if (playerScore === endScore) {
-        console.log("Player WINNER!\nComputer LOSER!");
-        scoreReset();
-        resetBall();
-        ballColorReset();
-    } else if (computerScore === endScore) {
-        console.log("Computer WINNER!\nPlayer LOSER!");
+    if (playerScore === endScore || computerScore === endScore) {
+        console.log(`player score: ${playerScore}, computer score ${computerScore}`);
         scoreReset();
         resetBall();
         ballColorReset();
