@@ -7,5 +7,5 @@ application = ProtocolTypeRouter({
 })
 
 websocket_urlpatterns = [
-    re_path(r'ws/socket-server/', consumers.ChatConsumer.as_asgi())
+    re_path(r'ws/socket-server/(?P<username>.*)$', consumers.ChatConsumer.as_asgi())
 ]

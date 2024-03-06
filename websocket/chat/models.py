@@ -3,7 +3,8 @@ from django.db import models
 
 class Message(models.Model):
 
-    author = models.CharField(max_length=50)
+    author = models.CharField(max_length=36)
+    audience = models.CharField(max_length=36)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -11,5 +12,10 @@ class Message(models.Model):
         return self.author
     
     @staticmethod
-    def last_10_messages():
-        return Message.objects.order_by('-timestamp').all()[:10]
+    def last_10_messages(author, audience):
+        return Message.objects.filter(author=author, audience=audience).order_by('-timestamp').all()[:10]
+    
+
+    @staticmethod
+    def last_n_messages(author, audience, n):
+        return Message.objects.filter(author=author, audience=audience).order_by('-timestamp').all()[:10]
