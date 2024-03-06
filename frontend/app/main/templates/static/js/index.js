@@ -153,7 +153,7 @@ async function setTournamentList(tournaments) {
   for (let i = 0; i < tournaments.length; i++) {
     let code = tournaments[i].tournament_code;
     let whos = await fetch(`http://localhost/api/tournaments/${code}`)
-    .then(data => data.json()).catch(error => console.log(error));
+      .then(data => data.json()).catch(error => console.log(error));
 
     let accordionItem = document.createElement("div");
     accordionItem.classList.add("accordion-item");
@@ -213,8 +213,7 @@ function setMatches(matches, username) {
 
 }
 
-function main_load()
-{
+function main_load() {
   let userAccess = JSON.parse(localStorage.getItem(0));
   let username = userAccess.user.username;
   let access_token = userAccess.access_token;
@@ -225,36 +224,35 @@ function main_load()
   setMatches(data.dataMatches);
 }
 
-function profile_load()
-{
-    let pathname = window.location.pathname;
-    let part = pathname.split('/');
-    let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+function profile_load() {
+  let pathname = window.location.pathname;
+  let part = pathname.split('/');
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
 
-    console.log("myuser: " + part[1])
-    loadUserInformation(part[1], access_token);
+  console.log("myuser: " + part[1])
+  loadUserInformation(part[1], access_token);
 }
 
 
 async function loadUserInformation(username, access_token) {
   let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
-      headers: {
-          "Authorization": "Bearer " + access_token,
-      },
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
   }).then(data => data.json());
 
   let dataTournament = await fetch(
-      `http://localhost/api/tournaments/${username}`, {
-      headers: {
-          "Authorization": "Bearer " + access_token,
-      },
+    `http://localhost/api/tournaments/${username}`, {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
   }).then(data => data.json());
 
   let dataMatches = await fetch(
-      `http://localhost/api/matches/${username}`, {
-      headers: {
-          "Authorization": "Bearer " + access_token,
-      },
+    `http://localhost/api/matches/${username}`, {
+    headers: {
+      "Authorization": "Bearer " + access_token,
+    },
   }).then(data => data.json());
 
   localStorage.setItem(1, JSON.stringify(userIdentity));
@@ -338,7 +336,7 @@ function changePhoto() {
   let control = document.getElementById("close-icon").style;
   if (control.display == "block") {
     document.getElementById("fileInput").click();
-    
+
   }
 };
 
