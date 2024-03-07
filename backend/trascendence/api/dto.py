@@ -129,10 +129,11 @@ def uploads_dto(upload: Uploads) -> dict:
 
 
 # Auth dto
-def auth_dto(usermodel: UserModel, token: str) -> dict:
+def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str) -> dict:
     return {
         "user": user_dto(usermodel),
-        "access_token": token
+        "access_token": access_token,
+        "refresh_token": refresh_token
 	}
 
 # Profile dto
