@@ -11,6 +11,7 @@ routes = {
     'match': 'match.html',
     'score': 'score.html',
     'finish-match': 'finish-match.html',
+    'ai': 'ai.html',
 }
 
 
