@@ -63,8 +63,9 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
                 intra_login=True
             )
             created_new = True
-        token = generate_token({"sub": user_db.username})
-        return JsonResponse(auth_dto(user_db, token), status=201 if created_new else 200)
+        access_token = generate_access_token(user_db)
+        refresh_token = generate_refresh_token(user_db)
+        return JsonResponse(auth_dto(user_db, access_token, refresh_token), status=201 if created_new else 200)
     return HttpResponseForbidden(json.dumps({"message": "code is invalid", "response": response}), content_type='application/json')
 
 

@@ -36,7 +36,7 @@ urlpatterns = [
     path('tournaments/invitations/<invitationcode>/accept', TorunamentsView.accept_tournamet),
     path('tournaments/invitations/<invitationcode>/delete', TorunamentsView.decline_tournament),
     path('tournaments/', TorunamentsView.get_tournaments),
-    path('tournaments/<user>', TorunamentsView.get_tournaments_for_user),
+    path('tournaments/user/<user>', TorunamentsView.get_tournaments_for_user),
     path('tournaments/<tournamentcode>', TorunamentsView.get_tournament),
     path('tournaments/<tournamentcode>/players', TorunamentsView.get_tournament_players),
     path('tournaments/<tournamentcode>/matches', TorunamentsView.get_tournament_matches),
@@ -47,6 +47,8 @@ urlpatterns = [
     path('matches/<username>', MatchesView.get_matches_for_user),
     path('matches/<user1>/<user2>', MatchesView.get_matches_for_users),
     path('matches/submit', MatchesView.submit_matches_for_users),
+    path('matches/submit/<matchcode>', MatchesView.submit_planned_match),
+    path('matches/code/<matchcode>', MatchesView.get_planned_match),
 
     # Uploads
     path('uploads/upload', Uploads.upload_file),
