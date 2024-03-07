@@ -61,13 +61,16 @@ def blacklist_dto(blacklist: BlackList) -> dict:
 	}
 
 # Tournament
-def tournament_dto(tournament: Tournaments) -> dict:
-    return {
+def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | None = None) -> dict:
+    dto = {
         "id": tournament.id,
 		"name": tournament.tournament_name,
         "tournament_code": tournament.tournament_code,
         "created_by": user_dto(tournament.created_at),
 	}
+    if players is not None:
+        dto["players"] = [tournament_player_dto(player) for player in players]
+    return dto
 
 # Tournament Invitation
 def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
