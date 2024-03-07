@@ -1,2 +1,2 @@
-from .generate_token import generate_token
+from .generate_token import generate_token, generate_access_token, generate_refresh_token
 from .validate_token import validate_token
