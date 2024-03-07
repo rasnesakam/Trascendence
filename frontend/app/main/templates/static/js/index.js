@@ -15,6 +15,8 @@ var webRoute = {
 
 if (window.location.pathname == "/")
   main_load()
+else if (window.location.pathname.includes("/users/"))
+  profile_load()
 
 //  "/profile-detail": "/static/pages/profile-detail.html",
 async function error_404() {
@@ -66,9 +68,9 @@ function router() {
     if (isPassageEvent(event.target.id)) {
       event.preventDefault();
 
-      console.log("pushState giriyorum: " )
+      console.log("pushState giriyorum: ")
       window.history.pushState({}, "", event.target.href);
-      console.log("pushStateden çıkıyorum: " );
+      console.log("pushStateden çıkıyorum: ");
       switchPages(event.target.id);
     }
   });
@@ -235,6 +237,7 @@ function profile_load() {
   let part = pathname.split('/');
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
 
+  console.log("access", access_token);
   console.log("myuser: " + part[1])
   loadUserInformation(part[1], access_token);
 }
@@ -720,6 +723,7 @@ document.getElementById("click-search").addEventListener("click", async function
   let newUrl = `/users/${profile}`;
   window.history.pushState({ path: newUrl }, '', newUrl);
   event.preventDefault();
+  console.log("pushState: " + newUrl);
   await switchPages(newUrl);
 });
 
