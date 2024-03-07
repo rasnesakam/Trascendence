@@ -24,7 +24,7 @@
                 </div>
               </li>
 
-              <li id="achavez" class="clearfix active" onclick="selectedPerson(id)">
+              <li id="achavez" class="clearfix" onclick="selectedPerson(id)">
                 <img id="profile-img" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
                 <div class="about">
                   <div class="name">achavez</div>
@@ -61,7 +61,7 @@
               </div>
             </div>
 
-            <div class="chat-history">
+            <div class="chat-history overflow-y-auto">
               <ul id="all-message" class="m-b-0">
                 <li class="clearfix">
                   <div class="message other-message float-right">
@@ -83,19 +83,18 @@
             </div>
 
             <div class="chat-message clearfix">
-              <div class="input-group mb-0">
+              <form class="input-group mb-0 livechat-send-message">
                 <div class="input-group-prepend">
-                  <span class="input-group-text icons"><i class="fa fa-send"></i></span>
+                  <button type="submit" class="input-group-text icons" ><i class="fa fa-send"></i></button>
                 </div>
-                <input id="message-input" type="text" class="form-control icon-search" placeholder="Enter text here..."
+                <input id="message-input" type="text" class="form-control icon-search" name="content" placeholder="Enter text here..."
                   style="background-color: #535353; color: #efefef; display: none;" />
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
   <script src="/static/js/livechat.js"></script>
 </body>

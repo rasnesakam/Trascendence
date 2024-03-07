@@ -422,30 +422,7 @@ people = {
   },
 };
 
-function sendMessage(sendType, photoWho, sendText) {
-  var message = document.createElement("li");
-  message.classList.add(sendType);
 
-  var img = document.createElement("img");
-  img.src = photoWho;
-  message.appendChild(img);
-
-  var para = document.createElement("p");
-  para.textContent = sendText;
-  message.appendChild(para);
-
-  document.getElementById("message").appendChild(message);
-  console.log(message);
-  document.querySelector(".messages").scrollTop =
-    document.querySelector(".messages").scrollHeight;
-}
-
-function clearMessages() {
-  var message = document.getElementById("message");
-  while (message.firstChild) {
-    message.removeChild(message.firstChild);
-  }
-}
 
 function disableChat() {
   document

@@ -1,80 +1,6 @@
-people = {
-    0: {
-        name: "vporter",
-        messages: [
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "other-message",
-            },
-            {
-                message:
-                    "What are you talking about? You do what they say or they shoot you.",
-                date: "2021-01-01",
-                time: "13:00",
-                type: "my-message",
-            },
-            {
-                message:
-                    "What are you talking about? You do what they say or they shoot you.",
-                date: "2021-01-01",
-                time: "15:00",
-                type: "other-message",
-            },
-            {
-                message: "get off",
-                date: "2021-01-01",
-                time: "17:00",
-                type: "other-message",
-            },
-        ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
-        status: "online",
-    },
-    1: {
-        name: "mthomas",
-        messages: [
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "other-message",
-            },
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "my-message",
-            },
-        ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar2.png",
-        status: "online",
-    },
-    2: {
-        name: "mthomas",
-        messages: [
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "my-message",
-            },
-            {
-                message: "Merhaba",
-                date: "2021-01-01",
-                time: "12:00",
-                type: "my-message",
-            },
-        ],
-        profile_photo: "https://bootdey.com/img/Content/avatar/avatar3.png",
-        status: "online",
-    },
-};
-
-function sendMessage(sendType, sendText) {
-    var message = document.createElement("li");
-    message.classList.add("clearfix");
+function sendMessage(sendType, sendText, targetUser) {
+    let li = document.createElement("li");
+    li.classList.add("clearfix");
 
     var div = document.createElement("div");
     div.classList.add("message");
@@ -82,12 +8,22 @@ function sendMessage(sendType, sendText) {
     if (sendType == "other-message")
         div.classList.add("float-right");
     div.textContent = sendText;
-    message.appendChild(div);
+    li.appendChild(div);
 
-    document.getElementById("all-message").appendChild(message);
-    console.log(message);
+    document.getElementById("all-message").appendChild(li);
+    let messages = JSON.parse(localStorage.getItem("messages"));
+    let msg;
+    msg = {
+        message: sendText,
+        from: targetUser,
+    };
+    if (messages == undefined)
+        messages = [msg];
+    else
+        messages.push(msg);
+    console.log("sendMessage is: ", sendText);
+    localStorage.setItem("messages", JSON.stringify(messages));
 }
-
 function clearMessages() {
     document.getElementById("all-message").innerHTML = " ";
 }
@@ -104,74 +40,112 @@ function disableChat() {
     document.getElementById("chat").style.display = "none";
 }
 
+function submitSend()
+{
+    let name = document.getElementById("contact-selected-profile-name").value;
+
+}
+
+function showMessage(type, message)
+{
+    clearMessages();
+    for (j = 0; j < Object.keys(people[i].messages).length; j++) {
+        sendMessage(type, message);   
+    }
+}
+
 function selectedPerson(name) {
     //zamana göre mesajları gösterme
+    let people = JSON.parse(localStorage.getItem("contant"))
     console.log(name);
-    //clearMessages();
-    //document.getElementById("message-input").style.display = "block";
-    for (i = 0; i < Object.keys(people).length; i++) {
-        if (people[i].name == name) {
-            document.getElementById(people[i].name).classList.add("active");
+    clearMessages();
+    document.getElementById("message-input").style.display = "block";
+    // load previous messages
+    for (i = 0; i < people.length; i++) {
+        if (people[i].username == name) {
+            document.getElementById(people[i].username).classList.add("active");
             document
                 .getElementById("contact-selected-profile-photo")
-                .setAttribute("src", people[i].profile_photo);
-            document.getElementById("contact-selected-profile-name").innerHTML =
+                .setAttribute("src", people[i].avatarURI);
+            document.getElementById("contact-selected-profile-name").textContent =
                 people[i].name;
-            /*
-            for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-                sendMessage(
+             
+            /*for (j = 0; j < Object.keys(people[i].messages).length; j++) {
+                showMessage(
                     people[i].messages[j].type,
                     people[i].messages[j].message
                 );
             }*/
+            
+            
         } else {
-            document.getElementById(people[i].name).classList.remove("active");
+            document.getElementById(name).classList.remove("active");
         }
     }
+    
 }
 
 
-function loadContent() {
+
+async function loadContent() {
     var contact = document.getElementById("add-contacts");
 
     contact.innerHTML = " ";
-    for (var i = 0; i < Object.keys(people).length; i++) {
+    token = JSON.parse(localStorage.getItem(0)).access_token
+    console.log(token);
+    const {length, content:people} = await fetch("http://localhost/api/interacts/friends", {
+        method: "GET",
+        headers:{
+            "Authorization": `Bearer ${token}`
+        }
+    }).then((response) => {
+        return response.json();
+    }).catch((error) => console.log(error));
+    console.log(people)
+    localStorage.setItem("contant", JSON.stringify(people));
+    for (var i = 0; i < length; i++) {
+        let user = people[i]
+        var listItem = document.createElement("li");
+        listItem.id = user.username;
+        listItem.classList.add("contact");
+        listItem.classList.add("active");
+        contact.appendChild(listItem);
+       
+        console.log("girdim ")
         var img = document.createElement("img");
         img.id = "profile-img";
-        img.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
+        img.src = user.avatarURI;  
         img.alt = "avatar";
         listItem.appendChild(img);
 
         // <div class="about"> öğesini oluştur
+        console.log("girdim ")
         var aboutDiv = document.createElement("div");
         aboutDiv.classList.add("about");
 
         // <div class="name"> öğesini oluştur
         var nameDiv = document.createElement("div");
         nameDiv.classList.add("name");
-        nameDiv.textContent = people[i].name;
+        nameDiv.textContent = user.username;
         aboutDiv.appendChild(nameDiv);
 
         // <div class="status"> öğesini oluştur
         var statusDiv = document.createElement("div");
         statusDiv.classList.add("status");
+        nameDiv.appendChild(statusDiv);
 
+        listItem.onclick = () => selectedPerson(user.username)
+        listItem.appendChild(aboutDiv);
         // <i class="fa fa-circle offline"></i> öğesini oluştur
         var circleIcon = document.createElement("i");
-        circleIcon.classList.add("fa", "fa-circle", people);
+        circleIcon.classList.add("fa", "fa-circle");
+        circleIcon.classList.add("offline");
         statusDiv.appendChild(circleIcon);
-        statusDiv.appendChild(document.createTextNode(" offline"));
-
-        aboutDiv.appendChild(statusDiv);
-
-        // <div class="about"> öğesini <li> öğesine ekle
-        listItem.appendChild(aboutDiv);
-
-        // Oluşturulan <li> öğesini bir başka elemana ekleyin veya kullanın
-        var container = document.getElementById("container"); // Değiştirilecek olan container elemanını seçin
-        container.appendChild(listItem); // Oluşturulan <li> öğesini container'a ekleyin
+        console.log("list:", listItem);
     }
 }
+
+loadContent();
 
 function connectWebSocket() {
     var socket = new WebSocket("ws://localhost:8080");
@@ -207,9 +181,9 @@ if (messagesElement) {
     messagesElement.scrollTop = document.body.scrollHeight;
 }
 
-document.getElementById("profile-img").addEventListener("click", function () {
-    document.querySelector("#status-options").classList.toggle("active");
-});
+//document.getElementById("profile-img").addEventListener("click", function () {
+//    document.querySelector("#status-options").classList.toggle("active");
+//});
 
 Array.from(document.querySelectorAll(".expand-button")).forEach(function (
     element
@@ -274,15 +248,41 @@ function newMessage() {
 
 const searchAlgorithm = () => {
     var search = document.querySelector("#search input").value;
-
-    for (var i = 0; i < Object.keys(people).length; i++) {
-        if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
-            document.getElementById(people[i].name).style.display = "block";
-        } else {
-            document.getElementById(people[i].name).style.display = "none";
+    fetch(`http://localhost/api/users/search/${search}`)
+    .then(data => data.json())
+    .then(datas => {
+        console.log(datas)
+        let contacts = document.getElementById("add-contacts")
+        contacts.innerHTML = ""
+        for (let i = 0; i < datas.length; i++){
+            let user = datas.content[i];
+            let element = `
+            <li id="${user.id}" class="clearfix" onclick="selectedPerson(${user.username})">
+                <img id="profile-img" src="${user.avatarURI}" alt="avatar" />
+                <div class="about">
+                <div class="name">${user.name}</div>
+                <div class="status">
+                    <i class="fa fa-circle online"></i> offline
+                </div>
+                </div>
+            </li>
+            `;
+            contacts.innerHTML += element
         }
-    }
+    });
 };
+
+//const searchAlgorithm = () => {
+//    var search = document.querySelector("#search input").value;
+    
+//    for (var i = 0; i < Object.keys(people).length; i++) {
+//        if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
+//            document.getElementById(people[i].name).style.display = "block";
+//        } else {
+//            document.getElementById(people[i].name).style.display = "none";
+//        }
+//    }
+//};
 
 // prototip yap backend hazır olduğunda backendden alıp
 //göster
@@ -318,3 +318,33 @@ function setRate(win, lose, elementId) {
   setRate(2, 1, "myPieChart2");
 })();
 */
+
+
+var user_data = JSON.parse(localStorage.getItem(0));
+console.log(user_data)
+var socket_url = `ws://localhost/ws/socket-server/${user_data.user.username}`
+
+var socket = new WebSocket(socket_url)
+var socket_sent = {token: user_data.access_token, type: "new_message", message: "selam", to:user_data.user.username}
+
+socket.onopen = () => socket.send(JSON.stringify(socket_sent)) 
+
+socket.onmessage = (message) => {
+    console.log(message)
+    let jsonObj = JSON.parse(message.data);
+    sendMessage("other-message", jsonObj.message, jsonObj.from);
+}
+
+(function(){
+    console.log("adding event listener to form");
+    let form = document.getElementsByClassName("livechat-send-message")[0]
+    form.addEventListener("submit", function(e){
+        e.preventDefault();
+        let formData = new FormData(e.target);
+        let targetUser = document.querySelector("#add-contacts").querySelector(".active")
+        console.log("target: ", targetUser.id);
+        sendMessage("my-message", formData.get("content"), targetUser.id);
+        console.log(targetUser)
+        socket.send(JSON.stringify({type:"message", message:formData.get("content"), to: targetUser.id}))
+    })
+})();
