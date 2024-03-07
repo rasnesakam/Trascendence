@@ -1,4 +1,5 @@
 @import url('/static/css/about.css');
+@import url('/static/css/ai.css');
 @import url('/static/css/error-404.css');
 @import url('/static/css/finish-match.css');
 @import url('/static/css/game.css');
@@ -17,4 +18,9 @@
     --saturation: 70%;
     --foreground-color: #e2e2e2;
     --background-color: #242424;
+}
+
+body {
+    font-family: "Kode Mono", monospace;
+    font-style: normal;
 }
