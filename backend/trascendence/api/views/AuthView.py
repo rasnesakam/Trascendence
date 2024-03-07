@@ -6,7 +6,7 @@ import requests
 import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
-from trascendence.core.token_manager import generate_token
+from trascendence.core.token_manager import generate_token, generate_refresh_token, generate_access_token
 from ..serializers import serialize_json
 from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
@@ -107,8 +107,14 @@ def sign_out(request: HttpRequest) -> HttpResponse:
 @require_http_methods(['GET'])
 @authorize
 def verify_token(request):
-    try:
-        user = UserModel.objects.get(username=request.auth_info["sub"])
-        return JsonResponse(auth_dto(user), status=200)
-    except UserModel.DoesNotExist:
-        return HttpResponseForbidden()
+    user = request.auth_info.user
+    return JsonResponse(auth_dto(user), status=200)
+
+
+@require_http_methods(['GET'])
+@authorize(token_type="refresh")
+def refresh_token(request: HttpRequest) -> HttpResponse:
+    auth_info = getattr(request, "auth_info")
+    user = auth_info.user
+    access_token = generate_access_token(user)
+    return JsonResponse(auth_dto(user, access_token, auth_info.token))
