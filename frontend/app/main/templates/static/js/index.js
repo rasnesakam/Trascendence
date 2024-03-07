@@ -1,9 +1,7 @@
 //İndex.js
 //sayısal değerlere define değerler atanabilir
-if (window.location.pathname == "/")
-  main_load()
 
-const webRoute = {
+var webRoute = {
   404: "/static/pages/error.html",
   "/": "/static/pages/main.html",
   "/about": "/static/pages/about.html",
@@ -13,6 +11,10 @@ const webRoute = {
   "/livechat": "/static/pages/livechat.html",
   "/ai": "/static/pages/ai.html",
 };
+
+
+if (window.location.pathname == "/")
+  main_load()
 
 //  "/profile-detail": "/static/pages/profile-detail.html",
 async function error_404() {
@@ -50,6 +52,7 @@ function isPassageEvent(eventId) {
   if (eventId == "/about") return true;
   if (eventId == "/livechat") return true;
   if (eventId == "/login") return true;
+  if (eventId == "/ai-game") return true;
   return false;
 }
 
@@ -63,7 +66,9 @@ function router() {
     if (isPassageEvent(event.target.id)) {
       event.preventDefault();
 
+      console.log("pushState giriyorum: " )
       window.history.pushState({}, "", event.target.href);
+      console.log("pushStateden çıkıyorum: " );
       switchPages(event.target.id);
     }
   });
