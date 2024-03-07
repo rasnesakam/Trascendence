@@ -69,7 +69,10 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
         "created_by": user_dto(tournament.created_at),
 	}
     if players is not None:
-        dto["players"] = [tournament_player_dto(player) for player in players]
+        dto["players"] = {
+            "length": len(list),
+            "content": [tournament_player_dto(player) for player in players]
+        }
     return dto
 
 # Tournament Invitation
