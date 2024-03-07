@@ -17,6 +17,7 @@ urlpatterns = [
     path('auth/sign-in', AuthView.sign_in),
     path('auth/sign-up', AuthView.sign_up),
     path('auth/token', AuthView.verify_token),
+    path('auth/token/refresh', AuthView.refresh_token),
 
     # Interactions
     path('interacts/friends', InteractionsView.get_friends),

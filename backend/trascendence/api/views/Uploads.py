@@ -30,15 +30,8 @@ def save_file_with_user(user: UserModel, file) -> str | None:
 @authorize
 def upload_file(request: HttpRequest):
     form = FileForm(request.POST, request.FILES)
-    auth_info = getattr(request, "auth_info", None)
-    if auth_info is None:
-        return HttpResponseForbidden(str({"message": "You have no permission to do this."}),
-                                     content_type="application/json")
-    try:
-        user = UserModel.objects.get(username=auth_info['sub'])
-    except:
-        return HttpResponseForbidden(str({"message": "You have no permission to do this."}),
-                                     content_type="application/json")
+    user = request.auth_info.user
+    
     if form.is_valid():
         saved_name = save_file_with_user(user, request.FILES['file'])
         if saved_name is not None:
@@ -50,15 +43,8 @@ def upload_file(request: HttpRequest):
 @require_http_methods(['DELETE'])
 @authorize
 def delete_file(request: HttpRequest, file: str):
-    auth_info = getattr(request, "auth_info", None)
-    if auth_info is None:
-        return HttpResponseForbidden(str({"message": "You have no permission to do this."}),
-                                     content_type="application/json")
-    try:
-        user = UserModel.objects.get(username=auth_info['sub'])
-    except:
-        return HttpResponseForbidden(str({"message": "You have no permission to do this."}),
-                                     content_type="application/json")
+    user = request.auth_info.user
+    
     extension = file.split('.')[-1]
     file_name = file[:file.find(extension) - 1]
     try:
