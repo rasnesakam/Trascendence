@@ -31,25 +31,26 @@ urlpatterns = [
     path('interacts/blacklist/<target_username>/delete', InteractionsView.remove_blacklist),
 
     # Tournaments
+    path('tournaments/create', TorunamentsView.create_tournament),
     path('tournaments/invitations', TorunamentsView.get_tournament_invitations),
     path('tournaments/invitations/<invitationcode>', TorunamentsView.get_tournament_invitation),
     path('tournaments/invitations/<invitationcode>/accept', TorunamentsView.accept_tournamet),
     path('tournaments/invitations/<invitationcode>/delete', TorunamentsView.decline_tournament),
-    path('tournaments/', TorunamentsView.get_tournaments),
     path('tournaments/user/<username>', TorunamentsView.get_tournaments_for_user),
+    path('tournaments/', TorunamentsView.get_tournaments),
     path('tournaments/<tournamentcode>', TorunamentsView.get_tournament),
     path('tournaments/<tournamentcode>/players', TorunamentsView.get_tournament_players),
     path('tournaments/<tournamentcode>/matches', TorunamentsView.get_tournament_matches),
-    path('tournaments/create', TorunamentsView.create_tournament),
     path('tournaments/<tournamentcode>/<username>/delete', TorunamentsView.remove_tournament_user),
 
     # Matches
-    path('matches/<username>', MatchesView.get_matches_for_user),
-    path('matches/<user1>/<user2>', MatchesView.get_matches_for_users),
     path('matches/submit', MatchesView.submit_matches_for_users),
     path('matches/submit/<matchcode>', MatchesView.submit_planned_match),
     path('matches/code/<matchcode>', MatchesView.get_planned_match),
-
+    path('matches/player/verify', MatchesView.verify_playcode),
+    path('matches/<username>', MatchesView.get_matches_for_user),
+    path('matches/<user1>/<user2>', MatchesView.get_matches_for_users),
+    
     # Uploads
     path('uploads/upload', Uploads.upload_file),
     path('uploads/delete/<file>', Uploads.delete_file),

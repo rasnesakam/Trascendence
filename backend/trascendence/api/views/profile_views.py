@@ -10,6 +10,7 @@ from trascendence.api.models.User import UserModel
 from trascendence.api.models.match_models import Matches
 from trascendence.api.models.tournament_models import TournamentMatches
 from django.contrib.auth.hashers import BCryptPasswordHasher
+from trascendence.api.dto import user_dto
 
 def create_profile_view(user: UserModel, matches: list, tournament_matches: list, tournaments: list) ->dict:
     response = dict()
@@ -67,23 +68,22 @@ def get_user_profile(request: HttpRequest, username: str):
     }
 )
 def update_profile(request: HttpRequest, content: dict):
-    #if request.method != "PATCH":
-    #    return JsonResponse({"message": "Only patch method is available"}, status=405)
     user = request.auth_info.user
     password_hasher = BCryptPasswordHasher()
-    if content.get("username"):
+    if "username" in content.keys():
         user.username = content["username"]
-    if content.get("name"):
+    if "name" in content.keys():
         user.name = content["name"]
-    if content.get("surname"):
+    if "surname" in content.keys():
         user.surname = content["surname"]
-    if content.get("email"):
+    if "email" in content.keys():
         user.email = content["email"]
-    if content.get("avatarURI"):
+    if "avatarURI" in content.keys():
         user.avatarURI = content["avatarURI"]
-    if content.get("playcode"):
-        user.playcode = password_hasher.encode(content["playcode"], password_hasher.salt())
-    if content.get("password"):
+    if "playcode" in content.keys():
+        user.play_code = password_hasher.encode(content["playcode"], password_hasher.salt())
+        user.has_play_code = True
+    if "password" in content.keys():
         user.password = password_hasher.encode(content["password"], password_hasher.salt())
     user.save()
-    return JsonResponse({"message": "user saved successfully"})
+    return JsonResponse({"new_user": user_dto(user)})

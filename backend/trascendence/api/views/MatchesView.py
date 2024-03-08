@@ -1,5 +1,5 @@
 import json
-
+import jwt
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from trascendence.middleware.auth import authorize
@@ -10,6 +10,9 @@ from trascendence.middleware.validators import request_body, str_field, number_f
 from trascendence.api.dto import match_dto
 from trascendence.core.token_manager import validate_token
 from django.utils.timezone import now
+from trascendence.core.token_manager import token_types, generate_match_token
+from django.contrib.auth.hashers import BCryptPasswordHasher
+
 
 @require_http_methods(['GET'])
 @authorize()
@@ -108,4 +111,30 @@ def submit_planned_match(request: HttpRequest, matchcode, content) -> HttpRespon
 
 @require_http_methods(['GET'])
 def get_planned_match(request: HttpRequest, matchcode):
-    pass
+    try:
+        planned_match = Matches.objects.get(match_code = matchcode)
+        return JsonResponse(match_dto(planned_match))
+    except Matches.DoesNotExist:
+        return HttpResponseNotFound()
+
+
+@require_http_methods(['POST'])
+@request_body(
+    content_type="application/json",
+    fields= {
+        "username": str_field(required=True),
+        "playcode": str_field(required=True)
+    }
+)
+def verify_playcode(request: HttpRequest, content: dict) -> HttpResponse:
+    password_hasher = BCryptPasswordHasher()
+    username = content["username"]
+    password_raw = content["password"]
+    user = UserModel.objects.filter(username=username)
+    if user.exists:
+        user = user.first()
+        if password_hasher.verify(password_raw, user.password):
+            match_token = generate_match_token(user)
+            return JsonResponse({"token": match_token}, status=200)
+        return HttpResponseForbidden()
+    return HttpResponseNotFound()
