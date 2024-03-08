@@ -23,3 +23,6 @@ def generate_access_token(user):
 
 def generate_refresh_token(user):
     return generate_token({"sub": str(user.id), "typ": "refresh"}, timedelta(minutes=45))
+
+def generate_match_token(user):
+    return generate_token({"sub": str(user.id), "typ": "match_signature"}, timedelta(minutes=45))
