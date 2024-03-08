@@ -240,6 +240,44 @@ function profile_load() {
 }
 
 
+async function setPlayCode()
+{
+    let playcode = document.getElementById("playcode-input").value;
+    let token = JSON.parse(localStorage.getItem(0)).access_token;
+    if (playcode != "")
+    {
+        let response = await fetch("http://localhost/api/profile/update", {
+          method: 'PATCH',
+          headers:{
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({playcode})
+        })
+        if (!response.ok)
+          alert("Hata!")
+        localStorage.setItem(0, JSON.stringify(data));
+    }
+    else
+    {
+        document.getElementById("play-code").click();
+        alert("Please enter play code");
+    }
+}
+
+
+function isPlayCode(data)
+{
+  alert("isPlayCode")
+  console.log(data.has_playcode);
+    if (data.has_playcode == undefined || data.has_playcode == false)
+    {
+        document.getElementById("play-code").click();
+        return (false);
+    }
+    return true;
+}
+
 async function loadUserInformation(username, access_token) {
   let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
     headers: {
@@ -248,7 +286,7 @@ async function loadUserInformation(username, access_token) {
   }).then(data => data.json());
 
   let dataTournament = await fetch(
-    `http://localhost/api/tournaments/${username}`, {
+    `http://localhost/api/tournaments/user/${username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
@@ -271,6 +309,7 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("enemy").innerHTML = userIdentity.rival;
 
   let resultData = { userIdentity, dataTournament, dataMatches };
+  isPlayCode(userIdentity)
   return (resultData);
 }
 

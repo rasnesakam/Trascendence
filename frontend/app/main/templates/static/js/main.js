@@ -1,7 +1,3 @@
-(function() {
-    isPlayCode();
-})
-
 function saveUserInformation() {
     user.nickname = document.getElementById("nicknameInput").value;
 
@@ -87,29 +83,3 @@ function handleFileSelect() {
     }
 }
 
-function isPlayCode()
-{
-    let data = JSON.parse(localStorage.getItem(0));
-
-    if (data.play_code == undefined)
-    {
-        document.getElementById("play-code").click();
-    }
-}
-
-function setPlayCode()
-{
-    let data = JSON.parse(localStorage.getItem(0));
-    let playcode = document.getElementById("playcode-input").value;
-
-    if (playcode != "")
-    {
-        data.play_code = playcode;
-        localStorage.setItem(0, JSON.stringify(data));
-    }
-    else
-    {
-        document.getElementById("play-code").click();
-        alert("Please enter play code");
-    }
-}
