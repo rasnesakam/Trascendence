@@ -1,3 +1,7 @@
+(function() {
+    isPlayCode();
+})
+
 function saveUserInformation() {
     user.nickname = document.getElementById("nicknameInput").value;
 
@@ -6,7 +10,7 @@ function saveUserInformation() {
     user.surname = document.getElementById("surnameInput").value;
     loadUserInformation();
     closeUpdateProfile();
-    alert("oli");
+    alert("save");
 }
 
 function removeSubstring(originalString, substringToRemove) {
@@ -68,7 +72,6 @@ function changePhoto() {
 };
 
 function handleFileSelect() {
-    
    
     var fileInput = document.getElementById("fileInput");
     if (fileInput.files.length > 0) {
@@ -81,5 +84,32 @@ function handleFileSelect() {
         }
     } else {
         console.error("Please select file.");
+    }
+}
+
+function isPlayCode()
+{
+    let data = JSON.parse(localStorage.getItem(0));
+
+    if (data.play_code == undefined)
+    {
+        document.getElementById("play-code").click();
+    }
+}
+
+function setPlayCode()
+{
+    let data = JSON.parse(localStorage.getItem(0));
+    let playcode = document.getElementById("playcode-input").value;
+
+    if (playcode != "")
+    {
+        data.play_code = playcode;
+        localStorage.setItem(0, JSON.stringify(data));
+    }
+    else
+    {
+        document.getElementById("play-code").click();
+        alert("Please enter play code");
     }
 }
