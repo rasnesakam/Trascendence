@@ -14,7 +14,7 @@ from trascendence.api.models import (
 # User Dto
 def user_dto(usermodel: UserModel) -> dict:
     return {
-        "id": usermodel.id,
+        #"id": str(usermodel.id),
         "name": usermodel.name,
         "surname": usermodel.surname,
         "name_surname": f"{usermodel.name} {usermodel.surname}",
@@ -35,7 +35,7 @@ def create_user_list(users: list[UserModel]) -> dict:
 # Friend dto
 def friend_dto(friend: Friends) -> dict:
     return {
-        "id": friend.id,
+        "id": str(friend.id),
         "pair_1": user_dto(friend.user_pair_1),
         "pait_2": user_dto(friend.user_pair_2)
 	}
@@ -44,7 +44,7 @@ def friend_dto(friend: Friends) -> dict:
 # Friend Invitation
 def friend_invitation_dto(invitaion: FriendInvitation) -> dict:
     return {
-        "id": invitaion.id,
+        "id": str(invitaion.id),
         "from": user_dto(invitaion.origin),
         "to": user_dto(invitaion.target),
 		"invite_code": invitaion.invite_code,
@@ -55,7 +55,7 @@ def friend_invitation_dto(invitaion: FriendInvitation) -> dict:
 # Blacklist
 def blacklist_dto(blacklist: BlackList) -> dict:
     return {
-        "id": blacklist.id,
+        "id": str(blacklist.id),
         "blocked_by": user_dto(blacklist.issuer),
         "user": user_dto(blacklist.user)
 	}
@@ -63,7 +63,7 @@ def blacklist_dto(blacklist: BlackList) -> dict:
 # Tournament
 def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | None = None) -> dict:
     dto = {
-        "id": tournament.id,
+        "id": str(tournament.id),
 		"name": tournament.tournament_name,
         "tournament_code": tournament.tournament_code,
         "created_by": user_dto(tournament.created_at),
@@ -78,7 +78,7 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
 # Tournament Invitation
 def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
     return {
-        "id": invitation.id,
+        "id": str(invitation.id),
         "to": invitation.target_user,
         "from": invitation.tournament.created_user,
         "invite_code": invitation.invite_code,
@@ -88,7 +88,7 @@ def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
 # Tournament Player
 def tournament_player_dto(player: TournamentPlayers) -> dict:
     return {
-        "id": player.id,
+        "id": str(player.id),
 		"user": user_dto(player.user),
         "tournament": tournament_dto(player.tournament),
         "stage": player.stage,
@@ -99,7 +99,7 @@ def tournament_player_dto(player: TournamentPlayers) -> dict:
 # Tournament Matches
 def tournament_match_dto(match: TournamentMatches) -> dict:
     return {
-        "id": match.id,
+        "id": str(match.id),
         "match": match_dto(match.match),
         "match_degree": match.match_priority
 	}
@@ -107,7 +107,7 @@ def tournament_match_dto(match: TournamentMatches) -> dict:
 # Matches
 def match_dto(match: Matches) -> dict:
     return {
-        "id": match.id,
+        "id": str(match.id),
         "tournament": tournament_dto(match.tournament) if match.tournament is not None else None,
         "home": {
             "user": user_dto(match.home),
@@ -125,7 +125,7 @@ def match_dto(match: Matches) -> dict:
 # Uploads
 def uploads_dto(upload: Uploads) -> dict:
     return {
-        "id": upload.id,
+        "id": str(upload.id),
         "name": upload.name,
         "extension": upload.extension,
         "full_name": f"{upload.name}.{upload.extension}",

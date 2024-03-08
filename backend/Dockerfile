@@ -15,6 +15,7 @@ CMD [\
     "\
     python manage.py makemigrations api && \
     python manage.py migrate api &&\
-    daphne trascendence.asgi:application -b 0.0.0.0\
+    python manage.py runserver 0.0.0.0:8000\
+    #daphne trascendence.asgi:application -b 0.0.0.0\
     "\
 ]

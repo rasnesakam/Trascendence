@@ -7,7 +7,7 @@ from .definitions import ISSUER, SECRET, ALGORITHM
 
 def generate_token(extended_payload: dict, expiration_time = timedelta(minutes=10)) -> str:
     payload = {
-        "jti": uuid.uuid4(),
+        "jti": str(uuid.uuid4()),
         "iss": ISSUER,
         "iat": datetime.now(),
 		"nbf": datetime.now(),
@@ -18,8 +18,8 @@ def generate_token(extended_payload: dict, expiration_time = timedelta(minutes=1
     return encoded_jwt
 
 def generate_access_token(user):
-    return generate_token({"sub": user.id, "typ":"access"})
+    return generate_token({"sub": str(user.id), "typ":"access"})
 
 
 def generate_refresh_token(user):
-    return generate_token({"sub": user.id, "typ": "refresh"}, timedelta(minutes=45))
+    return generate_token({"sub": str(user.id), "typ": "refresh"}, timedelta(minutes=45))

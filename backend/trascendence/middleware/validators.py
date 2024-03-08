@@ -11,6 +11,7 @@ Validators:
 from typing import Callable, Any
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponse
 from .validator_utils import *
+import sys
 
 content_parsers: dict[str, Callable[[str | bytes], dict | None]] = {
     "application/json": json_parser
@@ -21,18 +22,21 @@ def request_body(content_type, fields: dict):
     def decorator(request_view):
         def wrapper(request: HttpRequest, *args, **kwargs):
             if request.content_type != content_type:
-                return HttpResponse({"message": "content type is not supported"}, status=415,
+                print("Content type is not supported", file=sys.stderr)
+                return HttpResponse(json.dumps({"message": "content type is not supported"}), status=415,
                                     content_type="application/json")
 
             content = content_parsers[content_type](request.body)
             if content is None:
-                return HttpResponseBadRequest(str({"message": "Content is not parsable"}), content_type=content_type)
+                print("Content is not parsable", file=sys.stderr)
+                return HttpResponseBadRequest(json.dumps({"message": "Content is not parsable"}), content_type=content_type)
             try:
                 validate_content(content, fields)
                 combined_kwargs = {**kwargs, **({"content": content})}
                 return request_view(request, *args, **combined_kwargs)
             except Exception as err:
-                return HttpResponseBadRequest(str({"message": str(err)}), content_type=content_type)
+                print(str(err), file=sys.stderr)
+                return HttpResponse(json.dumps({"message": str(err)}), content_type=content_type, status=500)
         return wrapper
 
     return decorator
