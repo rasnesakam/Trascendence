@@ -5,27 +5,94 @@
     <div class="d-flex align-items-center justify-content-center">
         <div class="d-flex align-items-center justify-content-around col">
             <div class="col-1"></div>
+            <!--Left-->
             <div class="text-center col-3">
                 <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
-                <button class="btn btn-secondary btn-l match-button">
+                <button class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
+                    data-bs-target="#left-side">
                     <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
                 </button>
             </div>
+            <!--Tennis-->
             <!--
-            <div class="text-center col-4">
-                <img class="match-img-circle" src="/static/assets/tennis.png">
-            </div>
-            -->
+            <div class="text-center col-4" >
+                <img class="match-img-circle match-tennis-show" src="/static/assets/tennis.png">
+            </div>-->
+            <!--Snipped-->
             <div class="spinner-border text-dark match-spinner-response" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <!--Right-->
             <div class="text-center col-3">
                 <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
-                <button class="btn btn-warning btn-l match-button">
+                <button class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
+                data-bs-target="#right-side">
                     <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
                 </button>
             </div>
             <div class="col-1"></div>
         </div>
+
+        <!--Right Side-->
+        <div class="modal fade" id="right-side" tabindex="-1" aria-labelledby="right-side-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-dark" id="right-side-label">What's your user information</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bg-dark">
+
+                        <form>
+                            <div>
+                                <label for="right-match-nickname" class="col-form-label">Your Username:</label>
+                                <input type="text" class="form-control" id="right-match-nickname">
+                            </div>
+                            <div>
+                                <label for="right-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
+                                <input type="password" class="form-control" id="right-match-playcode">
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signUpUser()">Ready</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--Left Side-->
+        <div class="modal fade" id="left-side" tabindex="-1" aria-labelledby="left-side-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-dark" id="left-side-label">What's your user information</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bg-danger">
+
+                        <form>
+                            <div>
+                                <label for="left-match-nickname" class="col-form-label">Your Username:</label>
+                                <input type="text" class="form-control" id="left-match-nickname">
+                            </div>
+                            <div>
+                                <label for="left-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
+                                <input type="password" class="form-control" id="left-match-playcode">
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signUpUser()">Ready</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
