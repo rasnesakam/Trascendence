@@ -20,7 +20,8 @@ def user_dto(usermodel: UserModel) -> dict:
         "name_surname": f"{usermodel.name} {usermodel.surname}",
 		"username": usermodel.username,
         "email": usermodel.email,
-        "avatarURI": usermodel.avatarURI
+        "avatarURI": usermodel.avatarURI,
+        "has_playcode": usermodel.has_play_code
 	}
 
 
