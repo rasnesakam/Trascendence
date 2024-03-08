@@ -8,24 +8,23 @@
             <!--Left-->
             <div class="text-center col-3">
                 <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
-                <button class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
+                <button id="left-expected" class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
                     data-bs-target="#left-side">
                     <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
                 </button>
             </div>
             <!--Tennis-->
-            <!--
-            <div class="text-center col-4" >
+            <div id="match-tennis" class="text-center col-4" style="display: none;">
                 <img class="match-img-circle match-tennis-show" src="/static/assets/tennis.png">
-            </div>-->
+            </div>
             <!--Snipped-->
-            <div class="spinner-border text-dark match-spinner-response" role="status">
+            <div id="match-snipped" class="spinner-border text-dark match-spinner-response" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <!--Right-->
             <div class="text-center col-3">
                 <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
-                <button class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
+                <button id="right-expected" class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
                 data-bs-target="#right-side">
                     <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
                 </button>
@@ -43,7 +42,7 @@
                     </div>
                     <div class="modal-body bg-dark">
 
-                        <form>
+                        <form onsubmit="match_making('right')">
                             <div>
                                 <label for="right-match-nickname" class="col-form-label">Your Username:</label>
                                 <input type="text" class="form-control" id="right-match-nickname">
@@ -57,7 +56,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signUpUser()">Ready</button>
+                        <button type="submit" class="btn btn-light" data-bs-dismiss="modal" >Ready</button>
                     </div>
                 </div>
             </div>
@@ -74,21 +73,21 @@
                     </div>
                     <div class="modal-body bg-danger">
 
-                        <form>
+                        <form onsubmit="match_making('left')">
                             <div>
                                 <label for="left-match-nickname" class="col-form-label">Your Username:</label>
-                                <input type="text" class="form-control" id="left-match-nickname">
+                                <input id="left-input" type="text" class="form-control" id="left-match-nickname">
                             </div>
                             <div>
                                 <label for="left-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
-                                <input type="password" class="form-control" id="left-match-playcode">
+                                <input id="left-playcode" type="password" class="form-control" id="left-match-playcode">
                             </div>
                         </form>
 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" onclick="signUpUser()">Ready</button>
+                        <button type="submit" class="btn btn-light" data-bs-dismiss="modal">Ready</button>
                     </div>
                 </div>
             </div>
