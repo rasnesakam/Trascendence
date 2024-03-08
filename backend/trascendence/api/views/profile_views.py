@@ -3,11 +3,13 @@ import json
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponseNotFound, JsonResponse
 from django.db.models import Q
+from trascendence.middleware.validators import request_body, str_field
+from trascendence.middleware.auth import authorize
 from trascendence.api.models.tournament_models import Tournaments
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.match_models import Matches
 from trascendence.api.models.tournament_models import TournamentMatches
-
+from django.contrib.auth.hashers import BCryptPasswordHasher
 
 def create_profile_view(user: UserModel, matches: list, tournament_matches: list, tournaments: list) ->dict:
     response = dict()
@@ -16,6 +18,7 @@ def create_profile_view(user: UserModel, matches: list, tournament_matches: list
     response['surname'] = user.surname
     response['email'] = user.email
     response['avatarURI'] = user.avatarURI
+    response['has_playcode'] = user.has_play_code
     response['matches'] = {
         "length": len(matches),
         "matches": matches
@@ -48,3 +51,39 @@ def get_user_profile(request: HttpRequest, username: str):
         return JsonResponse(profile, status=200)
     except Exception as e:
         return HttpResponseNotFound(json.dumps({"message":f"user '{username}' not found", "exception": str(e)}), content_type="application/json")
+    
+@require_http_methods(['PATCH'])
+@authorize()
+@request_body(
+    content_type="application/json",
+    fields={
+        "username": str_field(required=False),
+        "name": str_field(required=False),
+        "surname": str_field(required=False),
+        "email": str_field(required=False),
+        "avatarURI": str_field(required=False),
+        "playcode": str_field(required=False),
+        "password": str_field(required=False)
+    }
+)
+def update_profile(request: HttpRequest, content: dict):
+    #if request.method != "PATCH":
+    #    return JsonResponse({"message": "Only patch method is available"}, status=405)
+    user = request.auth_info.user
+    password_hasher = BCryptPasswordHasher()
+    if content.get("username"):
+        user.username = content["username"]
+    if content.get("name"):
+        user.name = content["name"]
+    if content.get("surname"):
+        user.surname = content["surname"]
+    if content.get("email"):
+        user.email = content["email"]
+    if content.get("avatarURI"):
+        user.avatarURI = content["avatarURI"]
+    if content.get("playcode"):
+        user.playcode = password_hasher.encode(content["playcode"], password_hasher.salt())
+    if content.get("password"):
+        user.password = password_hasher.encode(content["password"], password_hasher.salt())
+    user.save()
+    return JsonResponse({"message": "user saved successfully"})

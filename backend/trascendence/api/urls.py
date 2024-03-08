@@ -55,6 +55,7 @@ urlpatterns = [
     path('uploads/delete/<file>', Uploads.delete_file),
 
     # Profile
+    path('profile/update', profile_views.update_profile),
     path('profile/<username>', profile_views.get_user_profile),
 
     # Search User
