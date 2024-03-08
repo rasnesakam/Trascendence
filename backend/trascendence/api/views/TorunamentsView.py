@@ -14,7 +14,7 @@ from trascendence.api.dto import (
 )
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     tournament_invitations = TournamentInvitations.objects.filter(target_user=user)
@@ -26,7 +26,7 @@ def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpRespo
     
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournament_invitation(request: HttpRequest, invitationcode: str) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     try:
@@ -37,7 +37,7 @@ def get_tournament_invitation(request: HttpRequest, invitationcode: str) -> Json
     
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def accept_tournamet(request: HttpRequest, invitationcode: str) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     try:
@@ -61,7 +61,7 @@ def accept_tournamet(request: HttpRequest, invitationcode: str) -> JsonResponse 
        
 
 @require_http_methods(['DELETE'])
-@authorize
+@authorize()
 def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonResponse | HttpResponseNotFound:
     try:
         user = request.auth_info.user
@@ -73,7 +73,7 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournaments(request: HttpRequest) -> JsonResponse:
     tournaments = Tournaments.objects.all()
     response = {
@@ -84,9 +84,9 @@ def get_tournaments(request: HttpRequest) -> JsonResponse:
 
 
 @require_http_methods(['GET'])
-@authorize
-def get_tournaments_for_user(request: HttpRequest, user: str) -> JsonResponse:
-    tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=user)
+@authorize()
+def get_tournaments_for_user(request: HttpRequest, username: str) -> JsonResponse:
+    tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=username)
     response = {
         "length": len(tournaments),
         "content": [tournament_dto(tournament) for tournament in tournaments]
@@ -95,7 +95,7 @@ def get_tournaments_for_user(request: HttpRequest, user: str) -> JsonResponse:
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     try:
         tournament = Tournaments.objects.get(tournament_code__exact=tournamentcode)
@@ -106,7 +106,7 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("-stage")
     if tournament_players.exists():
@@ -120,7 +120,7 @@ def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonRes
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode)
     if tournament_matches.exists():
@@ -133,7 +133,7 @@ def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonRes
 
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 @request_body(
     content_type="application/json",
     fields={
@@ -174,7 +174,7 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
     
 
 @require_http_methods(['DELETE'])
-@authorize
+@authorize()
 def remove_tournament_user(request: HttpRequest, tournament: str, username: str) -> JsonResponse | HttpResponseNotFound:
     try:
         user = request.auth_info.user

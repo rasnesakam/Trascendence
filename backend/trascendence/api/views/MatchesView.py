@@ -12,7 +12,7 @@ from trascendence.core.token_manager import validate_token
 from django.utils.timezone import now
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_matches_for_user(request: HttpRequest, username: str):
     matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username))
     matches_list = [match_dto(match) for match in matches]
@@ -20,7 +20,7 @@ def get_matches_for_user(request: HttpRequest, username: str):
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_matches_for_users(request: HttpRequest, user1: str, user2: str):
     matches = Matches.objects.filter((Q(home__username=user1) & Q(away__username=user2)) |
                                      (Q(home__username=user2) & Q(away__username=user1)))

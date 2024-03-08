@@ -47,7 +47,9 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     try:
         response = get_42_token(code)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, 500)
+        import sys
+        print(str(e), file=sys.stderr)
+        return JsonResponse({"error": str(e)}, status=500)
     if response["ok"]:
         created_new = False
         token = response["content"]["access_token"]
@@ -107,13 +109,13 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
 
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def sign_out(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"message": "Not Supported Yet."}, status=500)
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def verify_token(request):
     user = request.auth_info.user
     return JsonResponse(auth_dto(user), status=200)

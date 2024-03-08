@@ -14,7 +14,7 @@ def get_token(request: HttpRequest) -> str | None:
 
 
 def authorize(token_type="access"):
-    def inner_decorator(request_view):
+    def decorator(request_view):
         def middleware(request: HttpRequest, *args, **kwargs):
             token = get_token(request)
             if token is None:
@@ -25,7 +25,7 @@ def authorize(token_type="access"):
                     return JsonResponse({"message": "This token is not valid for this request."}, status=401)
                 try:
                     user = UserModel.objects.get(id=token_info['sub'])
-                    auth_info = object()
+                    auth_info = type('AuthInfo', (), {})()
                     setattr(auth_info, "token_info", token_info)
                     setattr(auth_info, "user", user)
                     setattr(auth_info, "token", token)
@@ -41,5 +41,8 @@ def authorize(token_type="access"):
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.InvalidTokenError:
                 return JsonResponse({"message": f"Token couldn't verified."}, status=401)
+
         return middleware
-    return inner_decorator
+
+    return decorator
+
