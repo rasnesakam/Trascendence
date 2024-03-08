@@ -16,5 +16,7 @@ class UserModel(models.Model, SerializableModel):
     password = models.CharField(max_length=72, blank=True, null=True)
     intra_login = models.BooleanField(default=False)
     user_active = models.BooleanField(default=True)
+    has_play_code = models.BooleanField(default=False)
+    play_code = models.CharField(max_length=72, blank=True, null=True)
 
 
