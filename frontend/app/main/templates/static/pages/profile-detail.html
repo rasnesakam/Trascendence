@@ -11,29 +11,29 @@
 				<div class="card my-2 px-5 justify-content-center rgba-background-dark" style="width: 98%;">
 					<div class="container text-center">
 						<div class="row align-items-start">
-							<div class="col-3 text-white">
+							<div class="col-4 text-white">
 								<h5 style="color: #02c302;">Match</h5>
 								<span id="total_match"></span>
 							</div>
-							<div class="col-3 text-white">
+							<div class="col-4 text-white">
 								<h5 style="color: #02c302;">Tournament</h5>
 								<span id="total_tournament"></span>
 							</div>
-							<div class="col-3 text-white">
+							<div class="col-4 text-white">
 								<h5 style="color: #02c302;">Enemy</h5>
 								<span id="enemy"></span>
-							</div>
-							<div class="col-3 text-white">
-								<h5 style="color: #02c302;">Minute</h5>
-								120
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
+			<span id="nickname" style="display: none;"></span>
+			<span id="pr-name" style="display: none;"></span>
+			<span id="pr-surname" style="display: none;"></span>
+
 			<div class="col-lg-2 mt-5 d-flex justify-content-center">
-				<img id="profile-detail-photo" class="rounded-circle mb-4 mb-lg-0"
+				<img id="profile-photo" class="rounded-circle mb-4 mb-lg-0"
 					src="/static/assets/profile-photos/emakas-pr.jpg" style="width: 150px; height: 150px;" />
 			</div>
 
@@ -48,12 +48,8 @@
 							<div class="col-12 text-white">
 								<div class="card-body">
 									<h4>Match</h4>
-									<div class="card-body">
-										<!-- Pasta Grafiği -->
-										<div class="text-center">
-											<canvas id="myPieChart"> </canvas>
-										</div>
-									</div>
+									<!-- Pasta Grafiği -->
+									<div id="myChart" style="width:100%; max-width:600px; height:500px;"></div>
 								</div>
 							</div>
 						</div>
