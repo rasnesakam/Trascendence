@@ -485,6 +485,7 @@ window.addEventListener("popstate", async function (event) {
 function gamePage() {
   if (window.location.pathname === "/ai") {
     const nav = document.getElementById("index-navbar");
+    
     if (nav) {
       nav.style.display = "none";
     }
