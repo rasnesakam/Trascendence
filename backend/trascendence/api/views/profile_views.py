@@ -1,7 +1,7 @@
 
 import json
 from django.views.decorators.http import require_http_methods
-from django.http import HttpRequest, HttpResponseNotFound, JsonResponse
+from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse
 from django.db.models import Q
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.middleware.auth import authorize
@@ -76,3 +76,28 @@ def update_profile(request: HttpRequest, content: dict):
 
     user.save()
     return JsonResponse({"new_user": user_dto(user)})
+
+
+from trascendence.core import generate_token
+from datetime import timedelta
+import requests
+@require_http_methods(['GET'])
+def send_notification(request, username):
+    message = "Dummy Text"
+    resource_group = "dummy"
+    resource_code = "dummy"
+    temp_token = generate_token({"sub": "42_rush"}, timedelta(seconds=30))
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer ${temp_token}"
+    }
+    url = f"http://websocket/ws/api/push/{username}"
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps({
+            "message": message,
+            "resource_group": resource_group,
+            "resource_code": resource_code
+        }))
+        return JsonResponse({"response_code": response.status_code}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)},status=200)
