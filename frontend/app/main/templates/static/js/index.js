@@ -153,7 +153,7 @@ function showTournament(tournaments) {
 
 async function setTournamentList(tournaments) {
 
-  let added = document.getElementById("torunamentList");
+  let added = document.getElementById("tournamentList");
   added.innerHTML = "";
   for (let i = 0; i < tournaments.length; i++) {
     let code = tournaments[i].tournament_code;
@@ -179,7 +179,7 @@ async function setTournamentList(tournaments) {
 
     let accordionBody = document.createElement("div");
     accordionBody.classList.add("accordion-body");
-    accordionBody.textContent;
+    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)` ; //1. 2. 3. 4. bilgilerini içerecek
     accordionHeader.appendChild(accordionBody);
     console.log("nediyorsun: " + added);
   }
@@ -303,16 +303,16 @@ async function loadUserInformation(username, access_token) {
   }).then(data => data.json());
 
   localStorage.setItem(1, JSON.stringify(userIdentity));
-  document.getElementById("nickname").innerHTML = userIdentity.username;
-  document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
-  document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
-  document.getElementById("profile-photo").src = userIdentity.avatarURI;
+  document.getElementById("nickname").innerHTML = userIdentity.user.username;
+  document.getElementById("pr-name").innerHTML = userIdentity.user.name; //username html
+  document.getElementById("pr-surname").innerHTML = userIdentity.user.surname; //surname add html
+  document.getElementById("profile-photo").src = userIdentity.user.avatarURI;
   document.getElementById("total_tournament").innerHTML = dataTournament.length; //Torunament add html
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
-  document.getElementById("enemy").innerHTML = userIdentity.rival;
+  document.getElementById("enemy").innerHTML = userIdentity.user.rival;
 
   let resultData = { userIdentity, dataTournament, dataMatches };
-  isPlayCode(userIdentity)
+  isPlayCode(userIdentity.user)
   return (resultData);
 }
 
@@ -440,9 +440,8 @@ window.addEventListener("popstate", async function (event) {
 });
 
 function gamePage(webRoute) {
-  const webRoute = window.location.href = "/ai";
 
-  if (webRoute) {
+  if (webRoute === "/ai") {
     document.querySelectorAll(nav).style.display = "none";
   }
 }
