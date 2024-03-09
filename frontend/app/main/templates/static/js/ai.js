@@ -56,6 +56,12 @@ function handleLose() {
         scoreReset();
         resetBall();
         ballColorReset();
+        ballInPlay = false;
+
+        if (!ballInPlay) {
+            console.log('yönlendir');
+            window.location.href = '/finish-match';
+        }
     }
 }
 

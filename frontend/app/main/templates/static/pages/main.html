@@ -108,80 +108,13 @@
                     <div class="col-12">
                       <div class="col-12 mt-5 overflow-y-scroll" style="height: 150px;">
                         <ul id="matchList" class="list-group">
-                          <li class="list-group-item d-flex justify-content-between align-items-center bg-color-green">
-                            <span>ayumusak - emakas</span>
-                            <span>1 - 3</span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center bg-color-green">
-                            <span>ayumusak - emakas</span>
-                            <span>0 - 2</span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center bg-danger">
-                            <span>ayumusak - emakas</span>
-                            <span>4 - 3</span>
-                          </li>
+                          <!--List match-->
                         </ul>
                       </div>
 
                       <div class="col-12 mt-5 overflow-y-scroll" style="height: 150px;">
                         <div class="accordion" id="tournamentList">
-                          <!--Tournament List Begin()-->
-                          <div class="accordion-item">
-                            <h2 class="accordion-header">
-                              <button class="text-white accordion-button bg-color-purple" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
-                                aria-controls="collapseOne">
-                                Nova
-                              </button>
-                            </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show"
-                              data-bs-parent="#tournamentList">
-                              <div class="accordion-body">
-                                1. ayumusak (🥇) <br />
-                                2. emakas (🥈) <br />
-                                3. haeris (🥉) <br />
-                                4. btekinli <br />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="accordion-item">
-                            <h2 class="accordion-header">
-                              <button class="text-white accordion-button bg-color-purple" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
-                                aria-controls="collapseTwo">
-                                Yigitler
-                              </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#tournamentList">
-                              <div class="accordion-body">
-                                1. ayumusak (🥇) <br />
-                                2. btekinli (🥈) <br />
-                                3. haeris (🥉) <br />
-                                4. emakas <br />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="accordion-item">
-                            <h2 class="accordion-header">
-                              <button class="text-white accordion-button bg-color-purple" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
-                                aria-controls="collapseThree">
-                                Members
-                              </button>
-                            </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse"
-                              data-bs-parent="#tournamentList">
-                              <div class="accordion-body">
-                                1. ayumusak (🥇) <br />
-                                2. btekinli (🥈) <br />
-                                3. emakas (🥉) <br />
-                                4. haeris <br />
-                              </div>
-                            </div>
-                          </div>
-                          <!--Tournament List End()-->
+                         <!--List Tournament-->
                         </div>
                       </div>
                     </div>
@@ -210,35 +143,47 @@
         </div>
 
 
+        <!-- Tournament Button -->
         <a type="button" class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg"
-          data-bs-toggle="modal" data-bs-target="#playPage" href="/static/pages/tournament.html">
+          data-bs-toggle="modal" data-bs-target="#createPage" href="/static/pages/tournament.html">
           <img src="/static/assets/tournament.png" class="me-4" />
           Tournament
         </a>
       </div>
 
 
-      <div class="modal fade" id="playPage" aria-hidden="true" aria-labelledby="playTournament" tabindex="-1">
+      <!--Tournament Modal-->
+      <div class="modal fade" id="createPage" aria-hidden="true" aria-labelledby="createTournament" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <div class="modal-header bg-dark">
-              <h1 class="modal-title fs-5" id="playTournament">Tournament</h1>
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="createTournament">Create</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <button class="btn btn-danger my-3" data-bs-target="#createPage" data-bs-toggle="modal">CREATE</button>
-                <button class="btn btn-light">JOIN</button>
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
+                  aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
               </div>
+              <div>
+                <li>Test 1</li>
+                <li>Test 2</li>
+                <li>Test 3</li>
+                <li>Test 4</li>
+              </div>
+  
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button class="btn btn-dark" data-bs-target="#playPage" data-bs-toggle="modal">Back</button>
             </div>
           </div>
         </div>
       </div>
 
 
+
+      <!-- Play Code Button -->
       <a id="play-code" type="button" class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg"
         data-bs-toggle="modal" data-bs-target="#playcode-modal" style="display: none;">
         playCode
@@ -273,27 +218,7 @@
     </div>
 
 
-    <div class="modal fade" id="createPage" aria-hidden="true" aria-labelledby="createTournament" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="createTournament">Create</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
-                aria-describedby="button-addon2">
-              <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
-            </div>
 
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-dark" data-bs-target="#playPage" data-bs-toggle="modal">Back</button>
-          </div>
-        </div>
-      </div>
-    </div>
     </div>
   </main>
   <!-- MAIN END -->
