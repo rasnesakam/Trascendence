@@ -44,7 +44,7 @@ async function takeUrl() {
         }),
       })
         .then(async (response) => {
-          if (!response.ok) return new Error("Respone is not ok");
+          if (!response.ok) throw new Error("Respone is not ok");
           return response.json();
         })
         .then((data) => {
@@ -52,6 +52,7 @@ async function takeUrl() {
   
           localStorage.setItem(0, JSON.stringify(data));
           window.location.href = "/";
+          alert("You are logged in");
           return data;
         })
         .catch((error) => {
@@ -86,12 +87,13 @@ async function takeUrl() {
       body: JSON.stringify(responseBody),
     })
       .then(async (response) => {
-        if (!response.ok) return new Error("Respone is not ok");
+        if (!response.ok) throw new Error("Respone is not ok");
         return response.json();
       })
       .then((data) => {
         localStorage.setItem(0, JSON.stringify(data));
         window.location.href = "/";
+        alert("registered")
         return data;
       })
       .catch((error) => {
@@ -119,7 +121,7 @@ async function takeUrl() {
       body: JSON.stringify(responseBody),
     })
       .then(async (response) => {
-        if (!response.ok) return new Error("Respone is not ok");
+        if (!response.ok) throw new Error("Respone is not ok");
         return response.json();
       })
       .then((data) => {

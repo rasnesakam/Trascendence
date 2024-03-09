@@ -9,7 +9,7 @@ function isLogin() {
     var login;
 
     try {
-        if (!url.includes("/login")) {
+        if (loginStr != undefined && !url.includes("/login")) {
             login = JSON.parse(loginStr);
 
             if (login.access_token == undefined) throw new Error("is not login");
@@ -21,3 +21,4 @@ function isLogin() {
     }
     return true;
 }
+

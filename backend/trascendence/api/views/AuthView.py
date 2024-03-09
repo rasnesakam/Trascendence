@@ -43,7 +43,13 @@ def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
 )
 def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     code = content["code"]
-    response = get_42_token(code)
+    print(code)
+    try:
+        response = get_42_token(code)
+    except Exception as e:
+        import sys
+        print(str(e), file=sys.stderr)
+        return JsonResponse({"error": str(e)}, status=500)
     if response["ok"]:
         created_new = False
         token = response["content"]["access_token"]
@@ -63,8 +69,10 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
                 intra_login=True
             )
             created_new = True
-        token = generate_token({"sub": user_db.username})
-        return JsonResponse(auth_dto(user_db, token), status=201 if created_new else 200)
+        access_token = generate_access_token(user_db)
+        refresh_token = generate_refresh_token(user_db)
+        dto = auth_dto(user_db, access_token, refresh_token)
+        return JsonResponse(dto, status=201 if created_new else 200)
     return HttpResponseForbidden(json.dumps({"message": "code is invalid", "response": response}), content_type='application/json')
 
 
@@ -99,13 +107,13 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
 
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def sign_out(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"message": "Not Supported Yet."}, status=500)
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def verify_token(request):
     user = request.auth_info.user
     return JsonResponse(auth_dto(user), status=200)

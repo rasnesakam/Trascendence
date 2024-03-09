@@ -1,5 +1,7 @@
+from environ import Env
 
-CLIENT_ID = "u-s4t2ud-93b994991128a715506042b0c6a8460084a51ee7cbd47b81b9acf5c385edb53c"
-CLIENT_SECRET = "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"
-REDIRECT_URL = "http://localhost/login"
+env = Env()
+CLIENT_ID = env("CLIENT_42") 
+CLIENT_SECRET = env("SECRET_42")
+REDIRECT_URL = env("REDIRECT_URI_42")
 

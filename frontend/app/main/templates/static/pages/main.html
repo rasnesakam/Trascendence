@@ -34,6 +34,8 @@
                 Name: <input id="nameInput" type="text" />
                 <br />
                 Surname: <input id="surnameInput" type="text" />
+                <br />
+                PlayCode: <input id="playco" type="password" />
               </div>
               <div id="name" class="col fs-5">
                 <label id="pr-name" for="name">Name: </label>
@@ -204,7 +206,7 @@
             <img src="/static/assets/ai.png" style="padding-left: 20px; width: 75px; height: 70px;">
           </span>
           <div class="slice-left slice-twice">
-            <a href="/static/pages/pvp.html" class="pvp-link slice-twice-link">PvP</a>
+            <a href="/match" class="pvp-link slice-twice-link" onclick="router()">PvP</a>
           </div>
           <div class="slice-right slice-twice">
             <a id="/ai" href="/ai" class="ai-link slice-twice-link" onclick="router()">AI</a>
@@ -240,27 +242,62 @@
         </div>
       </div>
 
-      <div class="modal fade" id="createPage" aria-hidden="true" aria-labelledby="createTournament" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="createTournament">Create</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
-                  aria-describedby="button-addon2">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
-              </div>
 
+      <a id="play-code" type="button" class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg"
+        data-bs-toggle="modal" data-bs-target="#playcode-modal" style="display: none;">
+        playCode
+      </a>
+    </div>
+
+
+    <!-- Play Code Modal-->
+    <div class="modal fade" id="playcode-modal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="playcode-label" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-dark">
+            <h1 class="modal-title fs-5" id="playcode-label">playCode</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="row">
+              <form class="input-group mb-0 playcode-form">
+								<label for="sign-password" class="col-form-label text-dark"
+									autocomplete="playcode-input">PlayCode:</label>
+								<input type="password" class="form-control" id="playcode-input">
+              </form>
             </div>
-            <div class="modal-footer">
-              <button class="btn btn-dark" data-bs-target="#playPage" data-bs-toggle="modal">Back</button>
-            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="setPlayCode()">Accept</button>
           </div>
         </div>
       </div>
+    </div>
+
+
+    <div class="modal fade" id="createPage" aria-hidden="true" aria-labelledby="createTournament" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="createTournament">Create</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
+                aria-describedby="button-addon2">
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-dark" data-bs-target="#playPage" data-bs-toggle="modal">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </main>
   <!-- MAIN END -->

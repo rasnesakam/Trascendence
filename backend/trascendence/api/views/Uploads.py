@@ -27,7 +27,7 @@ def save_file_with_user(user: UserModel, file) -> str | None:
 
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def upload_file(request: HttpRequest):
     form = FileForm(request.POST, request.FILES)
     user = request.auth_info.user
@@ -41,7 +41,7 @@ def upload_file(request: HttpRequest):
 
 
 @require_http_methods(['DELETE'])
-@authorize
+@authorize()
 def delete_file(request: HttpRequest, file: str):
     user = request.auth_info.user
     

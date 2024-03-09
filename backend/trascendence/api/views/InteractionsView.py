@@ -22,7 +22,7 @@ friends_user_pair_1__user_pair_2__exact
 """
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     friends = UserModel.objects.filter(
@@ -37,7 +37,7 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 @request_body(
     content_type="application/json",
     fields={
@@ -59,7 +59,7 @@ def add_friend(request: HttpRequest, content: dict) -> JsonResponse | HttpRespon
     
     
 @require_http_methods(['DELETE'])
-@authorize
+@authorize()
 def delete_friend(request: HttpRequest, user) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     try:
@@ -75,7 +75,7 @@ def delete_friend(request: HttpRequest, user) -> JsonResponse | HttpResponseNotF
     
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     invitations = FriendInvitation.objects.filter(target=user)
@@ -87,7 +87,7 @@ def get_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound
    
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def accept_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = request.auth_info.user
     try:
@@ -103,7 +103,7 @@ def accept_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpR
     
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = request.auth_info.user
     try:
@@ -115,7 +115,7 @@ def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | Http
     
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     blacklists = UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id)
@@ -126,7 +126,7 @@ def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     return JsonResponse(response, status=200)
     
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 @request_body(
     content_type="application/json",
     fields={
@@ -147,7 +147,7 @@ def add_blacklist(request: HttpRequest, content) -> JsonResponse | HttpResponseN
     
 
 @require_http_methods(['DELETE'])
-@authorize
+@authorize()
 def remove_blacklist(request: HttpRequest, target_username) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     issuer_user = request.auth_info.user
     try:

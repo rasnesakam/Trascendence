@@ -1,3 +1,6 @@
-SECRET = "42_rush"
-ALGORITHM = "HS256"
-ISSUER = "42_rush"
+from environ import Env
+
+env = Env()
+SECRET = env('JWT_SECRET')
+ALGORITHM = env('JWT_ALG')
+ISSUER = env('JWT_ISSUER')

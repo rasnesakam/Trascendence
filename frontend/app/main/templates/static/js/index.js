@@ -152,8 +152,6 @@ function showTournament(tournaments) {
   }
 }
 
-//showMatch();
-
 async function setTournamentList(tournaments) {
 
   let added = document.getElementById("torunamentList");
@@ -188,7 +186,6 @@ async function setTournamentList(tournaments) {
   }
 
 }
-
 
 function setMatches(matches, username) {
 
@@ -243,6 +240,47 @@ function profile_load() {
 }
 
 
+async function setPlayCode()
+{
+    let playcode = document.getElementById("playcode-input").value;
+    let token = JSON.parse(localStorage.getItem(0)).access_token;
+    if (playcode != "")
+    {
+        let response = await fetch("http://localhost/api/profile/update", {
+          method: 'PATCH',
+          headers:{
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({playcode})
+        })
+        if (!response.ok)
+          alert("Hata!")
+        let response_data = await response.json()
+        let authData = JSON.parse(localStorage.getItem(0))
+        authData.user = response_data.new_user;
+        localStorage.setItem(0, JSON.stringify(authData));
+    }
+    else
+    {
+        document.getElementById("play-code").click();
+        alert("Please enter play code");
+    }
+}
+
+
+function isPlayCode(data)
+{
+  alert("isPlayCode")
+  console.log(data.has_playcode);
+    if (data.has_playcode == undefined || data.has_playcode == false)
+    {
+        document.getElementById("play-code").click();
+        return (false);
+    }
+    return true;
+}
+
 async function loadUserInformation(username, access_token) {
   let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
     headers: {
@@ -251,7 +289,7 @@ async function loadUserInformation(username, access_token) {
   }).then(data => data.json());
 
   let dataTournament = await fetch(
-    `http://localhost/api/tournaments/${username}`, {
+    `http://localhost/api/tournaments/user/${username}`, {
     headers: {
       "Authorization": "Bearer " + access_token,
     },
@@ -274,6 +312,7 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("enemy").innerHTML = userIdentity.rival;
 
   let resultData = { userIdentity, dataTournament, dataMatches };
+  isPlayCode(userIdentity)
   return (resultData);
 }
 
@@ -354,288 +393,6 @@ function outLogin() {
   window.location.href = "/login";
 }
 
-//livechat.js
-/*
-people = {
-  0: {
-    name: "Harvey Specter",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message:
-          "What are you talking about? You do what they say or they shoot you.",
-        date: "2021-01-01",
-        time: "13:00",
-        type: "replies",
-      },
-      {
-        message:
-          "What are you talking about? You do what they say or they shoot you.",
-        date: "2021-01-01",
-        time: "15:00",
-        type: "sent",
-      },
-      {
-        message: "get off",
-        date: "2021-01-01",
-        time: "17:00",
-        type: "sent",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/harveyspecter.png",
-    status: "online",
-  },
-  1: {
-    name: "Charles Forstman",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "replies",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/charlesforstman.png",
-    status: "offline",
-  },
-  2: {
-    name: "Jonathan Sidwell",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "replies",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/jonathansidwell.png",
-    status: "online",
-  },
-};
-
-
-
-function disableChat() {
-  document
-    .getElementById("contact-selected-profile-photo")
-    .setAttribute(
-      "src",
-      "https://img.freepik.com/free-photo/abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1708365600&semt=ais"
-    );
-  document.getElementById("contact-selected-profile-name").innerHTML = "";
-  document.getElementById("message-input").style.display = "none";
-}
-
-function selectedPerson(name) {
-  //zamana göre mesajları gösterme
-  console.log(name);
-  clearMessages();
-  document.getElementById("message-input").style.display = "block";
-  for (i = 0; i < Object.keys(people).length; i++) {
-    if (people[i].name == name) {
-      document.getElementById(people[i].name).classList.add("active");
-      document
-        .getElementById("contact-selected-profile-photo")
-        .setAttribute("src", people[i].profile_photo);
-      document.getElementById("contact-selected-profile-name").innerHTML =
-        people[i].name;
-      for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-        sendMessage(
-          people[i].messages[j].type,
-          people[i].profile_photo,
-          people[i].messages[j].message
-        );
-      }
-    } else {
-      document.getElementById(people[i].name).classList.remove("active");
-    }
-  }
-}
-
-function loadContact() {
-  var contact = document.getElementById("add-contacts");
-
-  for (var i = 0; i < Object.keys(people).length; i++) {
-    var add = document.createElement("li");
-    add.classList.add("add");
-
-    var wrapDiv = document.createElement("div");
-    wrapDiv.classList.add("wrap");
-
-    var statusSpan = document.createElement("span");
-    statusSpan.classList.add(("contact-status", people[i].status));
-    wrapDiv.appendChild(statusSpan);
-
-    var img = document.createElement("img");
-    img.setAttribute("src", people[i].profile_photo);
-    img.setAttribute("alt", "");
-    wrapDiv.appendChild(img);
-
-    var metaDiv = document.createElement("div");
-    metaDiv.classList.add("meta");
-
-    var namePara = document.createElement("p");
-    namePara.classList.add("name");
-    namePara.textContent = people[i].name;
-    metaDiv.appendChild(namePara);
-
-    wrapDiv.appendChild(metaDiv);
-    add.appendChild(wrapDiv);
-
-    contact.innerHTML +=
-      '<li id="' +
-      people[i].name +
-      '"' +
-      "class='contact' onclick=selectedPerson(id)>" +
-      add.innerHTML +
-      "</li>";
-  }
-}
-
-function connectWebSocket() {
-  var socket = new WebSocket("ws://localhost:8080");
-
-  // Bağlantı açıldığında
-  socket.addEventListener("open", function (event) {
-    console.log("WebSocket bağlantısı açıldı.");
-  });
-
-  // Mesaj alındığında
-  socket.addEventListener("message", function (event) {
-    var outputDiv = document.getElementById("output");
-    outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
-  });
-
-  // Bağlantı kapandığında
-  socket.addEventListener("close", function (event) {
-    console.log("WebSocket bağlantısı kapandı.");
-  });
-
-  // Hata oluştuğunda
-  socket.addEventListener("error", function (event) {
-    console.error("WebSocket hatası:", event);
-  });
-
-  socket.send;
-}
-
-
-
-var messagesElement = document.querySelector(".messages");
-if (messagesElement) {
-  messagesElement.scrollTop = document.body.scrollHeight;
-}
-
-document.querySelector("#profile-img").addEventListener("click", function () {
-  document.querySelector("#status-options").classList.toggle("active");
-});
-
-Array.from(document.querySelectorAll(".expand-button")).forEach(function (
-  element
-) {
-  element.addEventListener("click", function () {
-    document.querySelector("#profile").classList.toggle("expanded");
-    document.querySelector("#contacts").classList.toggle("expanded");
-  });
-});
-
-Array.from(document.querySelectorAll("#status-options ul li")).forEach(
-  function (element) {
-    element.addEventListener("click", function () {
-      document.querySelector("#profile-img").className = "";
-      Array.from(document.querySelectorAll("#status-options ul li")).forEach(
-        function (innerElement) {
-          innerElement.classList.remove("active");
-        }
-      );
-      this.classList.add("active");
-
-      if (
-        document.querySelector("#status-online").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("online");
-      } else if (
-        document.querySelector("#status-away").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("away");
-      } else if (
-        document.querySelector("#status-busy").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("busy");
-      } else if (
-        document.querySelector("#status-offline").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("offline");
-      } else {
-        document.querySelector("#profile-img").className = "";
-      }
-
-      document.querySelector("#status-options").classList.remove("active");
-    });
-  }
-);
-
-
-
-function newMessage() {
-  //mesaj göndermek için
-  message = $(".message-input input").val();
-  if ($.trim(message) == "") {
-    return false;
-  }
-  $(
-    '<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' +
-      message +
-      "</p></li>"
-  ).appendTo($(".messages ul"));
-  $(".message-input input").val(null);
-  $(".contact.active .preview").html("<span>You: </span>" + message);
-  $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-}
-
-$(".submit").click(function () {
-  newMessage();
-});
-
-$(window).on("keydown", function (e) {
-  if (e.which == 13) {
-    newMessage();
-    return false;
-  }
-});
-
-const searchAlgorithm = () => {
-  var search = document.querySelector("#search input").value;
-
-  for (var i = 0; i < Object.keys(people).length; i++) {
-    if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
-      document.getElementById(people[i].name).style.display = "block";
-    } else {
-      document.getElementById(people[i].name).style.display = "none";
-    }
-  }
-};
-
-// prototip yap backend hazır olduğunda backendden alıp
-//göster
-*/
 
 //profile-detail.js
 function setRate(win, lose, elementId) {
@@ -661,61 +418,6 @@ function setRate(win, lose, elementId) {
   });
   return myPieChart;
 }
-/*
-
-/*(function () {
-  setRate(37, 63, "myPieChart");
-  setRate(2, 1, "myPieChart2");
-})();
-
-//game.js
-/*
-var canvas = document.querySelector(".game-container");
-var ctx = canvas.getContext("2d");
-
-var ball = document.querySelector(".ball");
-var paddle1 = document.querySelector(".player-bar-1");
-var paddle2 = document.querySelector(".player-bar-2");
-
-var ballSpeedX = 2;
-var ballSpeedY = 2;
-
-function update() {
-  var ballRect = ball.getBoundingClientRect();
-  var paddle1Rect = paddle1.getBoundingClientRect();
-  var paddle2Rect = paddle2.getBoundingClientRect();
-
-  if (ballRect.left < paddle1Rect.right || ballRect.right > paddle2Rect.left) {
-    ballSpeedX *= -1;
-  }
-
-  if (ballRect.top < 0 || ballRect.bottom > canvas.height) {
-    ballSpeedY *= -1;
-  }
-
-  ball.style.left = ball.offsetLeft + ballSpeedX + "px";
-  ball.style.top = ball.offsetTop + ballSpeedY + "px";
-
-  requestAnimationFrame(update);
-}
-
-document.addEventListener("keydown", function (event) {
-  var paddleSpeed = 5;
-
-  if (event.key === "w") {
-    paddle1.style.top = paddle1.offsetTop - paddleSpeed + "px";
-  } else if (event.key === "s") {
-    paddle1.style.top = paddle1.offsetTop + paddleSpeed + "px";
-  }
-
-  if (event.key === "ArrowUp") {
-    paddle2.style.top = paddle2.offsetTop - paddleSpeed + "px";
-  } else if (event.key === "ArrowDown") {
-    paddle2.style.top = paddle2.offsetTop + paddleSpeed + "px";
-  }
-});
-*/
-
 //login.js
 
 document.getElementById("click-search").addEventListener("click", async function (event) {

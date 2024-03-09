@@ -6,7 +6,7 @@ function saveUserInformation() {
     user.surname = document.getElementById("surnameInput").value;
     loadUserInformation();
     closeUpdateProfile();
-    alert("oli");
+    alert("save");
 }
 
 function removeSubstring(originalString, substringToRemove) {
@@ -68,7 +68,6 @@ function changePhoto() {
 };
 
 function handleFileSelect() {
-    
    
     var fileInput = document.getElementById("fileInput");
     if (fileInput.files.length > 0) {
@@ -83,3 +82,4 @@ function handleFileSelect() {
         console.error("Please select file.");
     }
 }
+
