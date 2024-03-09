@@ -144,10 +144,18 @@ def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str) -> dic
 	}
 
 # Profile dto
-def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments]) -> dict:
+def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
     return {
         "user": user_dto(user),
-        "matches": [match_dto(match) for match in matches],
-        "tournament_matches": [match_dto(match.match) for match in tournament_matches[:5]],
-        "tournaments": [tournament_dto(tournament) for tournament in tournaments[:5]] 
+        "matches": list_dto([match_dto(match) for match in matches]),
+        "tournament_matches": list_dto([match_dto(match.match) for match in tournament_matches]),
+        "tournaments": list_dto([tournament_dto(tournament) for tournament in tournaments]),
+        "rival": user_dto(rival) if rival is not None else None
 	}
+
+# Other types
+def list_dto(dto_list: list) -> dict:
+    return {
+        "length": len(dto_list),
+        "content": dto_list
+    }
