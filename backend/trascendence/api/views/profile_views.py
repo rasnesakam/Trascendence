@@ -91,7 +91,7 @@ def send_notification(request, username):
         "Content-Type": "application/json",
         "Authorization": f"Bearer ${temp_token}"
     }
-    url = f"http://websocket/ws/api/push/{username}"
+    url = f"http://websocket:8000/ws/api/push/{username}"
     try:
         response = requests.post(url, headers=headers, data=json.dumps({
             "message": message,
