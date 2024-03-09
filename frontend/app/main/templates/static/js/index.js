@@ -111,7 +111,6 @@ async function pushFetch(url, data, header = { "Content-type": "application/json
 
   return pushResult;
 }
-
 function showTournament(tournaments) {
   document.getElementById("tournament").innerHTML = "";
   for (let i = 0; i < tournament.content.size(); i++) {
@@ -235,8 +234,9 @@ function profile_load() {
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
 
   console.log("access", access_token);
-  console.log("myuser: " + part[1])
-  loadUserInformation(part[1], access_token);
+  console.log("myuser: " + part[2])
+  loadUserInformation(part[2], access_token);
+  setRate(37, 63, "myPieChart");
 }
 
 
@@ -438,3 +438,13 @@ window.addEventListener("popstate", async function (event) {
     await switchPages(currentUrl);
   }
 });
+
+function gamePage(webRoute) {
+  const webRoute = window.location.href = "/ai";
+
+  if (webRoute) {
+    document.querySelectorAll(nav).style.display = "none";
+  }
+}
+
+gamePage();
