@@ -25,7 +25,7 @@ def authorize(token_type="access"):
                     return JsonResponse({"message": "This token is not valid for this request."}, status=401)
                 try:
                     user = UserModel.objects.get(id=token_info['sub'])
-                    auth_info = type('AuthInfo', (), {})()
+                    auth_info = type('Object', (), {})()
                     setattr(auth_info, "token_info", token_info)
                     setattr(auth_info, "user", user)
                     setattr(auth_info, "token", token)

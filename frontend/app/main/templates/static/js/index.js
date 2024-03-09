@@ -256,7 +256,9 @@ async function setPlayCode()
         })
         if (!response.ok)
           alert("Hata!")
-        localStorage.setItem(0, JSON.stringify(data));
+        let authData = JSON.parse(localStorage.getItem(0))
+        authData.user = response.new_user;
+        localStorage.setItem(0, JSON.stringify(authData));
     }
     else
     {

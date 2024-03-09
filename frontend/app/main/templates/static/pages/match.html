@@ -6,11 +6,11 @@
         <div class="d-flex align-items-center justify-content-around col">
             <div class="col-1"></div>
             <!--Left-->
-            <div class="text-center col-3">
-                <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
+            <div  class="text-center col-3">
+                <img src="/static/assets/pp.png" id="left-photo" class="my-4 match-img-circle border border-white">
                 <button id="left-expected" class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
                     data-bs-target="#left-side">
-                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
+                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
                 </button>
             </div>
             <!--Tennis-->
@@ -23,10 +23,10 @@
             </div>
             <!--Right-->
             <div class="text-center col-3">
-                <img src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
+                <img id="right-photo" src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
                 <button id="right-expected" class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
                 data-bs-target="#right-side">
-                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Expected User</p>
+                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
                 </button>
             </div>
             <div class="col-1"></div>
@@ -42,10 +42,10 @@
                     </div>
                     <div class="modal-body bg-dark">
 
-                        <form onsubmit="match_making('right')">
+                        <form class="form-away" onsubmit="match_making('right')">
                             <div>
                                 <label for="right-match-nickname" class="col-form-label">Your Username:</label>
-                                <input type="text" class="form-control" id="right-match-nickname">
+                                <input type="text" class="form-control form-away-username" id="right-match-nickname">
                             </div>
                             <div>
                                 <label for="right-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
@@ -73,17 +73,31 @@
                     </div>
                     <div class="modal-body bg-danger">
 
-                        <form onsubmit="match_making('left')">
+                        <form class="form-home" onsubmit="match_making('left')">
                             <div>
                                 <label for="left-match-nickname" class="col-form-label">Your Username:</label>
-                                <input id="left-input" type="text" class="form-control" id="left-match-nickname">
+                                <input id="left-input" type="text" class="form-control form-home-username" id="left-match-nickname">
                             </div>
                             <div>
                                 <label for="left-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
                                 <input id="left-playcode" type="password" class="form-control" id="left-match-playcode">
                             </div>
                         </form>
-
+                        
+                    <script>
+                        (function(){
+                            let formHome = document.getElementsByClassName("form-home")[0]
+                            let input_username = formHome.getElementsByClassName("form-home-username")[0]
+                            let left_photo = document.getElementById("left-photo");
+                            let data = JSON.parse(localStorage.getItem(0));
+                            let username = data.user.username
+                            let userphoto = data.user.avatarURI;
+                            
+                            input_username.setAttribute("value", username);
+                            input_username.setAttribute("readonly", true);
+                            left_photo.src =  userphoto;
+                        })()
+                    </script>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -95,3 +109,31 @@
 
     </div>
 </body>
+
+<script>
+    (async function(){
+        let searchParam = new URLSearchParams(location.search)
+        if (searchParam.has("match-code")){
+            let matchCode = searchParam.get("match-code")
+            //fetch
+            let data = await fetch(`http://localhost/api/matches/code/${matchCode}`)
+            .then((response) => JSON.parse(resonse)).catch(() => console.log("error match-code"));
+            
+            
+            let formHome = document.getElementsByClassName("form-home")[0]
+            let usernameHome = formHome.getElementsByClassName("form-home-username")[0]
+            let avatarHome = document.getElementById("left-photo")
+            usernameHome.setAttribute("value", data.home.user.username)
+            usernameHome.setAttribute("readonly", true)
+            avatarHome.src = data.home.user.avatarURI
+            
+            let formAway = document.getElementsByClassName("form-away")[0]
+            let usernameAwat = formAway.getElementsByClassName("form-away-username")[0]
+            let avatarAway = document.getElementById("rigth-photo")
+            usernameAway.setAttribute("value", data.away.user.username);
+            usernameAway.setAttribute("readonly", true);
+            avatarAway.src = data.away.user.avatarURI;
+
+        }
+    })()
+</script>

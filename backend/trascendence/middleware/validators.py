@@ -9,14 +9,15 @@ Validators:
     The validator function will be used for validate the field declared in dictionary
 """
 from typing import Callable, Any
-from django.http import HttpRequest, HttpResponseBadRequest, HttpResponse
+from django.http import HttpRequest, HttpResponseBadRequest, HttpResponse, HttpResponseServerError
 from .validator_utils import *
 import sys
+import traceback
+
 
 content_parsers: dict[str, Callable[[str | bytes], dict | None]] = {
     "application/json": json_parser
 }
-
 
 def request_body(content_type, fields: dict):
     def decorator(request_view):
@@ -32,11 +33,15 @@ def request_body(content_type, fields: dict):
                 return HttpResponseBadRequest(json.dumps({"message": "Content is not parsable"}), content_type=content_type)
             try:
                 validate_content(content, fields)
-                combined_kwargs = {**kwargs, **({"content": content})}
-                return request_view(request, *args, **combined_kwargs)
+                try:
+                    kwargs.update(content=dict(content))
+                    return request_view(request, *args, **kwargs)
+                except:
+                    traceback.print_exc()
+                    return HttpResponseServerError()
             except Exception as err:
-                print(str(err), file=sys.stderr)
-                return HttpResponse(json.dumps({"message": str(err)}), content_type=content_type, status=500)
+                traceback.print_exc()
+                return HttpResponseServerError()
         return wrapper
 
     return decorator

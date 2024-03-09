@@ -14,7 +14,7 @@ from trascendence.api.models import (
 # User Dto
 def user_dto(usermodel: UserModel) -> dict:
     return {
-        #"id": str(usermodel.id),
+        "id": str(usermodel.id),
         "name": usermodel.name,
         "surname": usermodel.surname,
         "name_surname": f"{usermodel.name} {usermodel.surname}",

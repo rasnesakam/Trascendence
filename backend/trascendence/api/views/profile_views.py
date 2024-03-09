@@ -72,18 +72,25 @@ def update_profile(request: HttpRequest, content: dict):
     password_hasher = BCryptPasswordHasher()
     if "username" in content.keys():
         user.username = content["username"]
+
     if "name" in content.keys():
         user.name = content["name"]
+
     if "surname" in content.keys():
         user.surname = content["surname"]
+
     if "email" in content.keys():
         user.email = content["email"]
+
     if "avatarURI" in content.keys():
         user.avatarURI = content["avatarURI"]
+
     if "playcode" in content.keys():
         user.play_code = password_hasher.encode(content["playcode"], password_hasher.salt())
         user.has_play_code = True
+
     if "password" in content.keys():
         user.password = password_hasher.encode(content["password"], password_hasher.salt())
+
     user.save()
     return JsonResponse({"new_user": user_dto(user)})

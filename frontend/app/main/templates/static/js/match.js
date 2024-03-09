@@ -5,19 +5,27 @@ async function match_making(str)
   let username = document.getElementById(`${str}-input`).value;
   let playcode = document.getElementById(`${str}-playcode`).value;
   let url = "http://localhost/api/matches/player/verify"
-  let token = await fetch(url, {
+  fetch(url, {
 	method: "POST",
 	headers: {
 		"Content-type": "application/json",
 	},
-	body: JSON.stringify(playcode),
+	body: JSON.stringify({
+		username,
+		playcode
+	}),
   })
-  .then(() => {
-	user_count += 1;
-	let data = {username, token};
-  	localStorage.setItem(`${str}-player`, data);
-	document.getElementById(`${str}-expected`).disabled = true;
-}).catch(_ => alert("You have to enter your correct information"));
+  .then((response) => {
+	if (response.ok)
+		return response.json()
+	})
+	.then(responseData => {
+		user_count += 1;
+		let data = {username, token: responseData.token};
+		localStorage.setItem(`${str}-player-token`, data);
+		document.getElementById(`${str}-expected`).disabled = true;
+	})
+	.catch(_ => alert("You have to enter your correct information"));
   // matches/player/verify
   
 }
