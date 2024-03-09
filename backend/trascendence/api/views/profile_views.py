@@ -30,7 +30,7 @@ def get_user_profile(request: HttpRequest, username: str):
         if len(played_users) > 0:
             rival_id = get_most_played(played_users)
             rival = UserModel.objects.get(id=rival_id)
-        profile = profile_dto(user, matches[:5], tournament_matches[:5], tournaments[:5], rival)
+        profile = profile_dto(user, matches, tournament_matches, tournaments, rival)
         return JsonResponse(profile, status=200)
     except Exception as e:
         return HttpResponseNotFound(json.dumps({"message":f"user '{username}' not found", "exception": str(e)}), content_type="application/json")
