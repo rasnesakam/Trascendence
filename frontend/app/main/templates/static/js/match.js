@@ -2,6 +2,7 @@ var user_count = 0;
 
 async function match_making(str)
 {
+	alert(`${str}-girdi`);
   let username = document.getElementById(`${str}-input`).value;
   let playcode = document.getElementById(`${str}-playcode`).value;
   let url = "http://localhost/api/matches/player/verify"
@@ -22,6 +23,9 @@ async function match_making(str)
 	.then(responseData => {
 		user_count += 1;
 		let data = {username, token: responseData.token};
+
+		document.getElementById(`${str}-photo`).src = responseData.user.avatarURI;
+		document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
 		localStorage.setItem(`${str}-player-token`, data);
 		document.getElementById(`${str}-expected`).disabled = true;
 	})
@@ -31,14 +35,14 @@ async function match_making(str)
 }
 
 setInterval(() => {
+	console.log("mycount:", user_count);
 	if (user_count == 2)
 	{
-		documet.getElementById("match-snipped").style = "none";
-		documet.getElementById("match-tennis").style = "block";
+		document.getElementById("match-snipped").style = "none";
+		document.getElementById("match-tennis").style = "block";
 		document.getElementById("right-expected").disabled = false;
 		document.getElementById("left-expected").disabled = false;
 		user_count = 0;
-		//sayfa değiştir
 	}
 	else
 	{

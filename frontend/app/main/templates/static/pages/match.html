@@ -10,7 +10,7 @@
                 <img src="/static/assets/pp.png" id="left-photo" class="my-4 match-img-circle border border-white">
                 <button id="left-expected" class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
                     data-bs-target="#left-side">
-                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
+                    <p id="left-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
                 </button>
             </div>
             <!--Tennis-->
@@ -26,7 +26,7 @@
                 <img id="right-photo" src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
                 <button id="right-expected" class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
                 data-bs-target="#right-side">
-                    <p class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
+                    <p id="right-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
                 </button>
             </div>
             <div class="col-1"></div>
@@ -42,21 +42,29 @@
                     </div>
                     <div class="modal-body bg-dark">
 
-                        <form class="form-away" onsubmit="match_making('right')">
+                        <form id="form-away" class="form-away" onsubmit="(e) => {e.preventDefault()}">
                             <div>
                                 <label for="right-match-nickname" class="col-form-label">Your Username:</label>
-                                <input type="text" class="form-control form-away-username" id="right-match-nickname">
+                                <input type="text" class="form-control form-away-username" id="right-input">
                             </div>
                             <div>
                                 <label for="right-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
-                                <input type="password" class="form-control" id="right-match-playcode">
+                                <input type="password" class="form-control" id="right-playcode">
                             </div>
                         </form>
+                        <script>
+                            (function(){
+                                let formAway = document.getElementsByClassName("form-away")[0]
+                                formAway.addEventListener('submit', (e) => {
+                                    e.preventDefault()
+                                })
+                            })()
+                        </script>
 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-light" data-bs-dismiss="modal" >Ready</button>
+                        <button type="submit" form="form-away" class="btn btn-light" data-bs-dismiss="modal" onclick="match_making('right')" >Ready</button>
                     </div>
                 </div>
             </div>
@@ -73,7 +81,7 @@
                     </div>
                     <div class="modal-body bg-danger">
 
-                        <form class="form-home" onsubmit="match_making('left')">
+                        <form id="form-home" class="form-home" >
                             <div>
                                 <label for="left-match-nickname" class="col-form-label">Your Username:</label>
                                 <input id="left-input" type="text" class="form-control form-home-username" id="left-match-nickname">
@@ -87,6 +95,9 @@
                     <script>
                         (function(){
                             let formHome = document.getElementsByClassName("form-home")[0]
+                            formHome.addEventListener('submit', (e) => {
+                                e.preventDefault()
+                            })
                             let input_username = formHome.getElementsByClassName("form-home-username")[0]
                             let left_photo = document.getElementById("left-photo");
                             let data = JSON.parse(localStorage.getItem(0));
@@ -101,12 +112,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-light" data-bs-dismiss="modal">Ready</button>
+                        <button type="submit" form="form-home" class="btn btn-light" data-bs-dismiss="modal" onclick="match_making('left')">Ready</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        <script src="/static/js/match.js"></script>
     </div>
 </body>
 

@@ -7,7 +7,7 @@ from trascendence.api.models import Matches, UserModel
 from django.db.models import Q
 from trascendence.core import validate_token
 from trascendence.middleware.validators import request_body, str_field, number_field
-from trascendence.api.dto import match_dto
+from trascendence.api.dto import match_dto, user_dto
 from trascendence.core.token_manager import validate_token
 from django.utils.timezone import now
 from trascendence.core.token_manager import token_types, generate_match_token
@@ -129,12 +129,14 @@ def get_planned_match(request: HttpRequest, matchcode):
 def verify_playcode(request: HttpRequest, content: dict) -> HttpResponse:
     password_hasher = BCryptPasswordHasher()
     username = content["username"]
-    password_raw = content["password"]
+    password_raw = content["playcode"]
     user = UserModel.objects.filter(username=username)
     if user.exists:
         user = user.first()
-        if password_hasher.verify(password_raw, user.password):
+        if not user.has_play_code:
+            return HttpResponseForbidden()
+        if password_hasher.verify(password_raw, user.play_code):
             match_token = generate_match_token(user)
-            return JsonResponse({"token": match_token}, status=200)
+            return JsonResponse({"user": user_dto(user), "token": match_token}, status=200)
         return HttpResponseForbidden()
     return HttpResponseNotFound()

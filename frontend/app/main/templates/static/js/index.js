@@ -256,8 +256,9 @@ async function setPlayCode()
         })
         if (!response.ok)
           alert("Hata!")
+        let response_data = await response.json()
         let authData = JSON.parse(localStorage.getItem(0))
-        authData.user = response.new_user;
+        authData.user = response_data.new_user;
         localStorage.setItem(0, JSON.stringify(authData));
     }
     else
