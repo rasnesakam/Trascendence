@@ -77,6 +77,48 @@ function router() {
   isEventListenerAdded = true;
 };
 
+function addNotify(msg, id, func_name) {
+  let notification = document.getElementById("notify-list");
+
+  let div = document.createElement("div");
+  div.classList.add("toast-body", "border-top", "me-2");
+  div.textContent = msg;
+  notification.appendChild(div);
+
+  let div2 = document.createElement("div");
+  div2.classList.add("mt-2", "pt-2");
+  div.appendChild(div2);
+
+  let button = document.createElement("button");
+  button.classList.add("btn", "btn-success", "btn-sm");
+  button.setAttribute("onclick", func_name + `(\'accept\', ${id})`);
+  button.textContent = "Accept";
+  div2.appendChild(button);
+
+  let button2 = document.createElement("button");
+  button2.classList.add("btn", "btn-danger", "btn-sm", "ms-2");
+  button2.setAttribute("onclick", func_name +  `(\'delete\', ${id})`);
+  button2.textContent = "Cancel";
+  div2.appendChild(button2);
+}
+
+function responseTournament(response, code) {
+  fetch(`http://localhost/api/tournaments/invitations/${code}/${response}`)
+    .then(responseCode => {
+      if (responseCode == 404)
+        alert("Invatation not found");
+    })
+}
+
+function responseFriend(response, code) {
+  fetch(`http://localhost/api/friends/invitations/${code}/${response}`)
+    .then(responseCode => {
+      if (responseCode == 404)
+        alert("Invatation not found");
+    })
+}
+
+
 async function switchPages(eventId) {
   const path = window.location.pathname;
   var route = webRoute[path] || webRoute[404];
