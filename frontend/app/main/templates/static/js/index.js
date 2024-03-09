@@ -7,9 +7,11 @@ var webRoute = {
   "/about": "/static/pages/about.html",
   "/game": "/static/pages/game.html",
   "/match": "/static/pages/match.html",
+  "/finish-match": "/static/pages/finish-match.html",
   "/tournament": "/static/pages/tournament.html",
   "/livechat": "/static/pages/livechat.html",
   "/ai": "/static/pages/ai.html",
+  "/pvp": "/static/pages/pvp.html",
 };
 
 
@@ -313,7 +315,6 @@ async function setPlayCode()
 
 function isPlayCode(data)
 {
-  alert("isPlayCode")
   console.log(data.has_playcode);
     if (data.has_playcode == undefined || data.has_playcode == false)
     {
@@ -481,10 +482,12 @@ window.addEventListener("popstate", async function (event) {
   }
 });
 
-function gamePage(webRoute) {
-
-  if (webRoute === "/ai") {
-    document.querySelectorAll(nav).style.display = "none";
+function gamePage() {
+  if (window.location.pathname === "/ai") {
+    const nav = document.getElementById("index-navbar");
+    if (nav) {
+      nav.style.display = "none";
+    }
   }
 }
 
