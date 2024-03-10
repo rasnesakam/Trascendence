@@ -1,8 +1,9 @@
 from django.http import HttpRequest, JsonResponse
 from django.http import HttpResponse
 from trascendence.api.models.User import UserModel
-from trascendence.core import validate_token
+from trascendence.core.token_manager import validate_token, definitions
 import jwt
+import traceback
 
 def get_token(request: HttpRequest) -> str | None:
     authorization: str | None = request.headers.get("Authorization")
@@ -24,22 +25,30 @@ def authorize(token_type="access"):
                 if token_info["typ"] != token_type:
                     return JsonResponse({"message": "This token is not valid for this request."}, status=401)
                 try:
-                    user = UserModel.objects.get(id=token_info['sub'])
+
                     auth_info = type('Object', (), {})()
+                    if token_info["sub"] != definitions.ISSUER:
+                        user = UserModel.objects.get(id=token_info['sub'])
+                        setattr(auth_info, "user", user)
+                    else:
+                        setattr(auth_info, "sudo", True)
                     setattr(auth_info, "token_info", token_info)
-                    setattr(auth_info, "user", user)
                     setattr(auth_info, "token", token)
                     setattr(request, "auth_info", auth_info)
                     return request_view(request, *args, **kwargs)
                 except UserModel.DoesNotExist:
                     return JsonResponse({"message": "No such user associated with this token."}, status=401)
             except jwt.exceptions.InvalidIssuerError:
+                traceback.print_exc()
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.ExpiredSignatureError:
+                traceback.print_exc()
                 return JsonResponse({"message": "Token is expired."}, status=401)
             except jwt.exceptions.InvalidSignatureError:
+                traceback.print_exc()
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.InvalidTokenError:
+                traceback.print_exc()
                 return JsonResponse({"message": f"Token couldn't verified."}, status=401)
 
         return middleware
