@@ -23,8 +23,11 @@
 								<h5 style="color: #02c302;">Enemy</h5>
 								<span id="enemy"></span>
 							</div>
-							<div id="add-friend-button" class="col-3">
-								<button class="btn btn-outline-success" onclick="requestFriend()">Add Friend</button>
+							<div  class="col-3">
+								<button id="add-friend-button" class="btn btn-outline-success" onclick="requestAddFriend()">Add Friend</button>
+								<button id="delete-friend-button" class="btn btn-outline-danger" style="display: none;" onclick="requestDeleteFriend()">Delete Friend</button>
+								<button id="friend-block-button" class="btn btn-outline-danger" onclick="requestBlock()">Block</button>
+								<button id="friend-unblock-button" class="btn btn-outline-dark" style="display: none;" onclick="requestUnBlock()">Block</button>
 							</div>
 						</div>
 					</div>
