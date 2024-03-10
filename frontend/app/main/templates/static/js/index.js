@@ -673,22 +673,26 @@ document
   .getElementById("click-search")
   .addEventListener("click", async function (event) {
     profile = document.getElementById("input-search").value;
-    fetch(`http://localhost/api/users/search/${profile}`, {
+    event.preventDefault();
+    let users = await fetch(`http://localhost/api/users/search/${profile}`, {
       headers: {
         "Content-type": "application/json",
       },
     })
       .then(async (response) => {
         if (!response.ok) throw new Error("User not found");
-        let newUrl = `/users/${profile}`;
-        window.history.pushState({ path: newUrl }, "", newUrl);
-        event.preventDefault();
-        console.log("pushState: " + newUrl);
-        await switchPages(newUrl);
+        return response.json();
       })
       .catch((error) => {
-        alert("User not found");
+        console.log(error);
       });
+      if (users == undefined) {
+        alert("User not found");
+      }
+      let newUrl = `/users/${profile}`;
+      window.history.pushState({ path: newUrl }, "", newUrl);
+      console.log("pushState: " + newUrl);
+      await switchPages(newUrl);
   });
 
 //back-transition
