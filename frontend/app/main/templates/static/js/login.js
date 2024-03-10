@@ -1,6 +1,14 @@
 (function ()
 {
     takeUrl();
+    document.querySelector("#form-sign-in").addEventListener('submit', (e) => {
+      e.preventDefault()
+      signInUser()
+    })
+    document.querySelector('#form-register').addEventListener('submit', (e)=>{
+      e.preventDefault()
+      registerUser()
+    })
 })()
 
 function control_password(name)
@@ -102,7 +110,7 @@ async function takeUrl() {
   }
 
 
-  async function signUpUser() {
+  async function signInUser() {
     let url = "http://localhost/api/auth/sign-in"
   
     let username = document.getElementById("sign-nickname").value;
