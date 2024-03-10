@@ -577,12 +577,15 @@ async function requestDeleteFriend() {
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   console.log("nickname " + profileNickName);
-  await fetch(`http://localhost/api/interacts/friends/delete/${profileNickName}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
+  await fetch(
+    `http://localhost/api/interacts/friends/delete/${profileNickName}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  )
     .then(async (responseCode) => {
       if (!responseCode.ok) {
         throw new Error("Error sending friend request");
@@ -636,12 +639,15 @@ async function requestBlock() {
 async function requestUnBlock() {
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  await fetch(`http://localhost/api/interacts/blacklist/${profileNickName}/delete`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
+  await fetch(
+    `http://localhost/api/interacts/blacklist/${profileNickName}/delete`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  )
     .then(async (responseCode) => {
       if (!responseCode.ok) {
         throw new Error("Error sending friend request");
@@ -667,11 +673,22 @@ document
   .getElementById("click-search")
   .addEventListener("click", async function (event) {
     profile = document.getElementById("input-search").value;
-    let newUrl = `/users/${profile}`;
-    window.history.pushState({ path: newUrl }, "", newUrl);
-    event.preventDefault();
-    console.log("pushState: " + newUrl);
-    await switchPages(newUrl);
+    fetch(`http://localhost/api/users/search/${profile}`, {
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("User not found");
+        let newUrl = `/users/${profile}`;
+        window.history.pushState({ path: newUrl }, "", newUrl);
+        event.preventDefault();
+        console.log("pushState: " + newUrl);
+        await switchPages(newUrl);
+      })
+      .catch((error) => {
+        alert("User not found");
+      });
   });
 
 //back-transition
