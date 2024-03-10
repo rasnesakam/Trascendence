@@ -1,3 +1,4 @@
+/*
 function setRate(win, lose, elementId) {
     var matchesCount = win + lose;
     var winsCount = win;
@@ -21,10 +22,6 @@ function setRate(win, lose, elementId) {
     });
     return myPieChart;
 }
-
-
-/*(function () {
-  setRate(37, 63, "myPieChart");
-  setRate(2, 1, "myPieChart2");
-})();
 */
+
+
