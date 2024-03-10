@@ -307,8 +307,10 @@ function profile_load() {
   let data = JSON.parse(localStorage.getItem(0));
   let access_token = data.access_token;
 
+  console.log("data page", data);
   loadUserInformation(part[2], access_token);
-  isMyFriend(data.username, part[2], access_token);
+  isMyFriend(data.user.username, part[2], access_token);
+  isBlock(data.user.username, part[2], access_token);
   //setRate(37, 63, "myPieChart");
 }
 
@@ -335,13 +337,32 @@ async function setPlayCode() {
   }
 }
 
+function isBlock(username, friend, access_token) {
+  let myBlock = fetch(`http://localhost/api/interacts/blacklist`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  }).then((data) => data.json());
+
+  for (let i = 0; i < myBlock.length; i++) {
+    if (myBlock[i].username == friend) {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("friend-unblock-button").style.display = "block";
+
+      return;
+    }
+  }
+}
+
 function isMyFriend(username, friend, access_token) {
   if (username == friend) {
     document.getElementById("add-friend-button").style.display = "none";
     return;
   } else document.getElementById("add-friend-button").style.display = "block";
 
-  let myFriend = fetch(`http://localhost/api/friends`, {
+  let myFriend = fetch(`http://localhost/api/interacts/friends`, {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
@@ -350,6 +371,7 @@ function isMyFriend(username, friend, access_token) {
   for (let i = 0; i < myFriend.length; i++) {
     if (myFriend[i].username == friend) {
       document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
       return;
     }
   }
@@ -519,7 +541,7 @@ async function getNotification() {
   return data;
 }
 
-async function requestFriend() {
+async function requestAddFriend() {
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   console.log("nickname " + profileNickName);
@@ -538,6 +560,96 @@ async function requestFriend() {
       if (!responseCode.ok) {
         throw new Error("Error sending friend request");
       }
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
+
+async function requestDeleteFriend() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  console.log("nickname " + profileNickName);
+  await fetch(`http://localhost/api/interacts/friends/delete/${profileNickName}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  })
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
+
+async function requestBlock() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  await fetch("http://localhost/api/interacts/blacklist/add", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      username: profileNickName,
+    }),
+  })
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("friend-unblock-button").style.display = "block";
+
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
+
+async function requestUnBlock() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  await fetch(`http://localhost/api/interacts/blacklist/${profileNickName}/delete`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  })
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "block";
+      document.getElementById("friend-unblock-button").style.display = "none";
       return responseCode.json();
     })
     .then((data) => {
