@@ -53,3 +53,13 @@
     width: 100%;
     height: 100%;
 }
+
+.friend-flex {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+}
+
+.friend-flex > .btn {
+    margin-left: 15px;
+}
