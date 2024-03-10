@@ -41,7 +41,7 @@
 					</div>
 					<div class="modal-body">
 
-						<form onsubmit="registerUser()">
+						<form id="form-register">
 							<div>
 								<label for="register-nickname" class="col-form-label text-dark"
 									minlength="9">Username:</label>
@@ -87,7 +87,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button id="register-submit" type="submit" class="btn btn-light register-turn" onclick="registerUser()">Register</button>
+						<button id="register-submit" form="form-register" type="submit" class="btn btn-light register-turn">Register</button>
 					</div>
 
 				</div>
@@ -105,10 +105,10 @@
 					</div>
 					<div class="modal-body">
 
-						<form>
+						<form id="form-sign-in">
 							<div>
 								<label for="sign-nickname" class="col-form-label text-dark">Username:</label>
-								<input type="text" class="form-control" id="sign-name">
+								<input type="text" class="form-control" id="sign-nickname">
 							</div>
 							<div>
 								<label for="sign-password" class="col-form-label text-dark"
@@ -120,7 +120,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-light" onclick="signUpUser()">Sign In</button>
+						<button type="submit" form="form-signup" class="btn btn-light" onclick="signInUser()">Sign In</button>
 					</div>
 				</div>
 			</div>
