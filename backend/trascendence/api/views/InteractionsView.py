@@ -112,7 +112,7 @@ def accept_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpR
         return HttpResponseNotFound(json.dumps({"message": "Invitation not found"}), content_type="application/json")
     
 
-@require_http_methods(['POST'])
+@require_http_methods(['DELETE'])
 @authorize()
 def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = request.auth_info.user
