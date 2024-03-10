@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
 import os
 import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -94,16 +93,9 @@ WSGI_APPLICATION = 'websocket.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 #burada .env dosyasındakileri çekip data base kısmını özellikle belirtcem
 DATABASES = {
-    "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('PGDATABASE'),
-        'USER': env('PGUSER'),
-        'PASSWORD': env('PGPASSWORD'),
-        'HOST': env('PGHOST'),
-        'PORT': env('PGPORT'),
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
