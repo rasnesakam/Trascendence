@@ -59,8 +59,6 @@ urlpatterns = [
     path('profile/update', profile_views.update_profile),
     path('profile/<username>', profile_views.get_user_profile),
 
-    path('dummy/push-notification/<username>', profile_views.send_notification),
-
     # Search User
     path('users/search/<username>', UserView.search_user)
 ]
