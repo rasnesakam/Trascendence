@@ -6,12 +6,16 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNot
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.tournament_models import TournamentPlayers, TournamentInvitations, Tournaments
 from trascendence.middleware.validators import request_body, str_field, list_field, number_field
+from trascendence.core.notification_manager import push_notification, Notification
+from trascendence.core.token_manager import generate_sudo_token
 from trascendence.api.dto import (
     tournament_invitation_dto,
     tournament_dto,
     tournament_match_dto,
     tournament_player_dto
 )
+
+RESOURCE_GROUP_TOURNAMENTS = "tournaments"
 
 @require_http_methods(['GET'])
 @authorize()
@@ -161,12 +165,16 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
         # Invite userlist
         for user in participated_users:
             try:
-                TournamentInvitations.objects.create(
+                tournament_message = f"You have been invited to {tournament.tournament_name}!"
+                tournament_invitation = TournamentInvitations.objects.create(
                     target_user=user,
                     tournament=tournament,
-                    message=f"You have been invited to {tournament.tournament_name}!"
+                    message=tournament_message
                 )
                 # notify users about this invitations
+                notification = Notification(str(user.id), tournament_message, RESOURCE_GROUP_TOURNAMENTS, tournament_invitation.invite_code)
+                temp_token = generate_sudo_token()
+                push_notification(notification, temp_token)
             except Exception:
                 pass
     except Exception as error:
