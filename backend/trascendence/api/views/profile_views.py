@@ -1,7 +1,7 @@
 
 import json
 from django.views.decorators.http import require_http_methods
-from django.http import HttpRequest, HttpResponseNotFound, JsonResponse
+from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse
 from django.db.models import Q
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.middleware.auth import authorize
@@ -76,3 +76,4 @@ def update_profile(request: HttpRequest, content: dict):
 
     user.save()
     return JsonResponse({"new_user": user_dto(user)})
+

@@ -17,16 +17,22 @@ def generate_token(extended_payload: dict, expiration_time = timedelta(minutes=1
     encoded_jwt = jwt.encode(payload, SECRET, algorithm=ALGORITHM)
     return encoded_jwt
 
-def generate_access_token(user):
+
+def generate_access_token(user) -> str:
     return generate_token({"sub": str(user.id), "typ": TYPE_ACCESS})
 
 
-def generate_refresh_token(user):
+def generate_refresh_token(user) -> str:
     return generate_token({"sub": str(user.id), "typ": TYPE_REFRESH}, timedelta(minutes=45))
 
-def generate_match_token(user):
+
+def generate_match_token(user) -> str:
     payload = {
         "sub": str(user.id),
         "typ": TYPE_SIGNATURE_MATCH
     }
     return generate_token(payload, timedelta(minutes=45))
+
+
+def generate_sudo_token() -> str:
+    return generate_token({"sub": ISSUER, "typ": TYPE_ACCESS}, timedelta(seconds=30))

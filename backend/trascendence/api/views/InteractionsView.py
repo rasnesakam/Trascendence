@@ -6,7 +6,10 @@ from trascendence.middleware.validators import request_body, str_field
 from trascendence.api.models.InteractionModels import Friends, FriendInvitation, BlackList
 from trascendence.api.dto import user_dto, friend_dto, friend_invitation_dto, blacklist_dto
 from django.db.models import Q
+from trascendence.core.notification_manager import push_notification, Notification
+from trascendence.core.token_manager import generate_sudo_token
 import json
+import traceback
 
 """ NOTE:
 
@@ -20,6 +23,8 @@ friends_user_pair_1__user_pair_2__exact
    |---------------------------> Join table
 
 """
+
+RESOURCE_INTERACTIONS = "interacts"
 
 @require_http_methods(['GET'])
 @authorize()
@@ -47,15 +52,20 @@ def get_friends(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
 )
 def add_friend(request: HttpRequest, content: dict) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     target_username = content.get("username")
-    invitation_message = content.get("message", "")
     user = request.auth_info.user
+    invitation_message = content.get("message", f"Hello {user.username}, I want to be friend with you!")
     target = UserModel.objects.get(username=target_username)
     if target is None:
         return HttpResponseNotFound(json.dumps({"message": "User not found"}), content_type="application/json")
-    friend_invitation = FriendInvitation.objects.create(origin_id=user.id, target_id=target.id, note=invitation_message)
-    if friend_invitation is None:
-        return HttpResponseServerError(json.dumps({"message": "Invitation couldn't saved"}), content_type="application/json")
-    return JsonResponse({"message": "Invitation sent"}, status=201)
+    try:
+        friend_invitation = FriendInvitation.objects.create(origin_id=user.id, target_id=target.id, note=invitation_message)
+        notification = Notification(target.username, invitation_message, RESOURCE_INTERACTIONS, friend_invitation.invite_code)
+        temp_token = generate_sudo_token()
+        push_notification(notification, temp_token)
+        return JsonResponse({"message": "Invitation sent"}, status=201)
+    except:
+        traceback.print_exc()
+        return HttpResponseServerError()
     
     
 @require_http_methods(['DELETE'])
@@ -102,7 +112,7 @@ def accept_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpR
         return HttpResponseNotFound(json.dumps({"message": "Invitation not found"}), content_type="application/json")
     
 
-@require_http_methods(['POST'])
+@require_http_methods(['DELETE'])
 @authorize()
 def decline_invitation(request: HttpRequest, invite_code) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
     user = request.auth_info.user

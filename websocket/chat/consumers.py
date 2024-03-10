@@ -37,6 +37,10 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
+    def push_notification(self, event):
+        text = event['text']
+
+        self.send(text_data=text)
 
     def chat_message(self, event):
         message = event['message']
@@ -66,7 +70,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        #self.send(json.dumps({"message": data.get("message"), "to": data.get("to") }))
         message_type = data.get("type", None)
         if message_type is not None:
             self.send_chat_message(data.get("message"), data.get("to"))
