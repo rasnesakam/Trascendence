@@ -146,7 +146,7 @@
         <!-- Tournament Button -->
         <a type="button" class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg"
           data-bs-toggle="modal" data-bs-target="#createPage" href="/static/pages/tournament.html">
-          <img src="/static/assets/tournament.png" class="me-4" />
+          <img src="/static/assets/tournament.png" onclick="loadInvateFriend()" class="me-4" />
           Tournament
         </a>
       </div>
@@ -164,13 +164,27 @@
               <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="What's The Tournament's Name?"
                   aria-describedby="button-addon2">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Create</button>
               </div>
-              <div>
-                <li>Test 1</li>
-                <li>Test 2</li>
-                <li>Test 3</li>
-                <li>Test 4</li>
+              <div class="text-black">
+                <div>Select players.</div>
+                <select id="friend-for-tournament" multiple class="w-100">
+                  <option value="username1">
+                    emakas
+                  </option>
+
+                  <option>asdasd</option>
+
+                  <option>asdasd</option>
+
+                  <option>asdasd</option>
+                </select>
+                <div id="friend-for-tournament">
+                  <li class="text-black">Test 1</li>
+                  <div class="row">
+                    <li class="text-black">ayumusak</li>
+                    <button class="btn btn-success">Create Tournament</button>
+                  </div>
+
               </div>
   
             </div>

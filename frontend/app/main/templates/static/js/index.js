@@ -314,6 +314,22 @@ function profile_load() {
   //setRate(37, 63, "myPieChart");
 }
 
+function loadInvateFriend()
+{
+  let friends = fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
+  let list = document.getElementById("friend-for-tournament");
+
+  for (let i = 0; i < friends.length; i++)
+  {
+    let option = document.createElement("option");
+    option.setAttribute("value", list.content[i].username);
+    option.textContent = list.content[i].username;
+  }
+  
+  //<option>asdasd</option>
+
+}
+
 async function setPlayCode() {
   let playcode = document.getElementById("playcode-input").value;
   let token = JSON.parse(localStorage.getItem(0)).access_token;
@@ -688,6 +704,7 @@ document
       });
       if (users == undefined) {
         alert("User not found");
+        return ;
       }
       let newUrl = `/users/${profile}`;
       window.history.pushState({ path: newUrl }, "", newUrl);
