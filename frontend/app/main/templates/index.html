@@ -31,7 +31,7 @@
 					</li>
 					<li class="nav-item dropdown" style="width: 250px;">
 						<button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-							aria-expanded="false">
+							aria-expanded="false" onclick="getNotification()">
 							<svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor"
 								viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 								<path stroke-linecap="round" stroke-linejoin="round"
@@ -39,18 +39,8 @@
 								</path>
 							</svg>
 						</button>
-						<ul id="notify-list" class="dropdown-menu">
+						<ul id="notify-list" class="overflow-y-scroll dropdown-menu" style="height: 2x00px;">
 							<!--notification added-->
-
-							<div class="toast-body border-top me-2">
-								Hello, world! This is a toast message.
-								<div class="mt-2 pt-2">
-									<button type="button" class="btn btn-primary btn-sm">Take action</button>
-									<button type="button" class="btn btn-secondary btn-sm"
-										data-bs-dismiss="toast">Close</button>
-								</div>
-							</div>
-
 						</ul>
 					</li>
 				</ul>
