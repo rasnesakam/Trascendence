@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from .dto import dto_notification
 from asgiref.sync import async_to_sync
 
-APP_NAME = "http://backend:8000/"
+APP_NAME = "http://backend:8000"
 
 # @login_required
 def lobby(request):
@@ -21,7 +21,7 @@ def push_notification(request, username):
         return HttpResponse(status=401)
     if request.content_type != "application/json":
         return HttpResponse(staus=415)
-    response = requests.post(f"{APP_NAME}/api/auth/token", headers={"Authorization": auth_header})
+    response = requests.get(f"{APP_NAME}/api/auth/token", headers={"Authorization": auth_header})
     if not response.ok:
         return HttpResponse(status=401)
     json_body = json.loads(request.body)

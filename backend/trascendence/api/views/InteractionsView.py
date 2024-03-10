@@ -59,7 +59,7 @@ def add_friend(request: HttpRequest, content: dict) -> JsonResponse | HttpRespon
         return HttpResponseNotFound(json.dumps({"message": "User not found"}), content_type="application/json")
     try:
         friend_invitation = FriendInvitation.objects.create(origin_id=user.id, target_id=target.id, note=invitation_message)
-        notification = Notification(target.username, invitation_message, RESOURCE_INTERACTIONS, friend_invitation.invite_code)
+        notification = Notification(target.id, invitation_message, RESOURCE_INTERACTIONS, friend_invitation.invite_code)
         temp_token = generate_sudo_token()
         push_notification(notification, temp_token)
         return JsonResponse({"message": "Invitation sent"}, status=201)
