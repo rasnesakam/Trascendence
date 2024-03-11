@@ -425,14 +425,66 @@ async function loadUserInformation(username, access_token) {
   return resultData;
 }
 
-function saveUserInformation() {
+async function saveUserInformation() {
   //user save is not enough because you have to send it to backend
-  var user = JSON.parse(localStorage.getItem(1));
-  user.username = document.getElementById("nicknameInput").value;
+  var user = JSON.parse(localStorage.getItem("my-profile"));
+  var data = JSON.parse(localStorage.getItem(0));
 
-  user.name = document.getElementById("nameInput").value;
-  user.surname = document.getElementById("surnameInput").value;
-  loadUserInformation();
+  user.user.username = document.getElementById("nicknameInput").value;
+  user.user.name = document.getElementById("nameInput").value;
+  user.user.surname = document.getElementById("surnameInput").value;
+  if (document.getElementById("playcode-input").value != "")
+    user.user.playcode = document.getElementById("playcode-input").value;
+  localStorage.setItem("my-profile", JSON.stringify(user));
+
+  let userphoto = document.getElementById("profile-photo").src;
+  var response = {
+    username: user.user.username,
+    name: user.user.name,
+    surname: user.user.surname,
+  };
+
+  if (user.user.avatarURI != userphoto) {
+    let photo = await fetch("http://localhost/api/uploads/upload", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${data.access_token}`,
+      },
+      body: JSON.stringify({
+        avatarURI: userphoto,
+      })
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error sending friend request");
+      }
+      return response.json();
+    }).catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+    response.avatarURI = photo.file;
+  }
+  
+  if (user.user.playcode != "") response.playcode = user.user.playcode;
+
+  await fetch("http://localhost/api/profile/update", {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${data.access_token}`,
+    },
+    body: JSON.stringify(response),
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Error update");
+    }
+    return response.json();
+  }).catch((error) => {
+    console.error("Fetch error:", error);
+  });
+
+  loadUserInformation(user.user.username, data.access_token);
   closeUpdateProfile();
 }
 
@@ -441,7 +493,7 @@ function removeSubstring(originalString, substringToRemove) {
 }
 
 function updateProfile() {
-  var user = JSON.parse(localStorage.getItem(1));
+  var user = JSON.parse(localStorage.getItem("my-profile"));
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";
   document.getElementById("save-icon").style.display = "block";
@@ -452,10 +504,11 @@ function updateProfile() {
   document.getElementById("information").style.display = "block";
   document.getElementById("questions").style.display = "block";
 
-  document.getElementById("nicknameInput").value = user.username;
-  document.getElementById("nameInput").value = user.name;
-  document.getElementById("surnameInput").value = user.surname;
-
+  document.getElementById("nicknameInput").value = user.user.username;
+  document.getElementById("nameInput").value = user.user.name;
+  document.getElementById("surnameInput").value = user.user.surname;
+  if (document.getElementById("playcod").value != "")
+    document.getElementById("playcode-input").value = user.user.playcode;
   document.getElementById("profile-photo").style.cursor = "pointer";
 }
 
