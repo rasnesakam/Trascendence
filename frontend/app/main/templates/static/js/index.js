@@ -163,16 +163,6 @@ async function switchPages(eventId) {
 }
 
 //main.js
-async function pushFetch(
-  url,
-  data,
-  header = { "Content-type": "application/json" },
-  pushMethod = "GET"
-) {
-  var pushResult = await fetch(url, {
-    method: pushMethod,
-    headers: header,
-    body: JSON.stringify(data),
   })
     .then((response) => {
       if (!response.ok) throw new Error("Respone is not ok");
