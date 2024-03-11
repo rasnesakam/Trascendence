@@ -163,16 +163,43 @@ async function switchPages(eventId) {
 }
 
 //main.js
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Respone is not ok");
-      return response.json();
+async function createTournament() {
+  let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
+  let selectFriends = [];
+  for (let i = 0; i < listCheckBox.length; i++) {
+    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
+  }
+  if (selectFriends.length < 3) {
+    alert("Please select three friends");
+    return;
+  }
+  else if (selectFriends.length > 3) {
+    alert("Please select at least 4 friends");
+    return;
+  }
+  let tournamentName = document.getElementById("tournament-name").value;
+  let item = JSON.parse(localStorage.getItem(0));
+  let access_token = item.access_token;
+  selectFriends.push(item.user.username);
+  let data = await fetch("http://localhost/api/tournaments/create", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      tournamentName,
+      users: selectFriends,
+      capacity: 4
     })
-    .catch((error) => {
-      console.log(error);
-    });
+  })
+    .then((response) => response.json())
+    .then(responseData => {
+      console.log("responseData: ", responseData);
+    })
+    .catch((error) => console.log(error));
 
-  return pushResult;
+  console.log("data: ", data);
 }
 function showTournament(tournaments) {
   document.getElementById("tournament").innerHTML = "";
