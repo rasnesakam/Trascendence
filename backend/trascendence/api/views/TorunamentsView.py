@@ -72,7 +72,7 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
         user = request.auth_info.user
         tournament_invitation = TournamentInvitations.objects.get(invite_code__exact=invitationcode, target_user=user)
         tournament_invitation.delete()
-        return JsonResponse({"message": "Invitation declined."})
+        return JsonResponse({"message": "Invitation declined."}, status=200)
     except TournamentInvitations.DoesNotExist:
         return HttpResponseNotFound(json.dumps({"message":"There is no such tournament"}), content_type="application/json")
 
@@ -152,13 +152,13 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
     participated_users = list()
     usernames = content.get("users", [])
     if len(usernames) != content["capacity"]:
-        return JsonResponse(json.dumps({"message":f"Unmatched user list. capacity is {content['capacity']} but {len(usernames)} user invited"}), status=400)
+        return JsonResponse({"message":f"Unmatched user list. capacity is {content['capacity']} but {len(usernames)} user invited"}, status=400)
     for username in usernames:
         try:
             participated_user = UserModel.objects.get(username__exact=username)
             participated_users.append(participated_user)
         except UserModel.DoesNotExist:
-            return JsonResponse(json.dumps({"message": f"User {username} not found"}), 404)
+            return HttpResponseNotFound()
     tournament_name = content["tournamentName"]
     # create tournament
     try:
