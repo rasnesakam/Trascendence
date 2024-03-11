@@ -4,16 +4,20 @@ from trascendence.api.models import TournamentMatches
 from trascendence.middleware.auth import authorize
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseServerError
 from trascendence.api.models.User import UserModel
+from trascendence.api.models.match_models import Matches
 from trascendence.api.models.tournament_models import TournamentPlayers, TournamentInvitations, Tournaments
 from trascendence.middleware.validators import request_body, str_field, list_field, number_field
 from trascendence.core.notification_manager import push_notification, Notification
 from trascendence.core.token_manager import generate_sudo_token
 import traceback
+from django.db.models import Q
 from trascendence.api.dto import (
     tournament_invitation_dto,
     tournament_dto,
     tournament_match_dto,
-    tournament_player_dto
+    tournament_player_dto,
+    list_dto,
+    match_dto
 )
 
 RESOURCE_GROUP_TOURNAMENTS = "tournaments"
@@ -204,3 +208,51 @@ def remove_tournament_user(request: HttpRequest, tournament: str, username: str)
         return JsonResponse({"message": "No such tournament."}, status=404)
     except TournamentPlayers.DoesNotExist:
         return JsonResponse({"message": "No such tournament."}, status=404)
+
+
+@require_http_methods(['GET'])
+@authorize()
+def start_tournament(request: HttpRequest, tournamentcode: str):
+    user = request.auth_info.user
+    try:
+        tournament = Tournaments.objects.get(tournament_code=tournamentcode)
+        if tournament.created_user.id != user.id:
+            return HttpResponseForbidden()
+        tournament_players = TournamentPlayers.objects.filter(tournament=tournament)
+        # TODO: Discard tournament when no one attends
+        for player in tournament_players:
+            if not player.has_pair:
+                unpaired_players = TournamentPlayers.objects.exclude(user__id=player.id).filter(tournament=tournament, has_pair=False)
+                if len(unpaired_players) > 0:
+                    unpaired_player = unpaired_players.first()
+                    player.has_pair = True,
+                    player.pair_user = unpaired_player.user
+                    unpaired_player.has_pair = True
+                    unpaired_player.pair_user = player.user
+                    player.save()
+                    unpaired_player.save()
+        unpaired_player = TournamentPlayers.objects.filter(tournament=tournament, has_pair=False).first()
+        if unpaired_player is not None:
+            unpaired_player.stage += 1
+            unpaired_player.save()
+        new_tournament_players = TournamentPlayers.objects.filter(tournament=tournament)
+        return JsonResponse(list_dto([tournament_player_dto(player) for player in new_tournament_players]), status=200)
+    except Tournaments.DoesNotExist:
+        return HttpResponseNotFound()
+
+
+@require_http_methods(['GET'])
+@authorize
+def get_next_match(request: HttpRequest, tournamentcode: str):
+    try:
+        tournament = Tournaments.objects.get(tournament_code=tournamentcode)
+        import math
+        max_stages = int(math.log(int(tournament.players_capacity), 2))
+        for stage in range(1, max_stages + 1):
+            binded_players: TournamentPlayers | None = TournamentPlayers.objects.filter(stage=stage, has_pair=True).first()
+            if binded_players is not None:
+                new_match = Matches.objects.create(home=binded_players.user, away=binded_players.pair_user, is_played=False)
+                return JsonResponse(match_dto(new_match), 201)
+        return HttpResponseNotFound()
+    except Tournaments.DoesNotExist:
+        return HttpResponseNotFound()
