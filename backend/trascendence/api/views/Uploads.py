@@ -5,9 +5,10 @@ from trascendence.middleware.auth import authorize
 from trascendence.settings import BASE_DIR
 from trascendence.api.models.User import UserModel
 from trascendence.api.models.Uploads import Uploads
-from django.http import HttpRequest, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpRequest, JsonResponse, HttpResponseServerError, HttpResponseBadRequest, HttpResponseNotFound
 from django import forms
 import uuid
+import traceback
 
 UPLOAD_DIR = BASE_DIR / "media"
 
@@ -31,7 +32,7 @@ def save_file_with_user(user: UserModel, file) -> str | None:
 def upload_file(request: HttpRequest):
     form = FileForm(request.POST, request.FILES)
     user = request.auth_info.user
-    
+
     if form.is_valid():
         saved_name = save_file_with_user(user, request.FILES['file'])
         if saved_name is not None:
@@ -43,12 +44,15 @@ def upload_file(request: HttpRequest):
 @authorize()
 def delete_file(request: HttpRequest, file: str):
     user = request.auth_info.user
-    
+
     extension = file.split('.')[-1]
     file_name = file[:file.find(extension) - 1]
     try:
         uploaded_file = Uploads.objects.get(name__exact=file_name, extension__exact=extension, owner__exact=user.id)
         os.remove(UPLOAD_DIR / (uploaded_file.name + '.' + uploaded_file.extension))
         uploaded_file.delete()
-    except:
+    except Uploads.DoesNotExist:
         return HttpResponseNotFound(str({"message": "You have no such file."}), content_type="application/json")
+    except:
+        traceback.print_exc()
+        return HttpResponseServerError()
