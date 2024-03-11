@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 import requests
 import re
+from chat.core import authorize_token
 
 # TODO: bu APP_NAME değerini .env dosyasından çek
 APP_NAME = "localhost"
@@ -67,11 +68,54 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
+    def pong(self, event):
+        pong_message = event['message']
+        print(f"Recieved pong: {pong_message}")
+    
+    def ping(self):
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                "type": "chat_message",
+                "message": {
+                    "message": "pong",
+                    "from": self.room_group_name,
+                }
+            }
+        )
+
+    def fetch_messages(self, data):
+        user_id = self.room_group_name
+        target_user_id = data.get("target")
+        fetch_amount = data.get("amount")
+        messages = Message.last_n_messages(user_id, target_user_id, fetch_amount)
+
+        message_list = []
+        for message in messages:
+            message_list.append({
+                "message": message.content,
+                "sender": message.author,
+                "reciever": message.audience,
+                "timestamp": message.timestamp.isoformat()
+            })
+        self.send(json.dumps({"message": message_list}))
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        token = data.get("token", None)
+        if token is None:
+            # yetki yok
+            pass
+        ## token'i değerlendir eğer token değerlendirilmemişse frontedin anlayacağı bi değer döndür
+        authorize_token(token)
         message_type = data.get("type", None)
-        if message_type is not None:
+        if message_type == "ping":
+            self.ping(self)
+        elif message_type == "pong":
+            self.pong(data)
+        elif message_type == "message":
             self.send_chat_message(data.get("message"), data.get("to"))
+        elif message_type == "fetch-message":
+            self.fetch_messages(data)
         else:
             self.send(json.dumps({"message": "You need to set type for message type"}))

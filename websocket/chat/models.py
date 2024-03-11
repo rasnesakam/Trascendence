@@ -18,4 +18,4 @@ class Message(models.Model):
 
     @staticmethod
     def last_n_messages(author, audience, n):
-        return Message.objects.filter(author=author, audience=audience).order_by('-timestamp').all()[:10]
+        return Message.objects.filter(author=author, audience=audience).order_by('-timestamp').all()[:n]
