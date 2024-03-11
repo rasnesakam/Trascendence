@@ -41,18 +41,18 @@ def authorize(token_type="access"):
                     return JsonResponse({"message": "No such user associated with this token."}, status=401)
                 except:
                     traceback.print_exc()
+					return HttpResponseServerError()
             except jwt.exceptions.InvalidIssuerError:
-                traceback.print_exc()
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.ExpiredSignatureError:
-                traceback.print_exc()
                 return JsonResponse({"message": "Token is expired."}, status=401)
             except jwt.exceptions.InvalidSignatureError:
-                traceback.print_exc()
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.InvalidTokenError:
-                traceback.print_exc()
                 return JsonResponse({"message": f"Token couldn't verified."}, status=401)
+			except:
+				traceback.print_exc()
+				return HttpResponseServerError()
 
         return middleware
 
