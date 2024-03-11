@@ -8,6 +8,7 @@ from trascendence.api.models.tournament_models import TournamentPlayers, Tournam
 from trascendence.middleware.validators import request_body, str_field, list_field, number_field
 from trascendence.core.notification_manager import push_notification, Notification
 from trascendence.core.token_manager import generate_sudo_token
+import traceback
 from trascendence.api.dto import (
     tournament_invitation_dto,
     tournament_dto,
@@ -176,9 +177,11 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
                 temp_token = generate_sudo_token()
                 push_notification(notification, temp_token)
             except Exception:
-                pass
+                traceback.print_exc()
+                return HttpResponseServerError()
     except Exception as error:
-        return HttpResponseServerError(json.dumps({"message":str(error)}), content_type="application/json")
+        traceback.print_exc()
+        return HttpResponseServerError()
     
 
 @require_http_methods(['DELETE'])
