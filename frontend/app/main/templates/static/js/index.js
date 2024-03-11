@@ -763,7 +763,7 @@ window.addEventListener("popstate", async function (event) {
 });
 
 function gamePage() {
-  if (window.location.pathname === "/ai") {
+  if (window.location.pathname === "/ai" || window.location.pathname === "/pvp") {
     const nav = document.getElementById("index-navbar");
 
     if (nav) {
