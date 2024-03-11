@@ -293,20 +293,28 @@ function profile_load() {
   //setRate(37, 63, "myPieChart");
 }
 
-function loadInvateFriend()
-{
-  let friends = fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
+async function loadInvateFriend() {
+  let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
   let list = document.getElementById("friend-for-tournament");
 
-  for (let i = 0; i < friends.length; i++)
-  {
-    let option = document.createElement("option");
-    option.setAttribute("value", list.content[i].username);
-    option.textContent = list.content[i].username;
-  }
-  
-  //<option>asdasd</option>
+  for (let i = 0; i < friends.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    list.appendChild(li);
 
+    let input = document.createElement("input");
+    input.classList.add("form-check-input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("value", friends[i].username);
+    input.setAttribute("id", friends[i].username);
+    li.appendChild(input);
+
+    let label = document.createElement("label");
+    label.classList.add("form-check-label");
+    label.setAttribute("for", friends[i].username);
+    label.textContent = friends[i].username;
+    li.appendChild(label);
+  }
 }
 
 async function setPlayCode() {
