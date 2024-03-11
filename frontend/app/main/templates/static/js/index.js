@@ -163,66 +163,45 @@ async function switchPages(eventId) {
 }
 
 //main.js
-async function pushFetch(
-  url,
-  data,
-  header = { "Content-type": "application/json" },
-  pushMethod = "GET"
-) {
-  var pushResult = await fetch(url, {
-    method: pushMethod,
-    headers: header,
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Respone is not ok");
-      return response.json();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  return pushResult;
-}
-function showTournament(tournaments) {
-  document.getElementById("tournament").innerHTML = "";
-  for (let i = 0; i < tournament.content.size(); i++) {
-    // Örnek veri
-    var sendType =
-      "list-group-item d-flex justify-content-between align-items-center" +
-      "bg-warning";
-    var sendText = tournaments[i].title;
-
-    // Yeni li elementi oluştur
-    var table = document.createElement("li");
-    table.classList.add(
-      "list-group-item",
-      "d-flex",
-      "justify-content-between",
-      "align-items-center",
-      "bg-warning"
-    );
-
-    // İlk span (kullanıcı adı ve mesaj)
-    var span1 = document.createElement("span");
-    span1.classList.add("text-white");
-    span1.textContent = sendText;
-
-    // İkinci span (skor)
-    var span2 = document.createElement("span");
-    span2.classList.add("text-white");
-    span2.textContent = score;
-
-    // İlk span'i li elementine ekle
-    table.appendChild(span1);
-
-    // İkinci span'i li elementine ekle
-    table.appendChild(span2);
-
-    // Doküman içerisindeki "table" ID'li div'e li elementini ekle
-    document.getElementById("show_tournament").appendChild(table);
+async function createTournament() {
+  let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
+  let selectFriends = [];
+  for (let i = 0; i < listCheckBox.length; i++) {
+    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
   }
+  if (selectFriends.length < 3) {
+    alert("Please select three friends");
+    return;
+  }
+  else if (selectFriends.length > 3) {
+    alert("Please select at least 4 friends");
+    return;
+  }
+  let tournamentName = document.getElementById("tournament-name").value;
+  let item = JSON.parse(localStorage.getItem(0));
+  let access_token = item.access_token;
+  selectFriends.push(item.user.username);
+  let data = await fetch("http://localhost/api/tournaments/create", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      tournamentName,
+      users: selectFriends,
+      capacity: 4
+    })
+  })
+    .then((response) => response.json())
+    .then(responseData => {
+      console.log("responseData: ", responseData);
+    })
+    .catch((error) => console.log(error));
+
+  console.log("data: ", data);
 }
+
 
 async function setTournamentList(tournaments) {
   let added = document.getElementById("tournamentList");
@@ -314,20 +293,28 @@ function profile_load() {
   //setRate(37, 63, "myPieChart");
 }
 
-function loadInvateFriend()
-{
-  let friends = fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
+async function loadInvateFriend() {
+  let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
   let list = document.getElementById("friend-for-tournament");
 
-  for (let i = 0; i < friends.length; i++)
-  {
-    let option = document.createElement("option");
-    option.setAttribute("value", list.content[i].username);
-    option.textContent = list.content[i].username;
-  }
-  
-  //<option>asdasd</option>
+  for (let i = 0; i < friends.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    list.appendChild(li);
 
+    let input = document.createElement("input");
+    input.classList.add("form-check-input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("value", friends[i].username);
+    input.setAttribute("id", friends[i].username);
+    li.appendChild(input);
+
+    let label = document.createElement("label");
+    label.classList.add("form-check-label");
+    label.setAttribute("for", friends[i].username);
+    label.textContent = friends[i].username;
+    li.appendChild(label);
+  }
 }
 
 async function setPlayCode() {
@@ -424,7 +411,7 @@ async function loadUserInformation(username, access_token) {
     },
   }).then((data) => data.json());
 
-  localStorage.setItem(1, JSON.stringify(userIdentity));
+  localStorage.setItem("my-profile", JSON.stringify(userIdentity));
   document.getElementById("nickname").innerHTML = userIdentity.user.username;
   document.getElementById("pr-name").innerHTML = userIdentity.user.name; //username html
   document.getElementById("pr-surname").innerHTML = userIdentity.user.surname; //surname add html
@@ -438,14 +425,66 @@ async function loadUserInformation(username, access_token) {
   return resultData;
 }
 
-function saveUserInformation() {
+async function saveUserInformation() {
   //user save is not enough because you have to send it to backend
-  var user = JSON.parse(localStorage.getItem(1));
-  user.username = document.getElementById("nicknameInput").value;
+  var user = JSON.parse(localStorage.getItem("my-profile"));
+  var data = JSON.parse(localStorage.getItem(0));
 
-  user.name = document.getElementById("nameInput").value;
-  user.surname = document.getElementById("surnameInput").value;
-  loadUserInformation();
+  user.user.username = document.getElementById("nicknameInput").value;
+  user.user.name = document.getElementById("nameInput").value;
+  user.user.surname = document.getElementById("surnameInput").value;
+  if (document.getElementById("playcode-input").value != "")
+    user.user.playcode = document.getElementById("playcode-input").value;
+  localStorage.setItem("my-profile", JSON.stringify(user));
+
+  let userphoto = document.getElementById("profile-photo").src;
+  var response = {
+    username: user.user.username,
+    name: user.user.name,
+    surname: user.user.surname,
+  };
+
+  if (user.user.avatarURI != userphoto) {
+    let photo = await fetch("http://localhost/api/uploads/upload", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${data.access_token}`,
+      },
+      body: JSON.stringify({
+        avatarURI: userphoto,
+      })
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error sending friend request");
+      }
+      return response.json();
+    }).catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+    response.avatarURI = photo.file;
+  }
+  
+  if (user.user.playcode != "") response.playcode = user.user.playcode;
+
+  await fetch("http://localhost/api/profile/update", {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${data.access_token}`,
+    },
+    body: JSON.stringify(response),
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Error update");
+    }
+    return response.json();
+  }).catch((error) => {
+    console.error("Fetch error:", error);
+  });
+
+  loadUserInformation(user.user.username, data.access_token);
   closeUpdateProfile();
 }
 
@@ -454,7 +493,7 @@ function removeSubstring(originalString, substringToRemove) {
 }
 
 function updateProfile() {
-  var user = JSON.parse(localStorage.getItem(1));
+  var user = JSON.parse(localStorage.getItem("my-profile"));
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";
   document.getElementById("save-icon").style.display = "block";
@@ -465,10 +504,11 @@ function updateProfile() {
   document.getElementById("information").style.display = "block";
   document.getElementById("questions").style.display = "block";
 
-  document.getElementById("nicknameInput").value = user.username;
-  document.getElementById("nameInput").value = user.name;
-  document.getElementById("surnameInput").value = user.surname;
-
+  document.getElementById("nicknameInput").value = user.user.username;
+  document.getElementById("nameInput").value = user.user.name;
+  document.getElementById("surnameInput").value = user.user.surname;
+  if (document.getElementById("playcod").value != "")
+    document.getElementById("playcode-input").value = user.user.playcode;
   document.getElementById("profile-photo").style.cursor = "pointer";
 }
 
@@ -702,14 +742,14 @@ document
       .catch((error) => {
         console.log(error);
       });
-      if (users == undefined) {
-        alert("User not found");
-        return ;
-      }
-      let newUrl = `/users/${profile}`;
-      window.history.pushState({ path: newUrl }, "", newUrl);
-      console.log("pushState: " + newUrl);
-      await switchPages(newUrl);
+    if (users == undefined) {
+      alert("User not found");
+      return;
+    }
+    let newUrl = `/users/${profile}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
+    console.log("pushState: " + newUrl);
+    await switchPages(newUrl);
   });
 
 //back-transition
