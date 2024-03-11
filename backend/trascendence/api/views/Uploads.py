@@ -35,7 +35,7 @@ def upload_file(request: HttpRequest):
     if form.is_valid():
         saved_name = save_file_with_user(user, request.FILES['file'])
         if saved_name is not None:
-            return JsonResponse({"file": saved_name}, status=200)
+            return JsonResponse({"file": f"api/media/{saved_name}"}, status=200)
     return HttpResponseForbidden(str({"message": "You have no permission to do this."}),
                                  content_type="application/json")
 
