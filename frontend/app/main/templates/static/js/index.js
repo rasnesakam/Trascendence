@@ -411,7 +411,7 @@ async function loadUserInformation(username, access_token) {
     },
   }).then((data) => data.json());
 
-  localStorage.setItem(1, JSON.stringify(userIdentity));
+  localStorage.setItem("my-profile", JSON.stringify(userIdentity));
   document.getElementById("nickname").innerHTML = userIdentity.user.username;
   document.getElementById("pr-name").innerHTML = userIdentity.user.name; //username html
   document.getElementById("pr-surname").innerHTML = userIdentity.user.surname; //surname add html
@@ -742,14 +742,14 @@ document
       .catch((error) => {
         console.log(error);
       });
-      if (users == undefined) {
-        alert("User not found");
-        return ;
-      }
-      let newUrl = `/users/${profile}`;
-      window.history.pushState({ path: newUrl }, "", newUrl);
-      console.log("pushState: " + newUrl);
-      await switchPages(newUrl);
+    if (users == undefined) {
+      alert("User not found");
+      return;
+    }
+    let newUrl = `/users/${profile}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
+    console.log("pushState: " + newUrl);
+    await switchPages(newUrl);
   });
 
 //back-transition
