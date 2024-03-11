@@ -201,45 +201,7 @@ async function createTournament() {
 
   console.log("data: ", data);
 }
-function showTournament(tournaments) {
-  document.getElementById("tournament").innerHTML = "";
-  for (let i = 0; i < tournament.content.size(); i++) {
-    // Örnek veri
-    var sendType =
-      "list-group-item d-flex justify-content-between align-items-center" +
-      "bg-warning";
-    var sendText = tournaments[i].title;
 
-    // Yeni li elementi oluştur
-    var table = document.createElement("li");
-    table.classList.add(
-      "list-group-item",
-      "d-flex",
-      "justify-content-between",
-      "align-items-center",
-      "bg-warning"
-    );
-
-    // İlk span (kullanıcı adı ve mesaj)
-    var span1 = document.createElement("span");
-    span1.classList.add("text-white");
-    span1.textContent = sendText;
-
-    // İkinci span (skor)
-    var span2 = document.createElement("span");
-    span2.classList.add("text-white");
-    span2.textContent = score;
-
-    // İlk span'i li elementine ekle
-    table.appendChild(span1);
-
-    // İkinci span'i li elementine ekle
-    table.appendChild(span2);
-
-    // Doküman içerisindeki "table" ID'li div'e li elementini ekle
-    document.getElementById("show_tournament").appendChild(table);
-  }
-}
 
 async function setTournamentList(tournaments) {
   let added = document.getElementById("tournamentList");
