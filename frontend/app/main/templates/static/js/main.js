@@ -1,14 +1,3 @@
-function saveUserInformation() {
-    user.nickname = document.getElementById("nicknameInput").value;
-
-    alert("file: " + user.photo);
-    user.name = document.getElementById("nameInput").value;
-    user.surname = document.getElementById("surnameInput").value;
-    loadUserInformation();
-    closeUpdateProfile();
-    alert("save");
-}
-
 function removeSubstring(originalString, substringToRemove) {
     return originalString.replace(substringToRemove, "");
 }
