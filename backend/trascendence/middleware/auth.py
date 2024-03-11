@@ -1,5 +1,4 @@
-from django.http import HttpRequest, JsonResponse
-from django.http import HttpResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseServerError
 from trascendence.api.models.User import UserModel
 from trascendence.core.token_manager import validate_token, definitions
 import jwt
@@ -41,7 +40,7 @@ def authorize(token_type="access"):
                     return JsonResponse({"message": "No such user associated with this token."}, status=401)
                 except:
                     traceback.print_exc()
-					return HttpResponseServerError()
+                    return HttpResponseServerError()
             except jwt.exceptions.InvalidIssuerError:
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.ExpiredSignatureError:
@@ -50,9 +49,9 @@ def authorize(token_type="access"):
                 return JsonResponse({"message": "Token is not valid."}, status=401)
             except jwt.exceptions.InvalidTokenError:
                 return JsonResponse({"message": f"Token couldn't verified."}, status=401)
-			except:
-				traceback.print_exc()
-				return HttpResponseServerError()
+            except:
+                traceback.print_exc()
+                return HttpResponseServerError()
 
         return middleware
 
