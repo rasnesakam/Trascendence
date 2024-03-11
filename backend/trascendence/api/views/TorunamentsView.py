@@ -183,7 +183,8 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
             except Exception:
                 traceback.print_exc()
                 return HttpResponseServerError()
-    except Exception as error:
+        return JsonResponse({"message":f"Tournament {tournament.name} created."},status=201)
+    except Exception:
         traceback.print_exc()
         return HttpResponseServerError()
     
