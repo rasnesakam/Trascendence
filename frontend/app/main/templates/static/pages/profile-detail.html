@@ -23,11 +23,15 @@
 								<h5 style="color: #02c302;">Enemy</h5>
 								<span id="enemy"></span>
 							</div>
-							<div  class="col-3 friend-flex">
-								<button id="add-friend-button" class="btn btn-outline-success" onclick="requestAddFriend()">Add Friend</button>
-								<button id="delete-friend-button" class="btn btn-outline-danger" style="display: none;" onclick="requestDeleteFriend()">Delete Friend</button>
-								<button id="friend-block-button" class="btn btn-outline-danger" onclick="requestBlock()">Block</button>
-								<button id="friend-unblock-button" class="btn btn-outline-dark" style="display: none;" onclick="requestUnBlock()">Block</button>
+							<div class="col-3 friend-flex">
+								<button id="add-friend-button" class="btn btn-outline-success"
+									onclick="requestAddFriend()">Add Friend</button>
+								<button id="delete-friend-button" class="btn btn-outline-danger" style="display: none;"
+									onclick="requestDeleteFriend()">Delete Friend</button>
+								<button id="friend-block-button" class="btn btn-outline-danger"
+									onclick="requestBlock()">Block</button>
+								<button id="friend-unblock-button" class="btn btn-outline-dark" style="display: none;"
+									onclick="requestUnBlock()">Block</button>
 							</div>
 						</div>
 					</div>
@@ -55,7 +59,8 @@
 								<div class="card-body">
 									<h4>Match</h4>
 									<!-- Pasta Grafiği -->
-									<div id="myChart" style="width:100%; max-width:600px; height:500px;"></div>
+									<div id="chart" class="chart-container" style="--win-percentage: 0%;">
+									</div>
 								</div>
 							</div>
 						</div>
@@ -102,26 +107,22 @@
 												<li
 													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
 													<span class="text-white">Nova</span>
-													<img src="/static/assets/king.png" style="width: 20px;"
-														alt="">
+													<img src="/static/assets/king.png" style="width: 20px;" alt="">
 												</li>
 												<li
 													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
 													<span class="text-white">Torunlar</span>
-													<img src="/static/assets/king.png" style="width: 20px;"
-														alt="">
+													<img src="/static/assets/king.png" style="width: 20px;" alt="">
 												</li>
 												<li
 													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
 													<span class="text-white">Yigitler</span>
-													<img src="/static/assets/king.png" style="width: 20px;"
-														alt="">
+													<img src="/static/assets/king.png" style="width: 20px;" alt="">
 												</li>
 												<li
 													class="list-group-item d-flex justify-content-between align-items-center bg-warning">
 													<span class="text-white">Nokia</span>
-													<img src="/static/assets/king.png" style="width: 20px;"
-														alt="">
+													<img src="/static/assets/king.png" style="width: 20px;" alt="">
 												</li>
 											</ul>
 										</div>
