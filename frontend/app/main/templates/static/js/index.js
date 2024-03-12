@@ -148,7 +148,8 @@ function responseFriend(response, code) {
 
 async function switchPages(eventId) {
   const path = window.location.pathname;
-  path = path.split("?");
+  if (path.includes("?"))
+    path = path.split("?");
   var route = webRoute[path[0]] || webRoute[404];
 
   if (path.includes("/users/")) {
@@ -168,8 +169,7 @@ async function createTournament() {
   let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
   let selectFriends = [];
   let tournamentName = document.getElementById("tournament-name").value;
-  if (tournamentName == "")
-  {
+  if (tournamentName == "") {
     alert("Plese enter tournament name");
     return;
   }
@@ -205,9 +205,9 @@ async function createTournament() {
     })
     .catch((error) => console.log(error));
 
-    let go_tournament = document.getElementById("to_tournament");
-    go_tournament.href = `/tournament?${data.tournament_code}`;
-    go_tournament.click();
+  let go_tournament = document.getElementById("to_tournament");
+  go_tournament.href = `/tournament?${data.tournament_code}`;
+  go_tournament.click();
 }
 
 
@@ -472,7 +472,7 @@ async function saveUserInformation() {
     });
     response.avatarURI = photo.file;
   }
-  
+
   if (user.user.playcode != "") response.playcode = user.user.playcode;
 
   await fetch("http://localhost/api/profile/update", {
