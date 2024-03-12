@@ -50,3 +50,39 @@ setInterval(() => {
 		documet.getElementById("match-tennis").style = "none";
 	}
 }, 20000)
+
+/*
+function ready_profile(side, where_photo)
+{
+	let formHome = document.getElementsByClassName(side)[0]
+    formHome.addEventListener('submit', (e) => {
+		e.preventDefault()
+	})
+	let input_username = formHome.getElementsByClassName(`${side}` + "-username")[0]
+	let photo = document.getElementById(where_photo);
+	let data = JSON.parse(localStorage.getItem(0));
+	let username = data.user.username
+	let userphoto = data.user.avatarURI;
+
+	input_username.setAttribute("value", username);
+	input_username.setAttribute("readonly", true);
+	photo.src =  userphoto;
+}*/
+
+async function take_matchurl()
+{
+	let urlSearch = new URLSearchParams(window.location.search);
+	let matchcode = urlSearch.get("match");
+
+	let readyMatch =  await fetch(`http://localhost/api/matches/code/${matchcode}`, {
+		method: "GET",
+		headers: {
+			"Content-type": "application/json",
+		},
+	})
+	.then(response => response.json())
+	.catch(error => console.log(error));
+
+	ready_profile("form-home", "left-photo");
+	ready_profile("form-away", "right-photo");
+}
