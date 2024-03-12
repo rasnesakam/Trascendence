@@ -99,8 +99,8 @@ function updateGame() {
         (ballX <= 40 && ballY >= leftPaddleY && ballY <= leftPaddleY + 100) ||
         (ballX >= 1190 && ballY >= rightPaddleY && ballY <= rightPaddleY + 100)
     ) {
-        ballXSpeed *= 1.1;
-        ballYSpeed *= 1.1;
+        ballXSpeed *= 1.5;
+        ballYSpeed *= 1.5;
         ballXSpeed = -ballXSpeed;
         changeBallColor();
     }
