@@ -2,7 +2,7 @@
     <title>Match</title>
     <h1 class="text-white text-center my-4 fw-bolder col-12">Match</h1>
 
-    <div class="d-flex align-items-center justify-content-center">
+    <section class="d-flex align-items-center justify-content-center">
         <div class="d-flex align-items-center justify-content-around col">
             <div class="col-1"></div>
             <!--Left-->
@@ -117,34 +117,7 @@
                 </div>
             </div>
         </div>
-        <script src="/static/js/match.js"></script>
-    </div>
+    </section>
+    
+    <script src="/static/js/match.js"></script>
 </body>
-
-<script>
-    (async function(){
-        let searchParam = new URLSearchParams(location.search)
-        if (searchParam.has("match-code")){
-            let matchCode = searchParam.get("match-code")
-            //fetch
-            let data = await fetch(`http://localhost/api/matches/code/${matchCode}`)
-            .then((response) => JSON.parse(resonse)).catch(() => console.log("error match-code"));
-            
-            
-            let formHome = document.getElementsByClassName("form-home")[0]
-            let usernameHome = formHome.getElementsByClassName("form-home-username")[0]
-            let avatarHome = document.getElementById("left-photo")
-            usernameHome.setAttribute("value", data.home.user.username)
-            usernameHome.setAttribute("readonly", true)
-            avatarHome.src = data.home.user.avatarURI
-            
-            let formAway = document.getElementsByClassName("form-away")[0]
-            let usernameAwat = formAway.getElementsByClassName("form-away-username")[0]
-            let avatarAway = document.getElementById("rigth-photo")
-            usernameAway.setAttribute("value", data.away.user.username);
-            usernameAway.setAttribute("readonly", true);
-            avatarAway.src = data.away.user.avatarURI;
-
-        }
-    })()
-</script>

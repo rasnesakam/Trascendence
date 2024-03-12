@@ -130,9 +130,8 @@ def verify_playcode(request: HttpRequest, content: dict) -> HttpResponse:
     password_hasher = BCryptPasswordHasher()
     username = content["username"]
     password_raw = content["playcode"]
-    user = UserModel.objects.filter(username=username)
-    if user.exists:
-        user = user.first()
+    user = UserModel.objects.filter(username=username).first()
+    if user is not None:
         if not user.has_play_code:
             return HttpResponseForbidden()
         if password_hasher.verify(password_raw, user.play_code):

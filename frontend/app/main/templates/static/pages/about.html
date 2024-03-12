@@ -1,7 +1,7 @@
 <body class="bg-dark">
 	<title id="head-title">About</title>
 	<!-- About START -->
-	<div class="">
+	<section class="">
 		<div class="row d-flex justify-content-center">
 			<div class="d-flex justify-content-center">
 				<img src="/static/assets/42 (2).png" style="width: 10%;">
@@ -12,28 +12,47 @@
 			<div class="d-flex justify-content-center pb-5">
 				<div class="col-1 col-lg-3"></div>
 
-				<p class="text-light text-center fs-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam,
-					delectus eligendi assumenda quis sunt sapiente inventore dolores, neque qui distinctio ab natus
-					quidem consequuntur a animi blanditiis. Voluptates, nobis beatae laborum nostrum deserunt dolores
-					quia incidunt natus vel corrupti aut provident voluptate illum itaque magni quaerat rerum minima
-					assumenda optio harum, nesciunt pariatur adipisci. Aliquam nihil vero veniam. Architecto officiis
-					iste perspiciatis, optio quis dolore incidunt laboriosam odio, itaque excepturi temporibus tempora.
-					Est vel veniam assumenda incidunt, fugit beatae nobis voluptate rem aperiam, nihil eligendi ipsum
-					dolorem non maxime aliquam reiciendis voluptatem, iste unde eius a asperiores sed vitae. Quidem
-					placeat sint nam mollitia libero enim dolor facilis impedit eius. Excepturi culpa accusamus quod
-					labore, fugit consequuntur assumenda dignissimos reiciendis cumque aliquam nulla dolor maxime nam
-					repellendus, amet cupiditate quos debitis beatae odio. Atque saepe deserunt, dolores similique,
-					minima illum provident molestiae eum modi aut omnis repellat sed doloremque? Velit similique officia
-					ipsa nemo veniam, rem, pariatur recusandae quos sit atque nisi, iure harum architecto tenetur sint!
-					Facilis nesciunt repudiandae, velit cumque fugit eius quisquam iure iusto perferendis recusandae
-					molestias ullam sed enim? Blanditiis nam rem tempora expedita quam quae temporibus, placeat, omnis
-					animi accusantium officia dolore cum earum eaque fuga?
+				<p class="text-light text-center fs-5">Ecole 42 İstanbul kampüsü öğrencileri tarafından geliştirilmiş
+					olan fullstack bir projedir. Bu proje Ecole 42 öğrencileri için authentication sağlamasının yanı
+					sıra dışarıdan bir kullanıcının da girişini mümkün kılar. Kaydı oluşturulan her kullanıcı turnuva
+					oluşturabilir, nickname ile arkadaş ekleyebilir, turnuva içinde aynı klavye üzerinden Ping-Pong
+					oyunu oynama ve isteyen kullanıcılar için AI yani karşısında computer varken oynama imkanı sunar.
+					Bunlar dışında livechat ile arkadaşlarınla mesajlaşma özelliği de mevcut.
 				</p>
 
 				<div class="col-1 col-lg-3"></div>
 			</div>
 		</div>
 
+
+
+		<!-- SLIDER START -->
+		<section class="d-flex justify-content-center">
+			<div id="carouselExampleIndicators" class="carousel slide slider" data-ride="carousel">
+				<ol class="carousel-indicators">
+					<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+					<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+					<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+					</div>
+				</div>
+				<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+		</section>
+		<!-- SLIDER END -->
+
+
+
+		<!-- TEAM START -->
 		<div class="bg-dark-subtle about py-3">
 			<div class="mb-5">
 				<p class="text-center fs-2 mb-2 fw-bold">Team</p>
@@ -156,6 +175,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
+		<!-- TEAM END -->
+	</section>
 	<!-- MAIN END -->
+
+	<script src="/static/js/about.js"></script>
 </body>

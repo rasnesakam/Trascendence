@@ -440,16 +440,26 @@ async function saveUserInformation() {
   user.user.username = document.getElementById("nicknameInput").value;
   user.user.name = document.getElementById("nameInput").value;
   user.user.surname = document.getElementById("surnameInput").value;
-  if (document.getElementById("playcode-input").value != "")
-    user.user.playcode = document.getElementById("playcode-input").value;
+  var code = document.getElementById("playcod").value;
+
+  if (code != undefined && code != null)
+    var response = {
+      username: user.user.username,
+      name: user.user.name,
+      surname: user.user.surname,
+      playcode: code
+    };
+  else
+    var response = {
+      username: user.user.username,
+      name: user.user.name,
+      surname: user.user.surname,
+    };
+    
+  console.log("code deneme:", code);
   localStorage.setItem("my-profile", JSON.stringify(user));
 
   let userphoto = document.getElementById("profile-photo").src;
-  var response = {
-    username: user.user.username,
-    name: user.user.name,
-    surname: user.user.surname,
-  };
 
   if (user.user.avatarURI != userphoto) {
     let photo = await fetch("http://localhost/api/uploads/upload", {
@@ -473,7 +483,6 @@ async function saveUserInformation() {
     response.avatarURI = photo.file;
   }
 
-  if (user.user.playcode != "") response.playcode = user.user.playcode;
 
   await fetch("http://localhost/api/profile/update", {
     method: "PATCH",
