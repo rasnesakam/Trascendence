@@ -201,14 +201,11 @@ async function createTournament() {
     })
   })
     .then((response) => response.json())
-    .then(responseData => {
-      console.log("responseData: ", responseData);
-    })
     .catch((error) => console.log(error));
 
-  let go_tournament = document.getElementById("to_tournament");
-  go_tournament.href = `/tournament?${data.tournament_code}`;
-  go_tournament.click();
+  let to_tournament = document.getElementById("to_tournament");
+  to_tournament.href = `/tournament?tournament=${data.tournament_code}`;
+  to_tournament.click();
 }
 
 
@@ -572,20 +569,32 @@ function outLogin() {
 
 async function getNotification() {
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  let data = await fetch("http://localhost/api/interacts/invitations/", {
+  let listUrl = [
+    "http://localhost/api/interacts/invitations",
+    "http://localhost/api/tournaments/invitations"
+  ]
+  document.getElementById("notify-list").innerHTML = "";
+  let listFunction = [
+    "responseFriend",
+    "responseTournament"
+  ]
+
+  for (let i = 0; i < listUrl.length; i++)
+  {
+    let data = await fetch(listUrl[i], {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
   })
     .then((response) => response.json())
     .catch((error) => console.log(error));
-  console.log("data:", data);
-  document.getElementById("notify-list").innerHTML = "";
-  for (let i = 0; i < data.length; i++) {
-    let msg = data.content[i].to.username + ": " + data.content[i].note;
-    addNotify(msg, data.content[i].invite_code, "responseFriend");
+
+    for (let j = 0; j < data.length; j++) {
+      let msg = data.content[j].from.username + ": " + data.content[j].note;
+      addNotify(msg, data.content[j].invite_code, listFunction[i]);
+    }
   }
-  return data;
+  
 }
 
 async function requestAddFriend() {
