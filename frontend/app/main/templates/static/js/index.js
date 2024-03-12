@@ -8,6 +8,7 @@ var webRoute = {
   "/game": "/static/pages/game.html",
   "/match": "/static/pages/match.html",
   "/finish-match": "/static/pages/finish-match.html",
+  "/profile-detail": "/static/pages/profile-detail.html",
   "/tournament": "/static/pages/tournament.html",
   "/livechat": "/static/pages/livechat.html",
   "/ai": "/static/pages/ai.html",

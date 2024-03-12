@@ -131,7 +131,7 @@ def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     blacklists = UserModel.objects.filter(blacklist_user__issuer__id__exact=user.id)
     response = {
         "length": len(blacklists),
-        "content": [blacklist_dto(blacklist) for blacklist in blacklists]
+        "content": [user_dto(blacklist) for blacklist in blacklists]
     }
     return JsonResponse(response, status=200)
     
