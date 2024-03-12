@@ -26,6 +26,7 @@ services:
       #- db
       - backend
       - frontend
+      - websocket
       #- adminer
   #db:
   #  image: postgres
