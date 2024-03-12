@@ -148,7 +148,8 @@ function responseFriend(response, code) {
 
 async function switchPages(eventId) {
   const path = window.location.pathname;
-  var route = webRoute[path] || webRoute[404];
+  path = path.split("?");
+  var route = webRoute[path[0]] || webRoute[404];
 
   if (path.includes("/users/")) {
     route = "/static/pages/profile-detail.html";
@@ -166,6 +167,12 @@ async function switchPages(eventId) {
 async function createTournament() {
   let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
   let selectFriends = [];
+  let tournamentName = document.getElementById("tournament-name").value;
+  if (tournamentName == "")
+  {
+    alert("Plese enter tournament name");
+    return;
+  }
   for (let i = 0; i < listCheckBox.length; i++) {
     if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
   }
@@ -177,7 +184,6 @@ async function createTournament() {
     alert("Please select at least 4 friends");
     return;
   }
-  let tournamentName = document.getElementById("tournament-name").value;
   let item = JSON.parse(localStorage.getItem(0));
   let access_token = item.access_token;
   selectFriends.push(item.user.username);
@@ -199,7 +205,9 @@ async function createTournament() {
     })
     .catch((error) => console.log(error));
 
-  console.log("data: ", data);
+    let go_tournament = document.getElementById("to_tournament");
+    go_tournament.href = `/tournament?${data.tournament_code}`;
+    go_tournament.click();
 }
 
 
@@ -234,7 +242,6 @@ async function setTournamentList(tournaments) {
     accordionBody.classList.add("accordion-body");
     accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
     accordionHeader.appendChild(accordionBody);
-    console.log("nediyorsun: " + added);
   }
 }
 
@@ -552,32 +559,6 @@ function outLogin() {
   localStorage.removeItem(0);
   window.location.href = "/login";
 }
-
-//profile-detail.js
-/*
-function setRate(win, lose, elementId) {
-  var matchesCount = win + lose;
-  var winsCount = win;
-  var data = {
-    labels: ["Lose", "Win"],
-    datasets: [
-      {
-        data: [matchesCount, winsCount],
-        backgroundColor: ["#C60606", "#20C606"],
-      },
-    ],
-  };
-  var ctx = document.getElementById(elementId).getContext("2d");
-  Chart(ctx, {
-    type: "doughnut",
-    data: data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    },
-  });
-  return myPieChart;
-}*/
 
 async function getNotification() {
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
