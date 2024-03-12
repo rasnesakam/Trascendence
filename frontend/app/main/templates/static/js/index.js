@@ -1,22 +1,29 @@
 //İndex.js
 //sayısal değerlere define değerler atanabilir
 
-const webRoute = {
+var webRoute = {
   404: "/static/pages/error.html",
   "/": "/static/pages/main.html",
   "/about": "/static/pages/about.html",
   "/game": "/static/pages/game.html",
   "/match": "/static/pages/match.html",
+  "/finish-match": "/static/pages/finish-match.html",
   "/tournament": "/static/pages/tournament.html",
   "/livechat": "/static/pages/livechat.html",
+  "/ai": "/static/pages/ai.html",
+  "/pvp": "/static/pages/pvp.html",
 };
 
+if (window.location.pathname == "/") main_load();
+else if (window.location.pathname.includes("/users/")) profile_load();
+
 //  "/profile-detail": "/static/pages/profile-detail.html",
-function error_404() {
-  pageTxt = fetch(webRoute[404])
+async function error_404() {
+  pageTxt = await fetch(webRoute[404])
     .then((response) => response.text())
     .catch((error) => alert(error));
   document.getElementById("index-navbar").style.display = "none";
+  document.getElementById("index-body").innerHTML = pageTxt;
 }
 
 async function winCount(data, username) {
@@ -30,22 +37,14 @@ async function winCount(data, username) {
 
 async function whichEvent(id) {
   if (id == "/") {
-    loadUserInformation(0);
+    main_load();
   } else if (id == "/livechat") {
     disableChat();
     loadContact();
   } else if (id == "login") {
     takeUrl();
   } else if (id.includes("/users/")) {
-    const path = window.location.pathname.split("/");
-    profileDetail = await fetch("http://localhost/api/profile/" + path[1])
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem(2, JSON.stringify(data));
-        document.getElementById("index-navbar").style.display = "block";
-        loadUserInformation(2);
-      })
-      .catch(error_404());
+    profile_load();
   }
 }
 
@@ -54,6 +53,7 @@ function isPassageEvent(eventId) {
   if (eventId == "/about") return true;
   if (eventId == "/livechat") return true;
   if (eventId == "/login") return true;
+  if (eventId == "/ai-game") return true;
   return false;
 }
 
@@ -67,18 +67,92 @@ function router() {
     if (isPassageEvent(event.target.id)) {
       event.preventDefault();
 
+      console.log("pushState giriyorum: ");
       window.history.pushState({}, "", event.target.href);
+      console.log("pushStateden çıkıyorum: ");
       switchPages(event.target.id);
     }
   });
   isEventListenerAdded = true;
-};
+}
+
+function addNotify(msg, id, func_name) {
+  alert("addNotify: " + msg + " " + id + " " + func_name);
+  let notification = document.getElementById("notify-list");
+
+  let div = document.createElement("div");
+  div.classList.add("toast-body", "border-top", "me-2");
+  div.id = id;
+  div.textContent = msg;
+  notification.appendChild(div);
+
+  let div2 = document.createElement("div");
+  div2.classList.add("mt-2", "pt-2");
+  div.appendChild(div2);
+
+  let button = document.createElement("button");
+  button.classList.add("btn", "btn-success", "btn-sm");
+  button.setAttribute("onclick", func_name + `(\'accept\', '${id}')`);
+  button.textContent = "Accept";
+  div2.appendChild(button);
+
+  let button2 = document.createElement("button");
+  button2.classList.add("btn", "btn-danger", "btn-sm", "ms-2");
+  button2.setAttribute("onclick", func_name + `(\'delete\', '${id}')`);
+  button2.textContent = "Cancel";
+  div2.appendChild(button2);
+}
+
+function removeNotify(code) {
+  console.log("code", code);
+  let notification = document.getElementById(code);
+  console.log("REMOVE REMOVE NOTIFY: ", notification);
+  notification.remove();
+}
+
+function responseTournament(response, code) {
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  console.log(response, "....", code);
+  fetch(`http://localhost/api/tournaments/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  removeNotify(code);
+}
+
+function responseFriend(response, code) {
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  fetch(`http://localhost/api/interacts/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  console.log("removeNotify: ", response, "....", code);
+  removeNotify(code);
+}
 
 async function switchPages(eventId) {
   const path = window.location.pathname;
-  const route = webRoute[path] || webRoute[404];
+  var route = webRoute[path] || webRoute[404];
 
-  if (path.includes("/users/")) route = "/static/pages/profile-detail.html";
+  if (path.includes("/users/")) {
+    route = "/static/pages/profile-detail.html";
+  }
 
   const html = await fetch(route)
     .then((response) => response.text())
@@ -86,125 +160,331 @@ async function switchPages(eventId) {
 
   document.getElementById("index-body").innerHTML = html;
   whichEvent(eventId);
-};
-
-
-//main.js
-async function pushFetch(url, data, header = { "Content-type": "application/json" }, pushMethod = "GET") {
-  var pushResult = await fetch(url, {
-    method: pushMethod,
-    headers: header,
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Respone is not ok");
-      return response.json();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  return pushResult;
 }
 
-function showTournament(tournaments) {
-  document.getElementById("tournament").innerHTML = "";
-  for (let i = 0; i < tournament.content.size(); i++) {
-    // Örnek veri
-    var sendType =
-      "list-group-item d-flex justify-content-between align-items-center" +
-      "bg-warning";
-    var sendText = tournaments[i].title;
+//main.js
+async function createTournament() {
+  let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
+  let selectFriends = [];
+  for (let i = 0; i < listCheckBox.length; i++) {
+    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
+  }
+  if (selectFriends.length < 3) {
+    alert("Please select three friends");
+    return;
+  }
+  else if (selectFriends.length > 3) {
+    alert("Please select at least 4 friends");
+    return;
+  }
+  let tournamentName = document.getElementById("tournament-name").value;
+  let item = JSON.parse(localStorage.getItem(0));
+  let access_token = item.access_token;
+  selectFriends.push(item.user.username);
+  let data = await fetch("http://localhost/api/tournaments/create", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      tournamentName,
+      users: selectFriends,
+      capacity: 4
+    })
+  })
+    .then((response) => response.json())
+    .then(responseData => {
+      console.log("responseData: ", responseData);
+    })
+    .catch((error) => console.log(error));
 
-    // Yeni li elementi oluştur
-    var table = document.createElement("li");
-    table.classList.add(
+  console.log("data: ", data);
+}
+
+
+async function setTournamentList(tournaments) {
+  let added = document.getElementById("tournamentList");
+  added.innerHTML = "";
+  if (tournaments == undefined) return;
+  for (let i = 0; i < tournaments.length; i++) {
+    let code = tournaments[i].tournament_code;
+    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
+      .then((data) => data.json())
+      .catch((error) => console.log(error));
+
+    let accordionItem = document.createElement("div");
+    accordionItem.classList.add("accordion-item");
+    added.appendChild(accordionItem);
+
+    let accordionHeader = document.createElement("h2");
+    accordionHeader.classList.add("accordion-header");
+    accordionItem.appendChild(accordionHeader);
+
+    let button = document.createElement("button");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white");
+    button.setAttribute("type", "button");
+    button.setAttribute("data-bs-toggle", "collapse");
+    button.setAttribute("data-bs-target", "#tournamentList");
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", "tournamentList");
+    accordionHeader.appendChild(button);
+
+    let accordionBody = document.createElement("div");
+    accordionBody.classList.add("accordion-body");
+    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
+    accordionHeader.appendChild(accordionBody);
+    console.log("nediyorsun: " + added);
+  }
+}
+
+function setMatches(matches, username) {
+  let added = document.getElementById("matchList");
+  added.innerHTML = "";
+  console.log("matches: ", matches);
+  if (matches == undefined) return;
+  for (let i = 0; i < matches.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add(
       "list-group-item",
       "d-flex",
       "justify-content-between",
-      "align-items-center",
-      "bg-warning"
+      "align-items-center"
     );
+    added.appendChild(li);
 
-    // İlk span (kullanıcı adı ve mesaj)
-    var span1 = document.createElement("span");
-    span1.classList.add("text-white");
-    span1.textContent = sendText;
+    let span1 = document.createElement("span");
+    span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
+    li.appendChild(span1);
 
-    // İkinci span (skor)
-    var span2 = document.createElement("span");
-    span2.classList.add("text-white");
-    span2.textContent = score;
+    let span2 = document.createElement("span");
+    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
+    li.appendChild(span2);
 
-    // İlk span'i li elementine ekle
-    table.appendChild(span1);
-
-    // İkinci span'i li elementine ekle
-    table.appendChild(span2);
-
-    // Doküman içerisindeki "table" ID'li div'e li elementini ekle
-    document.getElementById("show_tournament").appendChild(table);
+    if (matches.matches.score_home > matches.score_away)
+      if (matches.home == username) li.classList.add("bg-success");
+      else li.classList.add("bg-danger");
+    else if (matches.away == username) li.classList.add("bg-success");
+    else li.classList.add("bg-danger");
   }
 }
 
-//showMatch();
+function main_load() {
+  let userAccess = JSON.parse(localStorage.getItem(0));
+  let username = userAccess.user.username;
+  let access_token = userAccess.access_token;
 
-async function loadUserInformation(id) {
-  var userAccess = JSON.parse(localStorage.getItem(0));
-  console.log("userAccess: " + userAccess.access_token);
-  var access_token = userAccess.access_token;
-  var userIdentity = await fetch("http://localhost/api/profile/" + userAccess.username, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
-  });
+  console.log("access_token: " + access_token);
+  let data = loadUserInformation(username, access_token);
+  setTournamentList(data.dataTournament);
+  setMatches(data.dataMatches);
+}
 
-  console.log("user *" + userAccess.username + "***");
-  var dataTournament = await fetch(
-    "http://localhost/api/tournaments/" + userAccess.username, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
-  });
+function profile_load() {
+  let pathname = window.location.pathname;
+  let part = pathname.split("/");
+  let data = JSON.parse(localStorage.getItem(0));
+  let access_token = data.access_token;
 
-  var dataTournament = await fetch(
-    "http://localhost/api/matches/" + userAccess.username, {
-    headers: {
-      "Authorization": "Bearer " + access_token,
-    },
-  });
+  console.log("data page", data);
+  loadUserInformation(part[2], access_token);
+  isMyFriend(data.user.username, part[2], access_token);
+  isBlock(data.user.username, part[2], access_token);
+  //setRate(37, 63, "myPieChart");
+}
 
-  localStorage.setItem(id + 1, JSON.stringify(userIdentity));
-  document.getElementById("nickname").innerHTML = userAccess.username;
-  document.getElementById("pr-name").innerHTML = userIdentity.name; //username html
-  document.getElementById("pr-surname").innerHTML = userIdentity.surname; //surname add html
-  document.getElementById("profile-photo").src = userIdentity.avatarURI;
-  document.getElementById("total_tournament").innerHTML =
-    dataTournament.content.size(); //Torunament add html
-  document.getElementById("total_match").innerHTML = 3; //match added html
-  document.getElementById("enemy").innerHTML = user.enemy;
+async function loadInvateFriend() {
+  let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
+  let list = document.getElementById("friend-for-tournament");
 
-  if (id == 2) {
-    let tournamentWin = winCount(dataTournament, userIdentity.username);
-    let tournamentLose = dataTournament.content.size() - tournamentWin;
-    let matchWin = 2;
-    let matchLose = 3 - matchWin;
+  for (let i = 0; i < friends.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    list.appendChild(li);
 
-    setRate(tournamentWin, tournamentLose, "myPieChart");
-    setRate(matchWin, matchLose, "myPieChart2");
-    showTournament(dataTournament);
-    //showMatch();
+    let input = document.createElement("input");
+    input.classList.add("form-check-input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("value", friends[i].username);
+    input.setAttribute("id", friends[i].username);
+    li.appendChild(input);
+
+    let label = document.createElement("label");
+    label.classList.add("form-check-label");
+    label.setAttribute("for", friends[i].username);
+    label.textContent = friends[i].username;
+    li.appendChild(label);
   }
 }
 
-function saveUserInformation() {
+async function setPlayCode() {
+  let playcode = document.getElementById("playcode-input").value;
+  let token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (playcode != "") {
+    let response = await fetch("http://localhost/api/profile/update", {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ playcode }),
+    });
+    if (!response.ok) alert("Hata!");
+    let response_data = await response.json();
+    let authData = JSON.parse(localStorage.getItem(0));
+    authData.user = response_data.new_user;
+    localStorage.setItem(0, JSON.stringify(authData));
+  } else {
+    document.getElementById("play-code").click();
+    alert("Please enter play code");
+  }
+}
+
+function isBlock(username, friend, access_token) {
+  let myBlock = fetch(`http://localhost/api/interacts/blacklist`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  }).then((data) => data.json());
+
+  for (let i = 0; i < myBlock.length; i++) {
+    if (myBlock[i].username == friend) {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("friend-unblock-button").style.display = "block";
+
+      return;
+    }
+  }
+}
+
+function isMyFriend(username, friend, access_token) {
+  if (username == friend) {
+    document.getElementById("add-friend-button").style.display = "none";
+    return;
+  } else document.getElementById("add-friend-button").style.display = "block";
+
+  let myFriend = fetch(`http://localhost/api/interacts/friends`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  }).then((data) => data.json());
+
+  for (let i = 0; i < myFriend.length; i++) {
+    if (myFriend[i].username == friend) {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
+      return;
+    }
+  }
+}
+
+function isPlayCode(data) {
+  console.log(data.has_playcode);
+  if (data.has_playcode == undefined || data.has_playcode == false) {
+    document.getElementById("play-code").click();
+    return false;
+  }
+  return true;
+}
+
+async function loadUserInformation(username, access_token) {
+  let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
+    headers: {
+      Authorization: "Bearer " + access_token,
+    },
+  }).then((data) => data.json());
+
+  let dataTournament = await fetch(
+    `http://localhost/api/tournaments/user/${username}`,
+    {
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    }
+  ).then((data) => data.json());
+
+  let dataMatches = await fetch(`http://localhost/api/matches/${username}`, {
+    headers: {
+      Authorization: "Bearer " + access_token,
+    },
+  }).then((data) => data.json());
+
+  localStorage.setItem("my-profile", JSON.stringify(userIdentity));
+  document.getElementById("nickname").innerHTML = userIdentity.user.username;
+  document.getElementById("pr-name").innerHTML = userIdentity.user.name; //username html
+  document.getElementById("pr-surname").innerHTML = userIdentity.user.surname; //surname add html
+  document.getElementById("profile-photo").src = userIdentity.user.avatarURI;
+  document.getElementById("total_tournament").innerHTML = dataTournament.length; //Torunament add html
+  document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
+  document.getElementById("enemy").innerHTML = userIdentity.user.rival;
+
+  let resultData = { userIdentity, dataTournament, dataMatches };
+  isPlayCode(userIdentity.user);
+  return resultData;
+}
+
+async function saveUserInformation() {
   //user save is not enough because you have to send it to backend
-  var user = JSON.parse(localStorage.getItem(1));
-  user.username = document.getElementById("nicknameInput").value;
+  var user = JSON.parse(localStorage.getItem("my-profile"));
+  var data = JSON.parse(localStorage.getItem(0));
 
-  user.name = document.getElementById("nameInput").value;
-  user.surname = document.getElementById("surnameInput").value;
-  loadUserInformation();
+  user.user.username = document.getElementById("nicknameInput").value;
+  user.user.name = document.getElementById("nameInput").value;
+  user.user.surname = document.getElementById("surnameInput").value;
+  if (document.getElementById("playcode-input").value != "")
+    user.user.playcode = document.getElementById("playcode-input").value;
+  localStorage.setItem("my-profile", JSON.stringify(user));
+
+  let userphoto = document.getElementById("profile-photo").src;
+  var response = {
+    username: user.user.username,
+    name: user.user.name,
+    surname: user.user.surname,
+  };
+
+  if (user.user.avatarURI != userphoto) {
+    let photo = await fetch("http://localhost/api/uploads/upload", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${data.access_token}`,
+      },
+      body: JSON.stringify({
+        avatarURI: userphoto,
+      })
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error sending friend request");
+      }
+      return response.json();
+    }).catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+    response.avatarURI = photo.file;
+  }
+  
+  if (user.user.playcode != "") response.playcode = user.user.playcode;
+
+  await fetch("http://localhost/api/profile/update", {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${data.access_token}`,
+    },
+    body: JSON.stringify(response),
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Error update");
+    }
+    return response.json();
+  }).catch((error) => {
+    console.error("Fetch error:", error);
+  });
+
+  loadUserInformation(user.user.username, data.access_token);
   closeUpdateProfile();
 }
 
@@ -213,7 +493,7 @@ function removeSubstring(originalString, substringToRemove) {
 }
 
 function updateProfile() {
-  var user = JSON.parse(localStorage.getItem(1));
+  var user = JSON.parse(localStorage.getItem("my-profile"));
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";
   document.getElementById("save-icon").style.display = "block";
@@ -224,12 +504,13 @@ function updateProfile() {
   document.getElementById("information").style.display = "block";
   document.getElementById("questions").style.display = "block";
 
-  document.getElementById("nicknameInput").value = user.username;
-  document.getElementById("nameInput").value = user.name;
-  document.getElementById("surnameInput").value = user.surname;
-
+  document.getElementById("nicknameInput").value = user.user.username;
+  document.getElementById("nameInput").value = user.user.name;
+  document.getElementById("surnameInput").value = user.user.surname;
+  if (document.getElementById("playcod").value != "")
+    document.getElementById("playcode-input").value = user.user.playcode;
   document.getElementById("profile-photo").style.cursor = "pointer";
-};
+}
 
 function closeUpdateProfile() {
   var profil_photo = document.getElementById("profile-photo");
@@ -244,7 +525,7 @@ function closeUpdateProfile() {
   document.getElementById("information").style.display = "none";
   document.getElementById("questions").style.display = "none";
   profil_photo.style.cursor = "default";
-};
+}
 
 function clickOpcity(section, othSection) {
   let target = document.getElementById(section);
@@ -258,327 +539,22 @@ function clickOpcity(section, othSection) {
   othTarget.style.opacity = 1;
   event.style.display = "block";
   othEvent.style.display = "none";
-};
+}
 
 function changePhoto() {
   let control = document.getElementById("close-icon").style;
   if (control.display == "block") {
     document.getElementById("fileInput").click();
   }
-};
+}
 
 function outLogin() {
   localStorage.removeItem(0);
   window.location.href = "/login";
 }
 
-//livechat.js
-/*
-people = {
-  0: {
-    name: "Harvey Specter",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message:
-          "What are you talking about? You do what they say or they shoot you.",
-        date: "2021-01-01",
-        time: "13:00",
-        type: "replies",
-      },
-      {
-        message:
-          "What are you talking about? You do what they say or they shoot you.",
-        date: "2021-01-01",
-        time: "15:00",
-        type: "sent",
-      },
-      {
-        message: "get off",
-        date: "2021-01-01",
-        time: "17:00",
-        type: "sent",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/harveyspecter.png",
-    status: "online",
-  },
-  1: {
-    name: "Charles Forstman",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "replies",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/charlesforstman.png",
-    status: "offline",
-  },
-  2: {
-    name: "Jonathan Sidwell",
-    messages: [
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "sent",
-      },
-      {
-        message: "Merhaba",
-        date: "2021-01-01",
-        time: "12:00",
-        type: "replies",
-      },
-    ],
-    profile_photo: "http://emilcarlsson.se/assets/jonathansidwell.png",
-    status: "online",
-  },
-};
-
-function sendMessage(sendType, photoWho, sendText) {
-  var message = document.createElement("li");
-  message.classList.add(sendType);
-
-  var img = document.createElement("img");
-  img.src = photoWho;
-  message.appendChild(img);
-
-  var para = document.createElement("p");
-  para.textContent = sendText;
-  message.appendChild(para);
-
-  document.getElementById("message").appendChild(message);
-  console.log(message);
-  document.querySelector(".messages").scrollTop =
-    document.querySelector(".messages").scrollHeight;
-}
-
-function clearMessages() {
-  var message = document.getElementById("message");
-  while (message.firstChild) {
-    message.removeChild(message.firstChild);
-  }
-}
-
-function disableChat() {
-  document
-    .getElementById("contact-selected-profile-photo")
-    .setAttribute(
-      "src",
-      "https://img.freepik.com/free-photo/abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1708365600&semt=ais"
-    );
-  document.getElementById("contact-selected-profile-name").innerHTML = "";
-  document.getElementById("message-input").style.display = "none";
-}
-
-function selectedPerson(name) {
-  //zamana göre mesajları gösterme
-  console.log(name);
-  clearMessages();
-  document.getElementById("message-input").style.display = "block";
-  for (i = 0; i < Object.keys(people).length; i++) {
-    if (people[i].name == name) {
-      document.getElementById(people[i].name).classList.add("active");
-      document
-        .getElementById("contact-selected-profile-photo")
-        .setAttribute("src", people[i].profile_photo);
-      document.getElementById("contact-selected-profile-name").innerHTML =
-        people[i].name;
-      for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-        sendMessage(
-          people[i].messages[j].type,
-          people[i].profile_photo,
-          people[i].messages[j].message
-        );
-      }
-    } else {
-      document.getElementById(people[i].name).classList.remove("active");
-    }
-  }
-}
-
-function loadContact() {
-  var contact = document.getElementById("add-contacts");
-
-  for (var i = 0; i < Object.keys(people).length; i++) {
-    var add = document.createElement("li");
-    add.classList.add("add");
-
-    var wrapDiv = document.createElement("div");
-    wrapDiv.classList.add("wrap");
-
-    var statusSpan = document.createElement("span");
-    statusSpan.classList.add(("contact-status", people[i].status));
-    wrapDiv.appendChild(statusSpan);
-
-    var img = document.createElement("img");
-    img.setAttribute("src", people[i].profile_photo);
-    img.setAttribute("alt", "");
-    wrapDiv.appendChild(img);
-
-    var metaDiv = document.createElement("div");
-    metaDiv.classList.add("meta");
-
-    var namePara = document.createElement("p");
-    namePara.classList.add("name");
-    namePara.textContent = people[i].name;
-    metaDiv.appendChild(namePara);
-
-    wrapDiv.appendChild(metaDiv);
-    add.appendChild(wrapDiv);
-
-    contact.innerHTML +=
-      '<li id="' +
-      people[i].name +
-      '"' +
-      "class='contact' onclick=selectedPerson(id)>" +
-      add.innerHTML +
-      "</li>";
-  }
-}
-
-function connectWebSocket() {
-  var socket = new WebSocket("ws://localhost:8080");
-
-  // Bağlantı açıldığında
-  socket.addEventListener("open", function (event) {
-    console.log("WebSocket bağlantısı açıldı.");
-  });
-
-  // Mesaj alındığında
-  socket.addEventListener("message", function (event) {
-    var outputDiv = document.getElementById("output");
-    outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
-  });
-
-  // Bağlantı kapandığında
-  socket.addEventListener("close", function (event) {
-    console.log("WebSocket bağlantısı kapandı.");
-  });
-
-  // Hata oluştuğunda
-  socket.addEventListener("error", function (event) {
-    console.error("WebSocket hatası:", event);
-  });
-
-  socket.send;
-}
-
-
-
-var messagesElement = document.querySelector(".messages");
-if (messagesElement) {
-  messagesElement.scrollTop = document.body.scrollHeight;
-}
-
-document.querySelector("#profile-img").addEventListener("click", function () {
-  document.querySelector("#status-options").classList.toggle("active");
-});
-
-Array.from(document.querySelectorAll(".expand-button")).forEach(function (
-  element
-) {
-  element.addEventListener("click", function () {
-    document.querySelector("#profile").classList.toggle("expanded");
-    document.querySelector("#contacts").classList.toggle("expanded");
-  });
-});
-
-Array.from(document.querySelectorAll("#status-options ul li")).forEach(
-  function (element) {
-    element.addEventListener("click", function () {
-      document.querySelector("#profile-img").className = "";
-      Array.from(document.querySelectorAll("#status-options ul li")).forEach(
-        function (innerElement) {
-          innerElement.classList.remove("active");
-        }
-      );
-      this.classList.add("active");
-
-      if (
-        document.querySelector("#status-online").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("online");
-      } else if (
-        document.querySelector("#status-away").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("away");
-      } else if (
-        document.querySelector("#status-busy").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("busy");
-      } else if (
-        document.querySelector("#status-offline").classList.contains("active")
-      ) {
-        document.querySelector("#profile-img").classList.add("offline");
-      } else {
-        document.querySelector("#profile-img").className = "";
-      }
-
-      document.querySelector("#status-options").classList.remove("active");
-    });
-  }
-);
-
-
-
-function newMessage() {
-  //mesaj göndermek için
-  message = $(".message-input input").val();
-  if ($.trim(message) == "") {
-    return false;
-  }
-  $(
-    '<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' +
-      message +
-      "</p></li>"
-  ).appendTo($(".messages ul"));
-  $(".message-input input").val(null);
-  $(".contact.active .preview").html("<span>You: </span>" + message);
-  $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-}
-
-$(".submit").click(function () {
-  newMessage();
-});
-
-$(window).on("keydown", function (e) {
-  if (e.which == 13) {
-    newMessage();
-    return false;
-  }
-});
-
-const searchAlgorithm = () => {
-  var search = document.querySelector("#search input").value;
-
-  for (var i = 0; i < Object.keys(people).length; i++) {
-    if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
-      document.getElementById(people[i].name).style.display = "block";
-    } else {
-      document.getElementById(people[i].name).style.display = "none";
-    }
-  }
-};
-
-// prototip yap backend hazır olduğunda backendden alıp
-//göster
-*/
-
 //profile-detail.js
+/*
 function setRate(win, lose, elementId) {
   var matchesCount = win + lose;
   var winsCount = win;
@@ -601,100 +577,199 @@ function setRate(win, lose, elementId) {
     },
   });
   return myPieChart;
-}
-/*
+}*/
 
-/*(function () {
-  setRate(37, 63, "myPieChart");
-  setRate(2, 1, "myPieChart2");
-})();
-
-//game.js
-/*
-var canvas = document.querySelector(".game-container");
-var ctx = canvas.getContext("2d");
-
-var ball = document.querySelector(".ball");
-var paddle1 = document.querySelector(".player-bar-1");
-var paddle2 = document.querySelector(".player-bar-2");
-
-var ballSpeedX = 2;
-var ballSpeedY = 2;
-
-function update() {
-  var ballRect = ball.getBoundingClientRect();
-  var paddle1Rect = paddle1.getBoundingClientRect();
-  var paddle2Rect = paddle2.getBoundingClientRect();
-
-  if (ballRect.left < paddle1Rect.right || ballRect.right > paddle2Rect.left) {
-    ballSpeedX *= -1;
+async function getNotification() {
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  let data = await fetch("http://localhost/api/interacts/invitations/", {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  })
+    .then((response) => response.json())
+    .catch((error) => console.log(error));
+  console.log("data:", data);
+  document.getElementById("notify-list").innerHTML = "";
+  for (let i = 0; i < data.length; i++) {
+    let msg = data.content[i].to.username + ": " + data.content[i].note;
+    addNotify(msg, data.content[i].invite_code, "responseFriend");
   }
-
-  if (ballRect.top < 0 || ballRect.bottom > canvas.height) {
-    ballSpeedY *= -1;
-  }
-
-  ball.style.left = ball.offsetLeft + ballSpeedX + "px";
-  ball.style.top = ball.offsetTop + ballSpeedY + "px";
-
-  requestAnimationFrame(update);
+  return data;
 }
 
-document.addEventListener("keydown", function (event) {
-  var paddleSpeed = 5;
+async function requestAddFriend() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  console.log("nickname " + profileNickName);
+  await fetch("http://localhost/api/interacts/friends/add", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      username: profileNickName,
+      message: "would you like to be friends?",
+    }),
+  })
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
 
-  if (event.key === "w") {
-    paddle1.style.top = paddle1.offsetTop - paddleSpeed + "px";
-  } else if (event.key === "s") {
-    paddle1.style.top = paddle1.offsetTop + paddleSpeed + "px";
-  }
+async function requestDeleteFriend() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  console.log("nickname " + profileNickName);
+  await fetch(
+    `http://localhost/api/interacts/friends/delete/${profileNickName}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  )
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
 
-  if (event.key === "ArrowUp") {
-    paddle2.style.top = paddle2.offsetTop - paddleSpeed + "px";
-  } else if (event.key === "ArrowDown") {
-    paddle2.style.top = paddle2.offsetTop + paddleSpeed + "px";
-  }
-});
-*/
+async function requestBlock() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  await fetch("http://localhost/api/interacts/blacklist/add", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      username: profileNickName,
+    }),
+  })
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("friend-unblock-button").style.display = "block";
+
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
+
+async function requestUnBlock() {
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  await fetch(
+    `http://localhost/api/interacts/blacklist/${profileNickName}/delete`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  )
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "block";
+      document.getElementById("friend-unblock-button").style.display = "none";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
 
 //login.js
-async function takeUrl() {
-  myUrl = window.location.search;
-  searchParams = new URLSearchParams(myUrl);
 
-  if (myUrl.includes("/login") && searchParams.has("code")) {
-    await fetch("http://localhost/api/auth/sign-in/42", {
-      method: "POST",
+document
+  .getElementById("click-search")
+  .addEventListener("click", async function (event) {
+    profile = document.getElementById("input-search").value;
+    event.preventDefault();
+    let users = await fetch(`http://localhost/api/users/search/${profile}`, {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify({
-        code: searchParams.get("code"),
-      }),
     })
       .then(async (response) => {
-        if (!response.ok) return new Error("Respone is not ok");
+        if (!response.ok) throw new Error("User not found");
         return response.json();
       })
-      .then((data) => {
-        console.log(data);
-
-        localStorage.setItem(0, JSON.stringify(data));
-        window.location.href = "/";
-        return data;
-      })
       .catch((error) => {
-        alert(error);
+        console.log(error);
       });
+    if (users == undefined) {
+      alert("User not found");
+      return;
+    }
+    let newUrl = `/users/${profile}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
+    console.log("pushState: " + newUrl);
+    await switchPages(newUrl);
+  });
+
+//back-transition
+window.addEventListener("popstate", async function (event) {
+  if (event.state) {
+    let currentUrl = window.location.pathname;
+    event.preventDefault();
+    alert("prevent Default knk: " + currentUrl);
+    await switchPages(currentUrl);
+  }
+});
+
+function gamePage() {
+  if (window.location.pathname === "/ai") {
+    const nav = document.getElementById("index-navbar");
+
+    if (nav) {
+      nav.style.display = "none";
+    }
   }
 }
 
-//back-transition
-window.onpopstate = async function (event) {
-  alert("url degsiti");
-  if (event.state) {
-    var currentUrl = window.location.pathname;
-    event.preventDefault();
-    await switchPages(currentUrl);
-  }
-};
+gamePage();

@@ -1,26 +1,27 @@
 from django.shortcuts import render
-
+import re
 routes = {
-    '': 'main.html',
-    'game': 'game.html',
-    'login': 'login.html',
-    'tournament': 'tournament.html',
-    'about': 'about.html',
-    'profile-detail': 'profile-detail.html',
-    'livechat': 'livechat.html',
-    'match': 'match.html',
-    'score': 'score.html',
-    'finish-match': 'finish-match.html',
+    '^(\?.*|$)': 'main.html',
+    '^game(\/.*$|\?.*|$)': 'game.html',
+    '^login(\/.*$|\?.*|$)': 'login.html',
+    '^tournament(\/.*$|\?.*|$)': 'tournament.html',
+    '^about(\/.*$|\?.*|$)': 'about.html',
+    '^users(\/.*$|\?.*|$)': 'profile-detail.html',
+    '^livechat(\/.*$|\?.*|$)': 'livechat.html',
+    '^match(\/.*$|\?.*|$)': 'match.html',
+    '^score(\/.*$|\?.*|$)': 'score.html',
+    '^finish-match(\/.*$|\?.*|$)': 'finish-match.html',
+    '^ai(\/.*$|\?.*|$)': 'ai.html',
 }
 
 
 def get_requested_file(url: str, routes: dict) -> str:
-    query_param_index = url.find('?')
-    url_dir = url[: query_param_index if query_param_index > 0 else len(url)]
-    sub_url = url_dir.split("/")[0]
-    for route_dir in routes.keys():
-        if route_dir == sub_url:
-            return routes.get(route_dir)
+    for route_pattern in routes.keys():
+        regex_match = re.match(route_pattern, url)
+        if regex_match is not None:
+            import sys
+            print(route_pattern, url, regex_match, file=sys.stderr)
+            return routes[route_pattern]
     return "error-404.html"
 
 

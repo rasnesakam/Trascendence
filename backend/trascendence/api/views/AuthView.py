@@ -6,7 +6,7 @@ import requests
 import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
-from trascendence.core.token_manager import generate_token
+from trascendence.core.token_manager import generate_refresh_token, generate_access_token
 from ..serializers import serialize_json
 from ...middleware.validators import request_body, str_field, number_field
 from trascendence.api.api_42 import get_user_info
@@ -18,19 +18,20 @@ from django.db.models import Q
 @request_body(
     content_type="application/json",
     fields={
-        "usernameOrEmail": str_field(required=True),
+        "username": str_field(required=True),
         "password": str_field(required=True)
     }
 )
 def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
-    query = UserModel.objects.filter(Q(username=content['usernameOrEmail']) | Q(email=content['usernameOrEmail']))
+    query = UserModel.objects.filter(Q(username=content['username']) | Q(email=content['username']))
     if not query.exists():
         return HttpResponseNotFound(json.dumps({'message': 'user not found'}), content_type="application/json")
     user = query.first()
     hasher = BCryptPasswordHasher()
     if hasher.verify(content.get('password'), user.password):
-        token = generate_token({'sub': user.username})
-        return JsonResponse(auth_dto(user, token), status=200)
+        access_token = generate_access_token(user)
+        refresh_token = generate_refresh_token(user)
+        return JsonResponse(auth_dto(user, access_token, refresh_token), status=200)
     return HttpResponseForbidden(json.dumps({'message': 'Invalid credentials.'}), content_type='application.json')
 
 
@@ -43,7 +44,13 @@ def sign_in(request: HttpRequest, content: dict) -> HttpResponse:
 )
 def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     code = content["code"]
-    response = get_42_token(code)
+    print(code)
+    try:
+        response = get_42_token(code)
+    except Exception as e:
+        import sys
+        print(str(e), file=sys.stderr)
+        return JsonResponse({"error": str(e)}, status=500)
     if response["ok"]:
         created_new = False
         token = response["content"]["access_token"]
@@ -63,8 +70,10 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
                 intra_login=True
             )
             created_new = True
-        token = generate_token({"sub": user_db.username})
-        return JsonResponse(auth_dto(user_db, token), status=201 if created_new else 200)
+        access_token = generate_access_token(user_db)
+        refresh_token = generate_refresh_token(user_db)
+        dto = auth_dto(user_db, access_token, refresh_token)
+        return JsonResponse(dto, status=201 if created_new else 200)
     return HttpResponseForbidden(json.dumps({"message": "code is invalid", "response": response}), content_type='application/json')
 
 
@@ -90,25 +99,32 @@ def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
         surname=content["surname"],
         username=content['username'],
         email=content['email'],
-        avatarURI="default.jpeg",
+        avatarURI="http://localhost/api/media/default.jpeg",
         password=encoded_password,
         intra_login=False
     )
-    token = generate_token({"sub": user.username})
-    return JsonResponse(auth_dto(user, token), status=201)
+    access_token = generate_access_token(user)
+    refresh_token = generate_refresh_token(user)
+    return JsonResponse(auth_dto(user, access_token, refresh_token), status=201)
 
 
 @require_http_methods(['POST'])
-@authorize
+@authorize()
 def sign_out(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"message": "Not Supported Yet."}, status=500)
 
 
 @require_http_methods(['GET'])
-@authorize
+@authorize()
 def verify_token(request):
-    try:
-        user = UserModel.objects.get(username=request.auth_info["sub"])
-        return JsonResponse(json.dumps(auth_dto(user)), status=200)
-    except UserModel.DoesNotExist:
-        return HttpResponseForbidden()
+    dto = request.auth_info.token_info
+    return JsonResponse(dto, status=200)
+
+
+@require_http_methods(['GET'])
+@authorize(token_type="refresh")
+def refresh_token(request: HttpRequest) -> HttpResponse:
+    auth_info = getattr(request, "auth_info")
+    user = auth_info.user
+    access_token = generate_access_token(user)
+    return JsonResponse(auth_dto(user, access_token, auth_info.token))

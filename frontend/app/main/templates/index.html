@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 
-
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,23 +29,35 @@
 					<li class="nav-item">
 						<a id="/about" class="nav-link" onclick="router()" href="/about">About</a>
 					</li>
-
+					<li class="nav-item dropdown" style="width: 250px;">
+						<button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+							aria-expanded="false" onclick="getNotification()">
+							<svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor"
+								viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round"
+									d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0">
+								</path>
+							</svg>
+						</button>
+						<ul id="notify-list" class="overflow-y-scroll dropdown-menu" style="height: 2x00px;">
+							<!--notification added-->
+						</ul>
+					</li>
 				</ul>
 				<form class="d-flex" role="search">
-					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-					<button class="btn btn-outline-light" type="submit">
+					<input id="input-search" class="form-control me-2" type="search" placeholder="Search"
+						aria-label="Search" />
+					<button id="click-search" class="btn btn-outline-light" type="submit">
 						Search
 					</button>
-					<button id="out-login" class="btn btn-outline-white ms-2" style="width: 90px; float: right;"
-						onclick="outLogin()">
+					<a id="out-login" class="btn btn-outline-white ms-2" style="width: 90px; float: right;"
+						href="/login">
 						Out
-					</button>
+					</a>
 				</form>
-
 			</div>
 		</div>
 	</nav>
-
 	<!-- NAVBAR END -->
 
 	<span id="index-body">
@@ -59,6 +70,8 @@
 		</script>
 	<script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 	<script src="/static/js/index.js"></script>
+	<!--<script src="/static/js/controller.js"></script>-->
+	<script src="/static/js/websocket.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<script src="https://use.typekit.net/hoy3lrg.js"></script>
 

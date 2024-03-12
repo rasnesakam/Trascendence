@@ -1,30 +1,9 @@
-function setRate(win, lose, elementId) {
-    var matchesCount = win + lose;
-    var winsCount = win;
-    var data = {
-        labels: ["Lose", "Win"],
-        datasets: [
-            {
-                data: [matchesCount, winsCount],
-                backgroundColor: ["#C60606", "#20C606"],
-            },
-        ],
-    };
-    var ctx = document.getElementById(elementId).getContext("2d");
-    Chart(ctx, {
-        type: "doughnut",
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        },
-    });
-    return myPieChart;
+var winPercentage = 58;
+var losePercentage = 42;
+
+function updateChart(win, lose) {
+    var chart = document.getElementById('chart');
+    chart.style.setProperty('--win-percentage', win + '%');
 }
 
-
-/*(function () {
-  setRate(37, 63, "myPieChart");
-  setRate(2, 1, "myPieChart2");
-})();
-*/
+updateChart(winPercentage, losePercentage);

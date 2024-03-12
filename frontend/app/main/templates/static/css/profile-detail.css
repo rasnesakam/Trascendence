@@ -49,7 +49,21 @@
     overflow: auto;
 }
 
-.profile-detail-chart {
-    width: 100%;
-    height: 100%;
+.friend-flex {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+}
+
+.friend-flex>.btn {
+    margin-left: 15px;
+}
+
+.chart-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(#00BFFF 0% var(--win-percentage),
+            #FF0000 var(--lose-percentage) 100%);
 }

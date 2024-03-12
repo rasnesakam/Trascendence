@@ -24,7 +24,7 @@
     <script src="{% static 'reconnecting-websocket.js' %}"></script>
 
     <script type="text/javascript">
-        let url = `ws://localhost:5353/ws/socket-server/`
+        let url = `ws://localhost:8000/ws/socket-server/`
 
         const chatSocket = new ReconnectingWebSocket(url)
         chatSocket.addEventListener('open', function(){

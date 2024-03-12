@@ -43,6 +43,14 @@ services:
   #    - 8080:8080
   #  networks:
   #    - my_network
+  websocket:
+    build:
+      context: ./websocket
+      dockerfile: Dockerfile
+    networks:
+      - my_network
+    expose:
+      - 8000
   backend:
     build:
       context: ./backend

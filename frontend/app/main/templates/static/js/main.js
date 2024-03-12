@@ -1,28 +1,3 @@
-function loadUserInformation() {
-    document.getElementById("nickname").innerHTML = user.nickname || "Nickname";
-    document.getElementById("pr-name").innerHTML = "Name: " + user.name;
-    document.getElementById("pr-surname").innerHTML = "Surname: " + user.surname;
-    document.getElementById("profile-photo").src = user.photo;
-
-    document.getElementById("total_time").innerHTML = user.total_time + " Min";
-    document.getElementById("total_tournament").innerHTML =
-        user.total_tournament + " Tournament";
-    document.getElementById("total_match").innerHTML =
-        user.total_match + " Match";
-    document.getElementById("enemy").innerHTML = user.enemy;
-}
-
-function saveUserInformation() {
-    user.nickname = document.getElementById("nicknameInput").value;
-
-    alert("file: " + user.photo);
-    user.name = document.getElementById("nameInput").value;
-    user.surname = document.getElementById("surnameInput").value;
-    loadUserInformation();
-    closeUpdateProfile();
-    alert("oli");
-}
-
 function removeSubstring(originalString, substringToRemove) {
     return originalString.replace(substringToRemove, "");
 }
@@ -81,12 +56,19 @@ function changePhoto() {
     }
 };
 
-function redirectToPvP() {
-    window.location.href = "pvp.html";
-};
-
-function redirectToAI() {
-    window.location.href = "ai.html";
-};
-
+function handleFileSelect() {
+   
+    var fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length > 0) {
+        var file = document.getElementById("fileInput").files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = function(e) {
+            console.log("target:" + e.target);
+            document.getElementById("profile-photo").src = e.target.result;
+        }
+    } else {
+        console.error("Please select file.");
+    }
+}
 

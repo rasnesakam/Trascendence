@@ -11,17 +11,19 @@ from trascendence.api.models import (
     Uploads
 )
 
+
 # User Dto
 def user_dto(usermodel: UserModel) -> dict:
     return {
-        "id": usermodel.id,
+        "id": str(usermodel.id),
         "name": usermodel.name,
         "surname": usermodel.surname,
         "name_surname": f"{usermodel.name} {usermodel.surname}",
-		"username": usermodel.username,
+        "username": usermodel.username,
         "email": usermodel.email,
-        "avatarURI": usermodel.avatarURI
-	}
+        "avatarURI": usermodel.avatarURI,
+        "has_playcode": usermodel.has_play_code
+    }
 
 
 # user list dto
@@ -35,111 +37,134 @@ def create_user_list(users: list[UserModel]) -> dict:
 # Friend dto
 def friend_dto(friend: Friends) -> dict:
     return {
-        "id": friend.id,
+        "id": str(friend.id),
         "pair_1": user_dto(friend.user_pair_1),
         "pait_2": user_dto(friend.user_pair_2)
-	}
+    }
 
 
 # Friend Invitation
 def friend_invitation_dto(invitaion: FriendInvitation) -> dict:
     return {
-        "id": invitaion.id,
+        "id": str(invitaion.id),
         "from": user_dto(invitaion.origin),
         "to": user_dto(invitaion.target),
-		"invite_code": invitaion.invite_code,
+        "invite_code": invitaion.invite_code,
         "note": invitaion.note
-	}
+    }
 
 
 # Blacklist
 def blacklist_dto(blacklist: BlackList) -> dict:
     return {
-        "id": blacklist.id,
+        "id": str(blacklist.id),
         "blocked_by": user_dto(blacklist.issuer),
         "user": user_dto(blacklist.user)
-	}
+    }
+
 
 # Tournament
-def tournament_dto(tournament: Tournaments) -> dict:
-    return {
-        "id": tournament.id,
-		"name": tournament.tournament_name,
+def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | None = None) -> dict:
+    dto = {
+        "id": str(tournament.id),
+        "name": tournament.tournament_name,
         "tournament_code": tournament.tournament_code,
-        "created_by": user_dto(tournament.created_at),
-	}
+        "created_by": user_dto(tournament.created_user),
+    }
+    if players is not None:
+        dto["players"] = {
+            "length": len(list),
+            "content": [tournament_player_dto(player) for player in players]
+        }
+    return dto
+
 
 # Tournament Invitation
 def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
     return {
-        "id": invitation.id,
+        "id": str(invitation.id),
         "to": invitation.target_user,
         "from": invitation.tournament.created_user,
         "invite_code": invitation.invite_code,
         "note": invitation.message
-	}
+    }
+
 
 # Tournament Player
 def tournament_player_dto(player: TournamentPlayers) -> dict:
     return {
-        "id": player.id,
-		"user": user_dto(player.user),
+        "id": str(player.id),
+        "user": user_dto(player.user),
         "tournament": tournament_dto(player.tournament),
         "stage": player.stage,
         "has_pair": player.has_pair,
         "pair_user": user_dto(player.pair_user) if player.pair_user is not None else None
-	}
+    }
+
 
 # Tournament Matches
 def tournament_match_dto(match: TournamentMatches) -> dict:
     return {
-        "id": match.id,
+        "id": str(match.id),
         "match": match_dto(match.match),
         "match_degree": match.match_priority
-	}
+    }
+
 
 # Matches
 def match_dto(match: Matches) -> dict:
     return {
-        "id": match.id,
+        "id": str(match.id),
         "tournament": tournament_dto(match.tournament) if match.tournament is not None else None,
         "home": {
             "user": user_dto(match.home),
             "score": match.score_home,
             "signature": match.home_signature
-		},
+        },
         "away": {
             "user": user_dto(match.away),
             "score": match.score_away,
             "signaure": match.away_signature
-		},
-		"played_time": match.played_time,
-	}
+        },
+        "played_time": match.played_time,
+    }
+
 
 # Uploads
 def uploads_dto(upload: Uploads) -> dict:
     return {
-        "id": upload.id,
+        "id": str(upload.id),
         "name": upload.name,
         "extension": upload.extension,
         "full_name": f"{upload.name}.{upload.extension}",
         "created_at": upload.created_at,
         "owner": user_dto(upload.owner)
-	}
+    }
 
 
 # Auth dto
-def auth_dto(usermodel: UserModel, token: str) -> dict:
+def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str) -> dict:
     return {
         "user": user_dto(usermodel),
-        "access_token": token
-	}
+        "access_token": access_token,
+        "refresh_token": refresh_token
+    }
+
 
 # Profile dto
-def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments]) -> dict:
+def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
     return {
         "user": user_dto(user),
-        "matches": [match_dto(match) for match in matches],
-        "tournament_matches": [match_dto(match.match) for match in tournament_matches[:5]],
-        "tournaments": [tournament_dto(tournament) for tournament in tournaments[:5]] 
-	}
+        "matches": list_dto([match_dto(match) for match in matches]),
+        "tournament_matches": list_dto([match_dto(match.match) for match in tournament_matches]),
+        "tournaments": list_dto([tournament_dto(tournament) for tournament in tournaments]),
+        "rival": user_dto(rival) if rival is not None else None
+    }
+
+
+# Other types
+def list_dto(dto_list: list) -> dict:
+    return {
+        "length": len(dto_list),
+        "content": dto_list
+    }
