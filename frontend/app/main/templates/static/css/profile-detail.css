@@ -59,6 +59,11 @@
     margin-left: 15px;
 }
 
+.card-body {
+    display: flex;
+    justify-content: center;
+}
+
 .chart {
     display: flex;
     justify-content: center;
@@ -71,5 +76,5 @@
     height: 400px;
     border-radius: 50%;
     background: conic-gradient(#00BFFF 0% var(--win-percentage),
-            #FF0000 var(--lose-percentage) 100%);
+            #FF0000 var(--lose-percentage) 0%);
 }
