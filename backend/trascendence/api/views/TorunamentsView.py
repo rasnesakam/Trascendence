@@ -27,7 +27,7 @@ RESOURCE_GROUP_TOURNAMENTS = "tournaments"
 def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     tournament_invitations = TournamentInvitations.objects.filter(target_user=user)
-    return JsonResponse(list_dto([tournament_invitation_dto(invite) for invite in tournament_invitations]), 200)
+    return JsonResponse(list_dto([tournament_invitation_dto(invitation) for invitation in tournament_invitations]), status=200)
     
 
 @require_http_methods(['GET'])
@@ -49,13 +49,16 @@ def accept_tournamet(request: HttpRequest, invitationcode: str) -> JsonResponse 
         tournament_invitation = TournamentInvitations.objects.get(target_user=user, invite_code__exact=invitationcode)
         tournament = tournament_invitation.tournament
         try:
-            unpaired_user = TournamentPlayers.objects.get(tournament=tournament_invitation.tournament, has_pair=False)
-            TournamentPlayers.objects.create(
-                tournament=tournament, user=tournament_invitation.target_user, has_pair=True, pair_user=unpaired_user
-            )
-            unpaired_user.has_pair = True
-            unpaired_user.pair_user = user
-            unpaired_user.save()
+            tournament_player = TournamentPlayers.objects.create(user=user, tournament=tournament)
+            unpaired_user = TournamentPlayers.objects.exclude(user=user).filter(tournament=tournament, has_pair=False).first()
+            if unpaired_user is not None:
+                unpaired_user.has_pair = True
+                unpaired_user.pair_user = tournament_player.user
+                unpaired_user.save()
+                tournament_player.pair_user = unpaired_user.user
+                tournament_player.has_pair = True
+                tournament_player.save()
+            tournament_invitation.delete()
         except TournamentInvitations.DoesNotExist:
             TournamentPlayers.objects.create(
                 tournament=tournament, user=tournament_invitation.target_user, has_pair=False, pair_user=None
@@ -106,7 +109,7 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 @authorize()
 def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("-stage")
-    if tournament_players.exists():
+    if len(tournament_players) == 0:
         return HttpResponseNotFound()
     return JsonResponse(list_dto([tournament_player_dto(match) for match in tournament_players]), status=200)
 

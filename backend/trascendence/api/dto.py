@@ -83,8 +83,8 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
 def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
     return {
         "id": str(invitation.id),
-        "to": invitation.target_user,
-        "from": invitation.tournament.created_user,
+        "to": user_dto(invitation.target_user),
+        "from": user_dto(invitation.tournament.created_user),
         "invite_code": invitation.invite_code,
         "note": invitation.message
     }
