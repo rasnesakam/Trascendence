@@ -27,11 +27,7 @@ RESOURCE_GROUP_TOURNAMENTS = "tournaments"
 def get_tournament_invitations(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
     user = request.auth_info.user
     tournament_invitations = TournamentInvitations.objects.filter(target_user=user)
-    response = {
-        "length": len(tournament_invitations),
-        "content": [tournament_invitation_dto(invite) for invite in tournament_invitations]
-    }
-    return JsonResponse(response, 200)
+    return JsonResponse(list_dto([tournament_invitation_dto(invite) for invite in tournament_invitations]), 200)
     
 
 @require_http_methods(['GET'])
@@ -85,22 +81,14 @@ def decline_tournament(request: HttpRequest, invitationcode: str) -> JsonRespons
 @authorize()
 def get_tournaments(request: HttpRequest) -> JsonResponse:
     tournaments = Tournaments.objects.all()
-    response = {
-        "length": len(tournaments),
-        "content": [tournament_dto(tournament) for tournament in tournaments]
-    }
-    return JsonResponse(response,status=200)
+    return JsonResponse(list_dto([tournament_dto(tournament) for tournament in tournaments]),status=200)
 
 
 @require_http_methods(['GET'])
 @authorize()
 def get_tournaments_for_user(request: HttpRequest, username: str) -> JsonResponse:
     tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user__username__exact=username)
-    response = {
-        "length": len(tournaments),
-        "content": [tournament_dto(tournament) for tournament in tournaments]
-    }
-    return JsonResponse(response, status=200)
+    return JsonResponse(list_dto([tournament_dto(tournament) for tournament in tournaments]), status=200)
 
 
 @require_http_methods(['GET'])
@@ -120,11 +108,7 @@ def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonRes
     tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("-stage")
     if tournament_players.exists():
         return HttpResponseNotFound()
-    response = {
-        "length": len(tournament_players),
-        "content": [tournament_player_dto(match) for match in tournament_players]
-    }
-    return JsonResponse(response, status=200)
+    return JsonResponse(list_dto([tournament_player_dto(match) for match in tournament_players]), status=200)
 
 
 
@@ -134,11 +118,7 @@ def get_tournament_matches(request: HttpRequest, tournamentcode: str) -> JsonRes
     tournament_matches = TournamentMatches.objects.filter(match__tournament__tournament_code__exact=tournamentcode)
     if tournament_matches.exists():
         return HttpResponseNotFound()
-    response = {
-        "length": len(tournament_matches),
-        "content": [tournament_match_dto(match) for match in tournament_matches]
-    }
-    return JsonResponse(response, status=200)
+    return JsonResponse(list_dto([tournament_match_dto(match) for match in tournament_matches]), status=200)
 
 
 @require_http_methods(['POST'])
@@ -183,7 +163,7 @@ def create_tournament(request: HttpRequest, content) -> JsonResponse:
             except Exception:
                 traceback.print_exc()
                 return HttpResponseServerError()
-        return JsonResponse({"message":f"Tournament {tournament.name} created."},status=201)
+        return JsonResponse(tournament_dto(tournament),status=201)
     except Exception:
         traceback.print_exc()
         return HttpResponseServerError()
