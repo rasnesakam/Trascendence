@@ -575,7 +575,7 @@ function outLogin() {
 
 async function getNotification() {
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  let data = await fetch("http://localhost/api/interacts/invitations/", {
+  let data = await fetch("http://localhost/api/interacts/invitations", {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
