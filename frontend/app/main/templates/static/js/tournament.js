@@ -126,4 +126,3 @@ var enter_tournament = setInterval(async () => {
 	loadTournament();
 	}
 }, 7000);
-

@@ -23,9 +23,13 @@ function sendMessage(sendType, sendText, targetUser) {
         messages.push(msg);
     console.log("sendMessage is: ", sendText);
     localStorage.setItem("messages", JSON.stringify(messages));
+
+    console.log("Hello world btekinli")
+    document.getElementById("message-input").value = "";
 }
+
 function clearMessages() {
-    document.getElementById("all-message").innerHTML = " ";
+    document.getElementById("all-message").innerHTML = "";
 }
 
 function disableChat() {
