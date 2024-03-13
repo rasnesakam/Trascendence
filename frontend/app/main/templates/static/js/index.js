@@ -199,11 +199,9 @@ async function createTournament() {
     })
   })
     .then((response) => response.json())
-    .then(responseData => {
-      console.log("responseData: ", responseData);
-    })
     .catch((error) => console.log(error));
 
+  console.log("to_tournament:-", data);
   let go_tournament = document.getElementById("to_tournament");
   go_tournament.href = `/tournament?${data.tournament_code}`;
   go_tournament.click();
