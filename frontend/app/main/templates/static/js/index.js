@@ -299,26 +299,29 @@ function profile_load() {
 }
 
 async function loadInvateFriend() {
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
   let list = document.getElementById("friend-for-tournament");
 
+  console.log("friends", friends);
+  list.innerText = "";
   for (let i = 0; i < friends.length; i++) {
     let li = document.createElement("li");
-    li.classList.add("list-group-item");
-    list.appendChild(li);
+    li.classList.add("list-group-item");   
 
     let input = document.createElement("input");
     input.classList.add("form-check-input");
     input.setAttribute("type", "checkbox");
-    input.setAttribute("value", friends[i].username);
-    input.setAttribute("id", friends[i].username);
+    input.setAttribute("value", friends.content[i].username);
+    input.setAttribute("id", friends.content[i].username);
     li.appendChild(input);
 
     let label = document.createElement("label");
     label.classList.add("form-check-label");
-    label.setAttribute("for", friends[i].username);
-    label.textContent = friends[i].username;
+    label.setAttribute("for", friends.content[i].username);
+    label.textContent = friends.content[i].username;
     li.appendChild(label);
+    list.appendChild(li);
   }
 }
 

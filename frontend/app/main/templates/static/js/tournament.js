@@ -20,8 +20,8 @@ async function startTournament(tournament_code) {
 		.catch((error) => console.log(error));
 
 	let myHref = `/match?tournament=${tournament_code}&match=${match_code}`;
-	document.getElementById("to_match").setAttribute("href", myHref);
-	document.getElementById("to_match").onclick();
+  window.history.pushState({ path: myHref }, "", myHref);
+  switchPages(window.location.href);
 }
 
 //tournament kodunu url içerisine al
@@ -39,7 +39,6 @@ function putPhotoTournament()
 			{
 				if (user.stage == j)
 				{
-          console.log(i,j)
 					document.querySelectorAll(`.state-${i}-${j}`)[0].src = user.user.avatarURI;
 					if (j == 2 || j == 4)  
 						document.querySelectorAll(`.state-${i}-${j - 1}`)[0].src = user.pair_user.avatarURI;
@@ -59,7 +58,7 @@ async function loadTournament()
 }
 
 // Set the date we're counting down to
-var countDownDate = new Date().getTime() + 14000;
+var countDownDate = new Date().getTime() + 140000;
 
 // Update the count down every 1 second
 var timer = setInterval(function() {
@@ -81,6 +80,7 @@ var timer = setInterval(function() {
   if (distance < 0) {
     document.getElementById("tournament-timer").innerText = "CANCELLED";
     clearInterval(timer)
+    clearInterval(enter_tournament)
     window.history.pushState({ path: "/" }, "", "/");
     switchPages(window.location.href);
   }
@@ -88,9 +88,9 @@ var timer = setInterval(function() {
 console.log(timer)
 
 var enter_tournament = setInterval(async () => {
-  let urlSearchParam = new URLSearchParams(window.location.search)
+	let urlSearchParam = new URLSearchParams(window.location.search)
 	let tournament_code = urlSearchParam.get("tournament");
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+	let access_token = JSON.parse(localStorage.getItem(0)).access_token;
 	users = await fetch(`http://localhost/api/tournaments/${tournament_code}/players`,
 		{
 			headers: {
@@ -98,22 +98,32 @@ var enter_tournament = setInterval(async () => {
 				Authorization: `Bearer ${access_token}`,
 			},
 		})
-		.then((response) => response.json())
-		.catch((error) => console.log(error));
-
-  let match_making = 0;
-  for (let i = 0; i < users.length; i++)
-  {
+	.then((response) => response.json())
+	.catch((error) => console.log(error));
+	let pairs = []
+	users.content.forEach((player) =>{
+		if (player.has_pair){
+			let pair1 = [player.user, player.pair_user]
+			let pair2 = [player.pair_user, player.user]
+			if (pairs.indexOf(pair1) == -1 && pairs.indexOf(pair2))
+				pairs.push(pair1)
+		}
+	});
+	console.log(pairs)
+	let match_making = 0;
+	for (let i = 0; i < users.length; i++)
+	{
 	putPhotoTournament();
 	if (users.content[i].has_pair == true)
 		match_making++;
-  }
-  if (match_making == 4)
-  {
+	}
+	console.log("countMatchMaking: ", match_making);
+	if (match_making > 3)
+	{
 	clearInterval(timer);
 	document.getElementById("tournament-timer").style.display = "none";
-    clearInterval(enter_tournament);
-    startTournament(tournament_code);
-  }
+	clearInterval(enter_tournament);
+	loadTournament();
+	}
 }, 7000);
 
