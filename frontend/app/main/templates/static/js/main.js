@@ -57,13 +57,13 @@ function changePhoto() {
 };
 
 function handleFileSelect() {
-
+   
     var fileInput = document.getElementById("fileInput");
     if (fileInput.files.length > 0) {
         var file = document.getElementById("fileInput").files[0];
         var reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onloadend = function (e) {
+        reader.onloadend = function(e) {
             console.log("target:" + e.target);
             document.getElementById("profile-photo").src = e.target.result;
         }
@@ -71,46 +71,3 @@ function handleFileSelect() {
         console.error("Please select file.");
     }
 }
-
-function setMatches(matches, username) {
-    let added = document.getElementById("matchList");
-    added.innerHTML = "";
-    console.log("matches: ", matches);
-    if (matches == undefined) return;
-    for (let i = 0; i < matches.length; i++) {
-        let li = document.createElement("li");
-        li.classList.add(
-            "list-group-item",
-            "d-flex",
-            "justify-content-between",
-            "align-items-center"
-        );
-        added.appendChild(li);
-
-        let span1 = document.createElement("span");
-        span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
-        li.appendChild(span1);
-
-        let span2 = document.createElement("span");
-        span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
-        li.appendChild(span2);
-
-        if (matches.matches.score_home > matches.score_away)
-            if (matches.home == username) li.classList.add("bg-success");
-            else li.classList.add("bg-danger");
-        else if (matches.away == username) li.classList.add("bg-success");
-        else li.classList.add("bg-danger");
-    }
-}
-
-function main_load() {
-    let userAccess = JSON.parse(localStorage.getItem(0));
-    let username = userAccess.user.username;
-    let access_token = userAccess.access_token;
-
-    console.log("access_token: " + access_token);
-    let data = loadUserInformation(username, access_token);
-    setTournamentList(data.dataTournament);
-    setMatches(data.dataMatches);
-}
-
