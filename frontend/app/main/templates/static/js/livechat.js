@@ -1,3 +1,6 @@
+var user_data = JSON.parse(localStorage.getItem(0));
+
+
 function sendMessage(sendType, sendText, targetUser) {
     let li = document.createElement("li");
     li.classList.add("clearfix");
@@ -55,16 +58,32 @@ function showMessage(type, message) {
     }
 }
 
-function selectedPerson(name) {
+function fetchMessages(from){
+    let token = JSON.parse(localStorage.getItem(0)).access_token
+    let request = {
+        token,
+        type: "fetch-message",
+        target: from,
+        amount: 20
+    }
+    socket.send(JSON.stringify(request))
+}
+
+function selectedPerson(id) {
     //zamana göre mesajları gösterme
 
     let people = JSON.parse(localStorage.getItem("contant"))
-    console.log(name);
     clearMessages();
+    fetchMessages(id);
     document.getElementById("message-input").style.display = "block";
     // load previous messages
+    let formElement = document.getElementsByClassName("livechat-send-message")[0]
+    let hiddenInput = formElement.querySelector('input[name="to"]')
+    hiddenInput.type = "hidden"
+    hiddenInput.setAttribute("name", "to")
+    hiddenInput.value = id
     for (i = 0; i < people.length; i++) {
-        if (people[i].id == name) {
+        if (people[i].id == id) {
             document.getElementById(people[i].id).classList.add("active");
             document
                 .getElementById("contact-selected-profile-photo")
@@ -78,7 +97,7 @@ function selectedPerson(name) {
                 );
             }*/
         } else {
-            document.getElementById(name).classList.remove("active");
+            document.getElementById(id).classList.remove("active");
         }
     }
 
@@ -137,6 +156,15 @@ async function loadContent() {
         // <i class="fa fa-circle offline"></i> öğesini oluştur
         var circleIcon = document.createElement("i");
         circleIcon.classList.add("fa", "fa-circle");
+        // TODO: Send ping 
+        //setInterval(() => {
+        //    circleIcon.classList.remove("online");
+        //    circleIcon.classList.add("offline");
+        //    socket.send(JSON.stringify({
+        //        type: "ping",
+                
+        //    }))
+        //}, 5000)
         circleIcon.classList.add("offline");
         statusDiv.appendChild(circleIcon);
         console.log("list:", listItem);
@@ -144,34 +172,6 @@ async function loadContent() {
 }
 
 loadContent();
-
-function connectWebSocket() {
-    var socket = new WebSocket("ws://localhost:8080");
-
-    // Bağlantı açıldığında
-    socket.addEventListener("open", function (event) {
-        console.log("WebSocket bağlantısı açıldı.");
-    });
-
-    // Mesaj alındığında
-    socket.addEventListener("message", function (event) {
-        var outputDiv = document.getElementById("output");
-        outputDiv.innerHTML += "<p>Received: " + event.data + "</p>";
-    });
-
-    // Bağlantı kapandığında
-    socket.addEventListener("close", function (event) {
-        console.log("WebSocket bağlantısı kapandı.");
-    });
-
-    // Hata oluştuğunda
-    socket.addEventListener("error", function (event) {
-        console.error("WebSocket hatası:", event);
-    });
-
-    socket.send;
-}
-
 
 
 var messagesElement = document.querySelector(".messages");
@@ -192,7 +192,7 @@ Array.from(document.querySelectorAll(".expand-button")).forEach(function (
     });
 });
 
-Array.from(document.querySelectorAll("#status-options ul li")).forEach(
+Array.from(document.querySelectorAll("#status-options   i")).forEach(
     function (element) {
         element.addEventListener("click", function () {
             document.querySelector("#profile-img").className = "";
@@ -254,79 +254,25 @@ const searchAlgorithm = () => {
         });
 };
 
-//const searchAlgorithm = () => {
-//    var search = document.querySelector("#search input").value;
-
-//    for (var i = 0; i < Object.keys(people).length; i++) {
-//        if (people[i].name.toLowerCase().includes(search.toLowerCase())) {
-//            document.getElementById(people[i].name).style.display = "block";
-//        } else {
-//            document.getElementById(people[i].name).style.display = "none";
-//        }
-//    }
-//};
-
-// prototip yap backend hazır olduğunda backendden alıp
-//göster
-
-/*
-//profile-detail.js
-function setRate(win, lose, elementId) {
-  var matchesCount = win + lose;
-  var winsCount = win;
-  var data = {
-    labels: ["Lose", "Win"],
-    datasets: [
-      {
-        data: [matchesCount, winsCount],
-        backgroundColor: ["#C60606", "#20C606"],
-      },
-    ],
-  };
-  var ctx = document.getElementById(elementId).getContext("2d");
-  Chart(ctx, {
-    type: "doughnut",
-    data: data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    },
-  });
-  return myPieChart;
-}*/
-
-/*(function () {
-  setRate(37, 63, "myPieChart");
-  setRate(2, 1, "myPieChart2");
-})();
-*/
-
-
-var user_data = JSON.parse(localStorage.getItem(0));
-console.log(user_data)
-var socket_url = `ws://localhost/ws/socket-server/${user_data.user.id}`
-
-var socket = new WebSocket(socket_url)
-var socket_sent = { token: user_data.access_token, type: "new_message", message: "selam", to: user_data.user.id }
-
-socket.onopen = () => socket.send(JSON.stringify(socket_sent))
-
-socket.onmessage = (message) => {
-    console.log(message)
-    let jsonObj = JSON.parse(message.data);
-    sendMessage("other-message", jsonObj.message, jsonObj.from);
-}
 
 (function () {
     console.log("adding event listener to form");
     let form = document.getElementsByClassName("livechat-send-message")[0]
     form.addEventListener("submit", function (e) {
-        e.preventDefault();
+        e.preventDefault();        
         let formData = new FormData(e.target);
-        let targetUser = document.getElementById("add-contacts").getElementsByClassName("active")[0];
-        console.log("target: ", targetUser.id);
-        sendMessage("my-message", formData.get("content"), targetUser.id);
+        let targetUser = formData.get("to");
         console.log(targetUser)
-        socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser.id }))
+
+        console.log("target: ", targetUser.id);
+        sendMessage("my-message", formData.get("content"), targetUser);
+        socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser}))
     })
 })();
+
+
+socket.addEventListener('message', (message) => {
+    console.log(message)
+    let jsonObj = JSON.parse(message.data);
+    sendMessage("other-message", jsonObj.message, jsonObj.from);
+})
