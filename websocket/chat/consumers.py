@@ -27,13 +27,16 @@ APP_NAME = "localhost"
 class ChatConsumer(WebsocketConsumer):
 
     def send_chat_message(self, message, sendto):
+        new_message = Message.objects.create(author=self.room_group_name, audience=sendto, content=message)
         async_to_sync(self.channel_layer.group_send)(
             sendto,
             {
                 'type':'chat_message',
                 'message':{
+                    "type": "message",
                     "message": message,
-                    "from": self.room_group_name
+                    "from": self.room_group_name,
+                    "timestamp": new_message.timestamp.isoformat()
                 }
             }
         )
@@ -74,7 +77,6 @@ class ChatConsumer(WebsocketConsumer):
             {
                 "type": "chat_message",
                 "message": {
-                    "message": "Recieved pong message",
                     "type": "pong",
                     "from": self.room_group_name,
                 }
@@ -86,7 +88,6 @@ class ChatConsumer(WebsocketConsumer):
             {
                 "type": "chat_message",
                 "message": {
-                    "message": "pong",
                     "type": "ping",
                     "from": self.room_group_name,
                 }
@@ -96,17 +97,18 @@ class ChatConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
         user_id = self.room_group_name
         target_user_id = data.get("target")
-        fetch_amount = data.get("amount")
+        fetch_amount = int(data.get("amount"))
         messages = Message.last_n_messages(user_id, target_user_id, fetch_amount)
-
+        import sys
+        print("len of messages", len(messages), file=sys.stderr)
         for message in messages:
-            msg_json = json.dumps({
+            msg_json = {
+                "type": "message",
                 "message": message.content,
-                "sender": message.author,
-                "reciever": message.audience,
+                "from": message.author,
                 "timestamp": message.timestamp.isoformat()
-            })
-            self.send(json.dumps({"message": msg_json}))
+            }
+            self.send(json.dumps(msg_json))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -118,9 +120,9 @@ class ChatConsumer(WebsocketConsumer):
         authorize_token(token)
         message_type = data.get("type", None)
         if message_type == "ping":
-            self.ping(self, data.get("to"))
+            self.ping(data.get("to"))
         elif message_type == "pong":
-            self.pong(self, data.get("to"))
+            self.pong(data.get("to"))
         elif message_type == "message":
             self.send_chat_message(data.get("message"), data.get("to"))
         elif message_type == "fetch-message":
