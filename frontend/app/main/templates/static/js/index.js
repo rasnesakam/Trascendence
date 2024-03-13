@@ -1,24 +1,9 @@
-//İndex.js
-//sayısal değerlere define değerler atanabilir
+// ROUTER START 
 
-var webRoute = {
-  404: "/static/pages/error.html",
-  "/": "/static/pages/main.html",
-  "/about": "/static/pages/about.html",
-  "/game": "/static/pages/game.html",
-  "/match": "/static/pages/match.html",
-  "/finish-match": "/static/pages/finish-match.html",
-  "/profile-detail": "/static/pages/profile-detail.html",
-  "/tournament": "/static/pages/tournament.html",
-  "/livechat": "/static/pages/livechat.html",
-  "/ai": "/static/pages/ai.html",
-  "/pvp": "/static/pages/pvp.html",
-};
 
 if (window.location.pathname == "/") main_load();
 else if (window.location.pathname.includes("/users/")) profile_load();
 
-//  "/profile-detail": "/static/pages/profile-detail.html",
 async function error_404() {
   pageTxt = await fetch(webRoute[404])
     .then((response) => response.text())
@@ -36,7 +21,10 @@ async function winCount(data, username) {
   return win;
 }
 
+
 async function whichEvent(id) {
+  const users = id.includes("/users/");
+
   if (id == "/") {
     main_load();
   } else if (id == "/livechat") {
@@ -44,7 +32,8 @@ async function whichEvent(id) {
     loadContent();
   } else if (id == "login") {
     takeUrl();
-  } else if (id.includes("/users/")) {
+  } else if (users) {
+
     profile_load();
   }
 }
@@ -54,7 +43,7 @@ function isPassageEvent(eventId) {
   if (eventId == "/about") return true;
   if (eventId == "/livechat") return true;
   if (eventId == "/login") return true;
-  if (eventId == "/ai-game") return true;
+  if (eventId == "/ai") return true;
   return false;
 }
 
@@ -305,7 +294,7 @@ async function loadInvateFriend() {
   list.innerText = "";
   for (let i = 0; i < friends.length; i++) {
     let li = document.createElement("li");
-    li.classList.add("list-group-item");   
+    li.classList.add("list-group-item");
 
     let input = document.createElement("input");
     input.classList.add("form-check-input");
@@ -454,7 +443,7 @@ async function saveUserInformation() {
       name: user.user.name,
       surname: user.user.surname,
     };
-    
+
   localStorage.setItem("my-profile", JSON.stringify(user));
 
   let userphoto = document.getElementById("profile-photo").src;
@@ -579,22 +568,21 @@ async function getNotification() {
     "responseTournament"
   ]
 
-  for (let i = 0; i < listUrl.length; i++)
-  {
+  for (let i = 0; i < listUrl.length; i++) {
     let data = await fetch(listUrl[i], {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
-    .then((response) => response.json())
-    .catch((error) => console.log(error));
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .catch((error) => console.log(error));
 
     for (let j = 0; j < data.length; j++) {
       let msg = data.content[j].from.username + ": " + data.content[j].note;
       addNotify(msg, data.content[j].invite_code, listFunction[i]);
     }
   }
-  
+
 }
 
 async function requestAddFriend() {
@@ -773,3 +761,61 @@ function gamePage() {
 }
 
 gamePage();
+
+
+
+const contentUris = {
+  1: { title: 'Page 1', url: "/main" },
+  2: { title: 'Page 2', url: "/livechat" },
+  3: { title: 'Page 3', url: "/about" },
+};
+
+let routes = new Map([
+  [/^\/(\?.*|$)/, 'main.html'],
+  [/^\/game(\/.*$|\?.*|$)/, 'game.html'],
+  [/^\/login(\/.*$|\?.*|$)/, 'login.html'],
+  [/^\/tournament(\/.*$|\?.*|$)/, 'tournament.html'],
+  [/^\/about(\/.*$|\?.*|$)/, 'about.html'],
+  [/^\/users(\/.*$|\?.*|$)/, 'profile-detail.html'],
+  [/^\/livechat(\/.*$|\?.*|$)/, 'livechat.html'],
+  [/^\/match(\/.*$|\?.*|$)/, 'match.html'],
+  [/^\/score(\/.*$|\?.*|$)/, 'score.html'],
+  [/^\/finish-match(\/.*$|\?.*|$)/, 'finish-match.html'],
+  [/^\/ai(\/.*$|\?.*|$)/, 'ai.html'],
+])
+
+function determinePage(route) {
+  let page = 'error-404.html'
+  routes.forEach((v,k) => {
+    let result = k.exec(route)
+    if (result != null)
+      page = v;
+  });
+  return page;
+}
+
+let root = document.getElementById("index-body");
+
+document.querySelectorAll('a[data-page-id]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    let path = new URL(e.target.href).pathname;
+    history.pushState(null, "BAŞLIK(TR)", path);
+    renderPage();
+  })
+});
+
+window.addEventListener('popstate', (e) => {
+  renderPage();
+})
+
+function renderPage() {
+  let route = location.pathname
+  let page = determinePage(route);
+  fetch(`/static/pages/${page}`).then(data => data.text())
+    .then(html => {
+      root.innerHTML = html;
+    }).catch(err => console.log(err));
+}
+
+renderPage();
