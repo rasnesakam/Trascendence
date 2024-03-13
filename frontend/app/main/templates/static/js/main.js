@@ -102,3 +102,15 @@ function setMatches(matches, username) {
         else li.classList.add("bg-danger");
     }
 }
+
+function main_load() {
+    let userAccess = JSON.parse(localStorage.getItem(0));
+    let username = userAccess.user.username;
+    let access_token = userAccess.access_token;
+
+    console.log("access_token: " + access_token);
+    let data = loadUserInformation(username, access_token);
+    setTournamentList(data.dataTournament);
+    setMatches(data.dataMatches);
+}
+
