@@ -23,7 +23,7 @@ urlpatterns = [
     path('interacts/friends', InteractionsView.get_friends),
     path('interacts/friends/add', InteractionsView.add_friend),
     path('interacts/friends/delete/<user>', InteractionsView.delete_friend),
-    path('interacts/invitations', InteractionsView.get_invitations),
+    path('s', InteractionsView.get_invitations),
     path('interacts/invitations/<invite_code>/accept', InteractionsView.accept_invitation),
     path('interacts/invitations/<invite_code>/delete', InteractionsView.decline_invitation),
     path('interacts/blacklist', InteractionsView.get_blacklist),
