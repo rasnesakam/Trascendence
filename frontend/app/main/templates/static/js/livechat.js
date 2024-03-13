@@ -230,22 +230,6 @@ Array.from(document.querySelectorAll("#status-options ul li")).forEach(
     }
 );
 
-function newMessage() {
-    //mesaj göndermek için
-    message = $(".message-input input").val();
-    if ($.trim(message) == "") {
-        return false;
-    }
-    $(
-        '<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' +
-        message +
-        "</p></li>"
-    ).appendTo($(".messages ul"));
-    $(".message-input input").val(null);
-    $(".contact.active .preview").html("<span>You: </span>" + message);
-    $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-}
-
 const searchAlgorithm = () => {
     var search = document.querySelector("#search input").value;
     fetch(`http://localhost/api/users/search/${search}`)

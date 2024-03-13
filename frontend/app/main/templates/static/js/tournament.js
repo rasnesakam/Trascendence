@@ -19,7 +19,6 @@ async function startTournament(tournament_code) {
 		})
 		.catch((error) => console.log(error));
 
-	let tournament_code = window.location.search;
 	let myHref = `/match?tournament=${tournament_code}&match=${match_code}`;
 	document.getElementById("to_match").setAttribute("href", myHref);
 	document.getElementById("to_match").onclick();
@@ -53,9 +52,10 @@ function putPhotoTournament()
 	}
 }
 
-async function loadTournament() 
+async function loadTournament()
 {
-  startTournament();
+  let queryParams = new URLSearchParams(window.location.search)
+  startTournament(queryParams.get("tournament"));
 }
 
 // Set the date we're counting down to
@@ -79,9 +79,10 @@ var timer = setInterval(function() {
     
   // If the count down is over, write some text 
   if (distance < 0) {
-    document.getElementById("tournament-timer").innerHTML = "CANCELLED";
-    clearInterval(timer);
-	  document.getElementById("to_main").onclick();
+    document.getElementById("tournament-timer").innerText = "CANCELLED";
+    clearInterval(timer)
+    window.history.pushState({ path: "/" }, "", "/");
+    switchPages(window.location.href);
   }
 }, 1000);
 console.log(timer)
@@ -112,7 +113,7 @@ var enter_tournament = setInterval(async () => {
 	clearInterval(timer);
 	document.getElementById("tournament-timer").style.display = "none";
     clearInterval(enter_tournament);
-    startTournament();
+    startTournament(tournament_code);
   }
 }, 7000);
 
