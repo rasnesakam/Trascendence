@@ -41,7 +41,7 @@ async function whichEvent(id) {
     main_load();
   } else if (id == "/livechat") {
     disableChat();
-    loadContact();
+    loadContent();
   } else if (id == "login") {
     takeUrl();
   } else if (id.includes("/users/")) {
