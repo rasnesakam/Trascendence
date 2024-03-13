@@ -92,5 +92,4 @@ var refresh_token = setInterval(async () => {
       .catch((error) => {
         alert(error);
       });
-      console.log("refresh is active ", data);
   }, 240000);
