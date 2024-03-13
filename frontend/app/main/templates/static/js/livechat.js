@@ -115,7 +115,6 @@ async function loadContent() {
         listItem.classList.add("active");
         contact.appendChild(listItem);
        
-        console.log("girdim ")
         var img = document.createElement("img");
         img.id = "profile-img";
         img.src = user.avatarURI;  
@@ -123,7 +122,6 @@ async function loadContent() {
         listItem.appendChild(img);
 
         // <div class="about"> öğesini oluştur
-        console.log("girdim ")
         var aboutDiv = document.createElement("div");
         aboutDiv.classList.add("about");
 
