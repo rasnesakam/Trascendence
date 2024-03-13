@@ -2,6 +2,8 @@
 
 
 users = [];
+let map_allUser = new Map();
+let map_stage = 0;
 async function startTournament(tournament_code) {
 	let access_token = localStorage.getItem(0).access_token;
 	await fetch(`tournaments/${tournament_code}/next-match`,
@@ -29,24 +31,20 @@ async function startTournament(tournament_code) {
 //turnuva bittikten sonra tekrar o url kullanılarak turnuva sayfasına yönledirileceğiz
 function putPhotoTournament()
 {
-	let rank = 4;
-	for (let i = 1; i <= users.length; i++)
+	for (let i = 0; i < map_stage; i++)
 	{
-    let user = users.content[i - 1];
-		if (user.has_pair == true)
+		let rank = 4;
+		let stageInformation = map_allUser.get(i);
+		for (let j = 0; j < stageInformation.size; j++) //stage 1 - 2 - 3
 		{
-			for (let j = 1; j <= rank; j++)
-			{
-				if (user.stage == j)
-				{
-					document.querySelectorAll(`.state-${i}-${j}`)[0].src = user.user.avatarURI;
-					if (j == 2 || j == 4)  
-						document.querySelectorAll(`.state-${i}-${j - 1}`)[0].src = user.pair_user.avatarURI;
-					else
-						document.querySelectorAll(`.state-${i}-${j + 1}`)[0].src = user.pair_user.avatarURI;
-				}
-			}
-			rank /= 2;
+			let user = stageInformation.get(j);
+			if (j == 0)
+				rank = rank / user.stage;
+
+			console.log(user);
+			document.querySelectorAll(`.state-${user.stage}-${rank}`)[0].src = user.user.avatarURI;
+			document.querySelectorAll(`.state-${user.stage}-${rank - 1}`)[0].src = user.pair_user.avatarURI;
+			rank -= 1;
 		}
 	}
 }
@@ -54,6 +52,25 @@ function putPhotoTournament()
 async function loadTournament()
 {
   let queryParams = new URLSearchParams(window.location.search)
+
+  let allUser = new Map();
+  let index = 0;
+
+  for (let i = 0; i < users.length; i++)
+  {
+	let user_one = users.content[i].user.id;
+	for (let j = 0; j < users.length; j++)
+	{
+		if (user_one == users.content[j].pair_user.id)
+		{
+			allUser.set(index, users.content[j]);
+			index++;
+			map_allUser.set(map_stage++, allUser);
+		}
+	}
+  }
+
+  putPhotoTournament()
   startTournament(queryParams.get("tournament"));
 }
 
@@ -101,28 +118,32 @@ var enter_tournament = setInterval(async () => {
 	.then((response) => response.json())
 	.catch((error) => console.log(error));
 	let pairs = []
-	users.content.forEach((player) =>{
-		if (player.has_pair){
-			let pair1 = [player.user, player.pair_user]
-			let pair2 = [player.pair_user, player.user]
-			if (pairs.indexOf(pair1) == -1 && pairs.indexOf(pair2))
-				pairs.push(pair1)
-		}
-	});
-	console.log(pairs)
+	let matchs = new Map();
+
+	//for (let i = 0; i < users.length; i++)
+	//{
+		
+	//}
+	//users.content.filter(player => player.stage == 1).forEach((player) =>{
+	//	if (player.has_pair){
+	//		let pair1 = {`${player.user.id}`: `${player.pair_user.id}`}
+	//		let pair2 = [player.pair_user.id, player.user.id]
+	//		if (pairs.indexOf(pair1) == -1 && pairs.indexOf(pair2))
+	//			pairs.push(pair1)
+	//	}
+	//});
 	let match_making = 0;
 	for (let i = 0; i < users.length; i++)
 	{
-	putPhotoTournament();
-	if (users.content[i].has_pair == true)
-		match_making++;
+		putPhotoTournament();
+		if (users.content[i].has_pair == true)
+			match_making++;
 	}
-	console.log("countMatchMaking: ", match_making);
 	if (match_making > 3)
 	{
-	clearInterval(timer);
-	document.getElementById("tournament-timer").style.display = "none";
-	clearInterval(enter_tournament);
-	loadTournament();
+		clearInterval(timer);
+		document.getElementById("tournament-timer").style.display = "none";
+		clearInterval(enter_tournament);
+		loadTournament();
 	}
 }, 7000);
