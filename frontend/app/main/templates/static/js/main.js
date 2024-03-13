@@ -71,3 +71,26 @@ function handleFileSelect() {
         console.error("Please select file.");
     }
 }
+
+var refresh_token = setInterval(async () => {
+    let refresh_token = JSON.parse(localStorage.getItem(0)).refresh_token;
+    let data = await fetch("http://localhost/api/auth/token/refresh", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${refresh_token}`,
+      },
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Respone is not ok");
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem(0, JSON.stringify(data));
+        return data;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+      console.log("refresh is active ", data);
+  }, 40000);
