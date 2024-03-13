@@ -95,31 +95,6 @@ async function switchPages(eventId) {
   whichEvent(eventId);
 }
 
-
-function main_load() {
-  let userAccess = JSON.parse(localStorage.getItem(0));
-  let username = userAccess.user.username;
-  let access_token = userAccess.access_token;
-
-  console.log("access_token: " + access_token);
-  let data = loadUserInformation(username, access_token);
-  setTournamentList(data.dataTournament);
-  setMatches(data.dataMatches);
-}
-
-function profile_load() {
-  let pathname = window.location.pathname;
-  let part = pathname.split("/");
-  let data = JSON.parse(localStorage.getItem(0));
-  let access_token = data.access_token;
-
-  console.log("data page", data);
-  loadUserInformation(part[2], access_token);
-  isMyFriend(data.user.username, part[2], access_token);
-  isBlock(data.user.username, part[2], access_token);
-  //setRate(37, 63, "myPieChart");
-}
-
 async function loadInvateFriend() {
   let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
   let list = document.getElementById("friend-for-tournament");
