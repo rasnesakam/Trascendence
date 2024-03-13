@@ -24,7 +24,6 @@ function sendMessage(sendType, sendText, targetUser) {
     console.log("sendMessage is: ", sendText);
     localStorage.setItem("messages", JSON.stringify(messages));
 
-    console.log("Hello world btekinli")
     document.getElementById("message-input").value = "";
 }
 
@@ -66,22 +65,19 @@ function selectedPerson(name) {
     document.getElementById("message-input").style.display = "block";
     // load previous messages
     for (i = 0; i < people.length; i++) {
-        if (people[i].username == name) {
-            document.getElementById(people[i].username).classList.add("active");
+        if (people[i].id == name) {
+            document.getElementById(people[i].id).classList.add("active");
             document
                 .getElementById("contact-selected-profile-photo")
                 .setAttribute("src", people[i].avatarURI);
             document.getElementById("contact-selected-profile-name").textContent =
                 people[i].name;
-             
             /*for (j = 0; j < Object.keys(people[i].messages).length; j++) {
                 showMessage(
                     people[i].messages[j].type,
                     people[i].messages[j].message
                 );
             }*/
-            
-            
         } else {
             document.getElementById(name).classList.remove("active");
         }
@@ -105,14 +101,13 @@ async function loadContent() {
     }).then((response) => {
         return response.json();
     }).catch((error) => console.log(error));
-    console.log(people)
+    console.log(people);
     localStorage.setItem("contant", JSON.stringify(people));
     for (var i = 0; i < length; i++) {
         let user = people[i]
         var listItem = document.createElement("li");
         listItem.id = user.username;
         listItem.classList.add("contact");
-        listItem.classList.add("active");
         contact.appendChild(listItem);
        
         var img = document.createElement("img");
@@ -127,6 +122,8 @@ async function loadContent() {
 
         // <div class="name"> öğesini oluştur
         var nameDiv = document.createElement("div");
+        // nameDiv.style.marginTop = 5 + "px";
+        // nameDiv.style.marginBottom = 5 + "px";
         nameDiv.classList.add("name");
         nameDiv.textContent = user.username;
         aboutDiv.appendChild(nameDiv);
@@ -136,7 +133,7 @@ async function loadContent() {
         statusDiv.classList.add("status");
         nameDiv.appendChild(statusDiv);
 
-        listItem.onclick = () => selectedPerson(user.username)
+        listItem.onclick = () => selectedPerson(user.id)
         listItem.appendChild(aboutDiv);
         // <i class="fa fa-circle offline"></i> öğesini oluştur
         var circleIcon = document.createElement("i");
