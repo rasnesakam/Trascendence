@@ -203,7 +203,7 @@ async function createTournament() {
 
   console.log("to_tournament:-", data);
   let go_tournament = document.getElementById("to_tournament");
-  go_tournament.href = `/tournament?${data.tournament_code}`;
+  go_tournament.href = `/tournament?tournament=${data.tournament_code}`;
   go_tournament.click();
 }
 
