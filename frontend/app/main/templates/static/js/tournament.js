@@ -130,6 +130,7 @@ var enter_tournament = setInterval(async () => {
 	//			pairs.push(pair1)
 	//	}
 	//});
+	console.log("users:",users);
 	let match_making = 0;
 	for (let i = 0; i < users.length; i++)
 	{

@@ -109,8 +109,8 @@ def get_tournament(request: HttpRequest, tournamentcode: str) -> JsonResponse | 
 @authorize()
 def get_tournament_players(request: HttpRequest, tournamentcode: str) -> JsonResponse | HttpResponseNotFound:
     tournament_players = TournamentPlayers.objects.filter(tournament__tournament_code=tournamentcode).order_by("-stage")
-    if len(tournament_players) == 0:
-        return HttpResponseNotFound()
+    #if len(tournament_players) == 0:
+    #    return HttpResponseNotFound()
     return JsonResponse(list_dto([tournament_player_dto(match) for match in tournament_players]), status=200)
 
 
