@@ -117,8 +117,6 @@ var enter_tournament = setInterval(async () => {
 		})
 	.then((response) => response.json())
 	.catch((error) => console.log(error));
-	let pairs = []
-	let matchs = new Map();
 
 	//for (let i = 0; i < users.length; i++)
 	//{
@@ -135,7 +133,6 @@ var enter_tournament = setInterval(async () => {
 	let match_making = 0;
 	for (let i = 0; i < users.length; i++)
 	{
-		putPhotoTournament();
 		if (users.content[i].has_pair == true)
 			match_making++;
 	}
