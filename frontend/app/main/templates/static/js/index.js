@@ -764,6 +764,10 @@ gamePage();
 
 
 
+
+
+// SPA
+
 const contentUris = {
   1: { title: 'Page 1', url: "/main" },
   2: { title: 'Page 2', url: "/livechat" },
@@ -816,6 +820,46 @@ function renderPage() {
     .then(html => {
       root.innerHTML = html;
     }).catch(err => console.log(err));
+    renderPageWithScripts();
 }
 
 renderPage();
+
+
+
+// SPA Loader
+
+function loadScripts(scripts, callback) {
+  let loadedScripts = 0;
+  console.log("loadScript1");
+  scripts.forEach(script => {
+    const scriptTag = document.createElement('script');
+    scriptTag.src = script;
+    console.log("loadScript2");
+    scriptTag.onload = () => {
+      loadedScripts++;
+      if (loadedScripts === scripts.length) callback();
+    };
+    console.log("loadScript3");
+
+    document.head.appendChild(scriptTag);
+  });
+}
+
+function renderPageWithScripts() {
+  let route = location.pathname;
+  let page = determinePage(route);
+  console.log("renderPageScriipt1");
+
+  fetch(`/static/pages/${page}`).then(data => data.text())
+    .then(html => {
+      root.innerHTML = html;
+      const scripts = [`/static/js/${page}.js`];
+      console.log("renderPageScriipt2");
+      loadScripts(scripts, () => {
+        console.log('All scripts loaded');
+      });
+    }).catch(err => console.log(err));
+}
+
+

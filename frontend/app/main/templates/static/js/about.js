@@ -1,5 +1,3 @@
-const slides = document.getElementsByClassName("slider");
-
 const totalImages = 28;
 let currentSlide = 0;
 
