@@ -77,6 +77,76 @@ function router() {
   isEventListenerAdded = true;
 }
 
+function addNotify(msg, id, func_name) {
+  alert("addNotify: " + msg + " " + id + " " + func_name);
+  let notification = document.getElementById("notify-list");
+
+  let div = document.createElement("div");
+  div.classList.add("toast-body", "border-top", "me-2");
+  div.id = id;
+  div.textContent = msg;
+  notification.appendChild(div);
+
+  let div2 = document.createElement("div");
+  div2.classList.add("mt-2", "pt-2");
+  div.appendChild(div2);
+
+  let button = document.createElement("button");
+  button.classList.add("btn", "btn-success", "btn-sm");
+  button.setAttribute("onclick", func_name + `(\'accept\', '${id}')`);
+  button.textContent = "Accept";
+  div2.appendChild(button);
+
+  let button2 = document.createElement("button");
+  button2.classList.add("btn", "btn-danger", "btn-sm", "ms-2");
+  button2.setAttribute("onclick", func_name + `(\'delete\', '${id}')`);
+  button2.textContent = "Cancel";
+  div2.appendChild(button2);
+}
+
+function removeNotify(code) {
+  console.log("code", code);
+  let notification = document.getElementById(code);
+  console.log("REMOVE REMOVE NOTIFY: ", notification);
+  notification.remove();
+}
+
+function responseTournament(response, code) {
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  console.log(response, "....", code);
+  fetch(`http://localhost/api/tournaments/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  removeNotify(code);
+}
+
+function responseFriend(response, code) {
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  fetch(`http://localhost/api/interacts/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  console.log("removeNotify: ", response, "....", code);
+  removeNotify(code);
+}
+
 async function switchPages(eventId) {
   const path = window.location.pathname;
   if (path.includes("?"))
@@ -93,6 +163,142 @@ async function switchPages(eventId) {
 
   document.getElementById("index-body").innerHTML = html;
   whichEvent(eventId);
+}
+
+//main.js
+async function createTournament() {
+  let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
+  let selectFriends = [];
+  let tournamentName = document.getElementById("tournament-name").value;
+  if (tournamentName == "") {
+    alert("Plese enter tournament name");
+    return;
+  }
+  for (let i = 0; i < listCheckBox.length; i++) {
+    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
+  }
+  if (selectFriends.length < 3) {
+    alert("Please select three friends");
+    return;
+  }
+  else if (selectFriends.length > 3) {
+    alert("Please select at least 4 friends");
+    return;
+  }
+  let item = JSON.parse(localStorage.getItem(0));
+  let access_token = item.access_token;
+  selectFriends.push(item.user.username);
+  let data = await fetch("http://localhost/api/tournaments/create", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    body: JSON.stringify({
+      tournamentName,
+      users: selectFriends,
+      capacity: 4
+    })
+  })
+    .then((response) => response.json())
+    .then(responseData => {
+      console.log("responseData: ", responseData);
+    })
+    .catch((error) => console.log(error));
+
+  let go_tournament = document.getElementById("to_tournament");
+  go_tournament.href = `/tournament?${data.tournament_code}`;
+  go_tournament.click();
+}
+
+
+async function setTournamentList(tournaments) {
+  let added = document.getElementById("tournamentList");
+  added.innerHTML = "";
+  if (tournaments == undefined) return;
+  for (let i = 0; i < tournaments.length; i++) {
+    let code = tournaments[i].tournament_code;
+    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
+      .then((data) => data.json())
+      .catch((error) => console.log(error));
+
+    let accordionItem = document.createElement("div");
+    accordionItem.classList.add("accordion-item");
+    added.appendChild(accordionItem);
+
+    let accordionHeader = document.createElement("h2");
+    accordionHeader.classList.add("accordion-header");
+    accordionItem.appendChild(accordionHeader);
+
+    let button = document.createElement("button");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white");
+    button.setAttribute("type", "button");
+    button.setAttribute("data-bs-toggle", "collapse");
+    button.setAttribute("data-bs-target", "#tournamentList");
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", "tournamentList");
+    accordionHeader.appendChild(button);
+
+    let accordionBody = document.createElement("div");
+    accordionBody.classList.add("accordion-body");
+    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
+    accordionHeader.appendChild(accordionBody);
+  }
+}
+
+function setMatches(matches, username) {
+  let added = document.getElementById("matchList");
+  added.innerHTML = "";
+  console.log("matches: ", matches);
+  if (matches == undefined) return;
+  for (let i = 0; i < matches.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add(
+      "list-group-item",
+      "d-flex",
+      "justify-content-between",
+      "align-items-center"
+    );
+    added.appendChild(li);
+
+    let span1 = document.createElement("span");
+    span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
+    li.appendChild(span1);
+
+    let span2 = document.createElement("span");
+    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
+    li.appendChild(span2);
+
+    if (matches.matches.score_home > matches.score_away)
+      if (matches.home == username) li.classList.add("bg-success");
+      else li.classList.add("bg-danger");
+    else if (matches.away == username) li.classList.add("bg-success");
+    else li.classList.add("bg-danger");
+  }
+}
+
+function main_load() {
+  let userAccess = JSON.parse(localStorage.getItem(0));
+  let username = userAccess.user.username;
+  let access_token = userAccess.access_token;
+
+  console.log("access_token: " + access_token);
+  let data = loadUserInformation(username, access_token);
+  setTournamentList(data.dataTournament);
+  setMatches(data.dataMatches);
+}
+
+function profile_load() {
+  let pathname = window.location.pathname;
+  let part = pathname.split("/");
+  let data = JSON.parse(localStorage.getItem(0));
+  let access_token = data.access_token;
+
+  console.log("data page", data);
+  loadUserInformation(part[2], access_token);
+  isMyFriend(data.user.username, part[2], access_token);
+  isBlock(data.user.username, part[2], access_token);
+  //setRate(37, 63, "myPieChart");
 }
 
 async function loadInvateFriend() {
