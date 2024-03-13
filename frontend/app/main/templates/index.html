@@ -12,6 +12,8 @@
 	<link rel="stylesheet" href="/static/css/index.css">
 	<title>Transcendence</title>
 	<script src="/static/js/websocket.js"></script>
+	<script src="/static/js/livechat.js"></script>
+	<script src="/static/js/about.js"></script>
 </head>
 
 <body>
@@ -26,13 +28,13 @@
 				<div class="collapse navbar-collapse" id="navbarScroll">
 					<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
 						<li class="nav-item">
-							<a id="/" class="nav-link active" aria-current="page" onclick="router()" href="/">Home</a>
+							<a id="/" class="nav-link active" aria-current="page" onclick="router()" href="/" data-page-id="1">Home</a>
 						</li>
 						<li class="nav-item">
-							<a id="/livechat" class="nav-link" onclick="router()" href="/livechat">Live Chat</a>
+							<a id="/livechat" class="nav-link" onclick="router()" href="/livechat" data-page-id="2">Live Chat</a>
 						</li>
 						<li class="nav-item">
-							<a id="/about" class="nav-link" onclick="router()" href="/about">About</a>
+							<a id="/about" class="nav-link" onclick="router()" href="/about" data-page-id="3">About</a>
 						</li>
 						<li class="nav-item dropdown" style="width: 250px;">
 							<button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
