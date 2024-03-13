@@ -72,9 +72,9 @@ class ChatConsumer(WebsocketConsumer):
         pong_message = event['message']
         print(f"Recieved pong: {pong_message}")
     
-    def ping(self):
+    def ping(self, target):
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
+            target,
             {
                 "type": "chat_message",
                 "message": {
@@ -90,15 +90,14 @@ class ChatConsumer(WebsocketConsumer):
         fetch_amount = data.get("amount")
         messages = Message.last_n_messages(user_id, target_user_id, fetch_amount)
 
-        message_list = []
         for message in messages:
-            message_list.append({
+            msg_json = json.dumps({
                 "message": message.content,
                 "sender": message.author,
                 "reciever": message.audience,
                 "timestamp": message.timestamp.isoformat()
             })
-        self.send(json.dumps({"message": message_list}))
+            self.send(json.dumps({"message": msg_json}))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -110,7 +109,7 @@ class ChatConsumer(WebsocketConsumer):
         authorize_token(token)
         message_type = data.get("type", None)
         if message_type == "ping":
-            self.ping(self)
+            self.ping(self, data.get("to"))
         elif message_type == "pong":
             self.pong(data)
         elif message_type == "message":
