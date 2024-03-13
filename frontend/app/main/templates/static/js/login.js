@@ -54,7 +54,6 @@ async function takeUrl() {
 
         localStorage.setItem(0, JSON.stringify(data));
         window.location.href = "/";
-        alert("You are logged in");
         return data;
       })
       .catch((error) => {
