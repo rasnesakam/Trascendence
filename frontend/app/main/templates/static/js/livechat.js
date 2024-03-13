@@ -1,4 +1,3 @@
-var user_data = JSON.parse(localStorage.getItem(0));
 
 
 function sendMessage(sendType, sendText, targetUser) {
@@ -157,14 +156,21 @@ async function loadContent() {
         var circleIcon = document.createElement("i");
         circleIcon.classList.add("fa", "fa-circle");
         // TODO: Send ping 
-        //setInterval(() => {
-        //    circleIcon.classList.remove("online");
-        //    circleIcon.classList.add("offline");
-        //    socket.send(JSON.stringify({
-        //        type: "ping",
-                
-        //    }))
-        //}, 5000)
+        setInterval(() => {
+            circleIcon.classList.remove("online");
+            circleIcon.classList.add("offline");
+            socket.send(JSON.stringify({
+                type: "ping",
+                to: user.id
+            }))
+        }, 5000)
+        socket.addEventListener("message", (message) => {
+            jsonObj = JSON.parse(message.data)
+            if (jsonObj.type == "pong" && jsonObj.from == user.id){
+                circleIcon.classList.remove("offline");
+                circleIcon.classList.add("online");
+            }
+        });
         circleIcon.classList.add("offline");
         statusDiv.appendChild(circleIcon);
         console.log("list:", listItem);
@@ -270,9 +276,9 @@ const searchAlgorithm = () => {
     })
 })();
 
-
+let user_data = JSON.parse(localStorage.getItem(0)).user
 socket.addEventListener('message', (message) => {
-    console.log(message)
     let jsonObj = JSON.parse(message.data);
-    sendMessage("other-message", jsonObj.message, jsonObj.from);
+    if (jsonObj.type == "message")
+        sendMessage(jsonObj.from == user_data.id ? "my-message" :"other-message", jsonObj.message, jsonObj.from);
 })
