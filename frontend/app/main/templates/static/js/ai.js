@@ -59,7 +59,6 @@ function handleLose() {
         ballInPlay = false;
 
         if (!ballInPlay) {
-            console.log('yönlendir');
             window.location.href = '/finish-match';
         }
     }

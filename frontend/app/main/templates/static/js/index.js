@@ -68,9 +68,7 @@ function router() {
     if (isPassageEvent(event.target.id)) {
       event.preventDefault();
 
-      console.log("pushState giriyorum: ");
       window.history.pushState({}, "", event.target.href);
-      console.log("pushStateden çıkıyorum: ");
       switchPages(event.target.id);
     }
   });
@@ -310,7 +308,7 @@ async function loadInvateFriend() {
   list.innerText = "";
   for (let i = 0; i < friends.length; i++) {
     let li = document.createElement("li");
-    li.classList.add("list-group-item");   
+    li.classList.add("list-group-item");
 
     let input = document.createElement("input");
     input.classList.add("form-check-input");
@@ -459,8 +457,7 @@ async function saveUserInformation() {
       name: user.user.name,
       surname: user.user.surname,
     };
-    
-  console.log("code deneme:", code);
+
   localStorage.setItem("my-profile", JSON.stringify(user));
 
   let userphoto = document.getElementById("profile-photo").src;
@@ -575,7 +572,7 @@ function outLogin() {
 
 async function getNotification() {
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  let data = await fetch("http://localhost/api/interacts/invitations/", {
+  let data = await fetch("http://localhost/api/interacts/invitations", {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
