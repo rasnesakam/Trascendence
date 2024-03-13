@@ -116,6 +116,7 @@ def match_dto(match: Matches) -> dict:
     return {
         "id": str(match.id),
         "tournament": tournament_dto(match.tournament) if match.tournament is not None else None,
+        "match_code": match.match_code,
         "home": {
             "user": user_dto(match.home),
             "score": match.score_home,
