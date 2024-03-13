@@ -90,15 +90,14 @@ class ChatConsumer(WebsocketConsumer):
         fetch_amount = data.get("amount")
         messages = Message.last_n_messages(user_id, target_user_id, fetch_amount)
 
-        message_list = []
         for message in messages:
-            message_list.append({
+            msg_json = json.dumps({
                 "message": message.content,
                 "sender": message.author,
                 "reciever": message.audience,
                 "timestamp": message.timestamp.isoformat()
             })
-        self.send(json.dumps({"message": message_list}))
+            self.send(json.dumps({"message": msg_json}))
 
     def receive(self, text_data):
         data = json.loads(text_data)
