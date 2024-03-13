@@ -72,9 +72,9 @@ class ChatConsumer(WebsocketConsumer):
         pong_message = event['message']
         print(f"Recieved pong: {pong_message}")
     
-    def ping(self):
+    def ping(self, target):
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
+            target,
             {
                 "type": "chat_message",
                 "message": {
@@ -109,7 +109,7 @@ class ChatConsumer(WebsocketConsumer):
         authorize_token(token)
         message_type = data.get("type", None)
         if message_type == "ping":
-            self.ping(self)
+            self.ping(self, data.get("to"))
         elif message_type == "pong":
             self.pong(data)
         elif message_type == "message":
