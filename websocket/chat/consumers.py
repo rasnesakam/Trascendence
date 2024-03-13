@@ -26,7 +26,7 @@ APP_NAME = "localhost"
 
 class ChatConsumer(WebsocketConsumer):
 
-    def send_chat_message(self, message, sendto): 
+    def send_chat_message(self, message, sendto):
         async_to_sync(self.channel_layer.group_send)(
             sendto,
             {
@@ -68,10 +68,18 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-    def pong(self, event):
-        pong_message = event['message']
-        print(f"Recieved pong: {pong_message}")
-    
+    def pong(self, target):
+        async_to_sync(self.channel_layer.group_send)(
+            target,
+            {
+                "type": "chat_message",
+                "message": {
+                    "message": "Recieved pong message",
+                    "type": "pong",
+                    "from": self.room_group_name,
+                }
+            }
+        )
     def ping(self, target):
         async_to_sync(self.channel_layer.group_send)(
             target,
@@ -79,6 +87,7 @@ class ChatConsumer(WebsocketConsumer):
                 "type": "chat_message",
                 "message": {
                     "message": "pong",
+                    "type": "ping",
                     "from": self.room_group_name,
                 }
             }
@@ -111,7 +120,7 @@ class ChatConsumer(WebsocketConsumer):
         if message_type == "ping":
             self.ping(self, data.get("to"))
         elif message_type == "pong":
-            self.pong(data)
+            self.pong(self, data.get("to"))
         elif message_type == "message":
             self.send_chat_message(data.get("message"), data.get("to"))
         elif message_type == "fetch-message":
