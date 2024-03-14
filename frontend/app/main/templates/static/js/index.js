@@ -1,24 +1,6 @@
-//İndex.js
-//sayısal değerlere define değerler atanabilir
-
-var webRoute = {
-  404: "/static/pages/error.html",
-  "/": "/static/pages/main.html",
-  "/about": "/static/pages/about.html",
-  "/game": "/static/pages/game.html",
-  "/match": "/static/pages/match.html",
-  "/finish-match": "/static/pages/finish-match.html",
-  "/profile-detail": "/static/pages/profile-detail.html",
-  "/tournament": "/static/pages/tournament.html",
-  "/livechat": "/static/pages/livechat.html",
-  "/ai": "/static/pages/ai.html",
-  "/pvp": "/static/pages/pvp.html",
-};
-
 if (window.location.pathname == "/") main_load();
 else if (window.location.pathname.includes("/users/")) profile_load();
 
-//  "/profile-detail": "/static/pages/profile-detail.html",
 async function error_404() {
   pageTxt = await fetch(webRoute[404])
     .then((response) => response.text())
@@ -36,7 +18,10 @@ async function winCount(data, username) {
   return win;
 }
 
+
 async function whichEvent(id) {
+  const users = id.includes("/users/");
+
   if (id == "/") {
     main_load();
   } else if (id == "/livechat") {
@@ -44,7 +29,8 @@ async function whichEvent(id) {
     loadContent();
   } else if (id == "login") {
     takeUrl();
-  } else if (id.includes("/users/")) {
+  } else if (users) {
+
     profile_load();
   }
 }
@@ -54,7 +40,7 @@ function isPassageEvent(eventId) {
   if (eventId == "/about") return true;
   if (eventId == "/livechat") return true;
   if (eventId == "/login") return true;
-  if (eventId == "/ai-game") return true;
+  if (eventId == "/ai") return true;
   return false;
 }
 
@@ -305,7 +291,7 @@ async function loadInvateFriend() {
   list.innerText = "";
   for (let i = 0; i < friends.length; i++) {
     let li = document.createElement("li");
-    li.classList.add("list-group-item");   
+    li.classList.add("list-group-item");
 
     let input = document.createElement("input");
     input.classList.add("form-check-input");
@@ -432,7 +418,6 @@ async function loadUserInformation(username, access_token) {
 }
 
 async function saveUserInformation() {
-  //user save is not enough because you have to send it to backend
   var user = JSON.parse(localStorage.getItem("my-profile"));
   var data = JSON.parse(localStorage.getItem(0));
 
@@ -454,7 +439,7 @@ async function saveUserInformation() {
       name: user.user.name,
       surname: user.user.surname,
     };
-    
+
   localStorage.setItem("my-profile", JSON.stringify(user));
 
   let userphoto = document.getElementById("profile-photo").src;
@@ -579,22 +564,21 @@ async function getNotification() {
     "responseTournament"
   ]
 
-  for (let i = 0; i < listUrl.length; i++)
-  {
+  for (let i = 0; i < listUrl.length; i++) {
     let data = await fetch(listUrl[i], {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
-    .then((response) => response.json())
-    .catch((error) => console.log(error));
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .catch((error) => console.log(error));
 
     for (let j = 0; j < data.length; j++) {
       let msg = data.content[j].from.username + ": " + data.content[j].note;
       addNotify(msg, data.content[j].invite_code, listFunction[i]);
     }
   }
-  
+
 }
 
 async function requestAddFriend() {
@@ -723,36 +707,37 @@ async function requestUnBlock() {
     });
 }
 
-//login.js
 
-document
-  .getElementById("click-search")
-  .addEventListener("click", async function (event) {
-    profile = document.getElementById("input-search").value;
-    event.preventDefault();
-    let users = await fetch(`http://localhost/api/users/search/${profile}`, {
-      headers: {
-        "Content-type": "application/json",
-      },
+
+
+
+// LOGIN
+
+document.getElementById("click-search").addEventListener("click", async function (event) {
+  profile = document.getElementById("input-search").value;
+  event.preventDefault();
+  let users = await fetch(`http://localhost/api/users/search/${profile}`, {
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error("User not found");
+      return response.json();
     })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("User not found");
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    if (users == undefined) {
-      alert("User not found");
-      return;
-    }
-    let newUrl = `/users/${profile}`;
-    window.history.pushState({ path: newUrl }, "", newUrl);
-    console.log("pushState: " + newUrl);
-    await switchPages(newUrl);
-  });
+    .catch((error) => {
+      console.log(error);
+    });
+  if (users == undefined) {
+    alert("User not found");
+    return;
+  }
+  let newUrl = `/users/${profile}`;
+  window.history.pushState({ path: newUrl }, "", newUrl);
+  console.log("pushState: " + newUrl);
+  await switchPages(newUrl);
+});
 
-//back-transition
 window.addEventListener("popstate", async function (event) {
   if (event.state) {
     let currentUrl = window.location.pathname;
@@ -761,6 +746,12 @@ window.addEventListener("popstate", async function (event) {
     await switchPages(currentUrl);
   }
 });
+
+
+
+
+
+// AI and PvP
 
 function gamePage() {
   if (window.location.pathname === "/ai" || window.location.pathname === "/pvp") {
@@ -773,3 +764,154 @@ function gamePage() {
 }
 
 gamePage();
+
+
+
+
+
+// ABOUT
+
+const totalImages = 28;
+let currentSlide = 0;
+
+function updateImageSource(next = true) {
+  currentSlide = next ? (currentSlide + 1) % totalImages : (currentSlide - 1 + totalImages) % totalImages;
+  const newImageNumber = currentSlide + 1;
+  const newImagePath = `/static/assets/slider-photo/${newImageNumber}.jpg`;
+
+  const carouselInner = document.querySelector('.carousel-inner');
+  const currentActive = carouselInner.querySelector('.active');
+
+  const newImage = document.createElement('img');
+  newImage.classList.add('d-block', 'w-100', 'h-50');
+  newImage.src = newImagePath;
+  newImage.alt = `Slide ${newImageNumber}`;
+
+  currentActive.innerHTML = '';
+  currentActive.appendChild(newImage);
+}
+
+
+
+// ROUTER START 
+// SPA
+
+const contentUris = {
+  1: { title: 'Page 1', url: "/main" },
+  2: { title: 'Page 2', url: "/livechat" },
+  3: { title: 'Page 3', url: "/about" },
+};
+
+let routes = new Map([
+  [/^\/(\?.*|$)/, 'main.html'],
+  [/^\/game(\/.*$|\?.*|$)/, 'game.html'],
+  [/^\/login(\/.*$|\?.*|$)/, 'login.html'],
+  [/^\/tournament(\/.*$|\?.*|$)/, 'tournament.html'],
+  [/^\/about(\/.*$|\?.*|$)/, 'about.html'],
+  [/^\/users(\/.*$|\?.*|$)/, 'profile-detail.html'],
+  [/^\/livechat(\/.*$|\?.*|$)/, 'livechat.html'],
+  [/^\/match(\/.*$|\?.*|$)/, 'match.html'],
+  [/^\/score(\/.*$|\?.*|$)/, 'score.html'],
+  [/^\/finish-match(\/.*$|\?.*|$)/, 'finish-match.html'],
+  [/^\/ai(\/.*$|\?.*|$)/, 'ai.html'],
+])
+
+function determinePage(route) {
+  let page = 'error-404.html'
+  routes.forEach((v, k) => {
+    let result = k.exec(route)
+    if (result != null)
+      page = v;
+  });
+  return page;
+}
+
+let root = document.getElementById("index-body");
+
+document.querySelectorAll('a[data-page-id]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    let path = new URL(e.target.href).pathname;
+    history.pushState(null, "BAŞLIK(TR)", path);
+    renderPage();
+  })
+});
+
+window.addEventListener('popstate', (e) => {
+  renderPage();
+})
+
+function renderPage() {
+  let route = location.pathname
+  let page = determinePage(route);
+  fetch(`/static/pages/${page}`).then(data => data.text())
+    .then(html => {
+      root.innerHTML = html;
+    }).catch(err => console.log(err));
+  renderPageWithScripts();
+}
+
+renderPage();
+
+
+
+// SPA Loader
+
+function loadScripts(scripts, callback) {
+  let loadedScripts = 0;
+  const head = document.head;
+
+  function scriptLoaded() {
+    loadedScripts++;
+    if (loadedScripts === scripts.length) callback();
+  }
+
+  scripts.forEach(script => {
+    const scriptTag = document.createElement('script');
+    scriptTag.src = script;
+
+    scriptTag.onload = scriptLoaded;
+    scriptTag.onerror = scriptLoaded;
+
+    head.appendChild(scriptTag);
+  });
+}
+
+function renderPageWithComponents() {
+  let route = location.pathname;
+  let page = determinePage(route);
+
+  fetch(`/static/pages/${page}`)
+    .then(data => data.text())
+    .then(html => {
+      root.innerHTML = html;
+      const scripts = [`/static/js/${page}.js`];
+      loadScripts(scripts, () => {
+        console.log('Tüm scriptler yüklendi.');
+        initializeComponents();
+      });
+    })
+    .catch(err => console.error(err));
+}
+
+
+function initializeComponents() {
+  document.querySelector('.carousel-control-next').addEventListener('click', () => {
+    updateImageSource();
+  });
+
+  document.querySelector('.carousel-control-prev').addEventListener('click', () => {
+    updateImageSource(false);
+  });
+
+  updateImageSource();
+}
+
+initializeComponents();
+
+renderPageWithComponents();
+
+document.addEventListener('DOMContentLoaded', () => {
+  initializeComponents();
+});
+

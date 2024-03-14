@@ -1,5 +1,3 @@
-
-
 function sendMessage(sendType, sendText, targetUser) {
     let li = document.createElement("li");
     li.classList.add("clearfix");
@@ -45,11 +43,6 @@ function disableChat() {
     document.getElementById("chat").style.display = "none";
 }
 
-function submitSend() {
-    let name = document.getElementById("contact-selected-profile-name").value;
-
-}
-
 function showMessage(type, message) {
     clearMessages();
     for (j = 0; j < Object.keys(people[i].messages).length; j++) {
@@ -57,7 +50,7 @@ function showMessage(type, message) {
     }
 }
 
-function fetchMessages(from){
+function fetchMessages(from) {
     let token = JSON.parse(localStorage.getItem(0)).access_token
     let request = {
         token,
@@ -166,7 +159,7 @@ async function loadContent() {
         }, 5000)
         socket.addEventListener("message", (message) => {
             jsonObj = JSON.parse(message.data)
-            if (jsonObj.type == "pong" && jsonObj.from == user.id){
+            if (jsonObj.type == "pong" && jsonObj.from == user.id) {
                 circleIcon.classList.remove("offline");
                 circleIcon.classList.add("online");
             }
@@ -263,16 +256,16 @@ const searchAlgorithm = () => {
 
 (function () {
     console.log("adding event listener to form");
-    let form = document.getElementsByClassName("livechat-send-message")[0]
+    let form = document.getElementsByClassName("livechat-send-message")[0];
     form.addEventListener("submit", function (e) {
-        e.preventDefault();        
+        e.preventDefault();
         let formData = new FormData(e.target);
         let targetUser = formData.get("to");
-        console.log(targetUser)
+        console.log(targetUser);
 
         console.log("target: ", targetUser.id);
         sendMessage("my-message", formData.get("content"), targetUser);
-        socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser}))
+        socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser }))
     })
 })();
 
@@ -280,5 +273,5 @@ let user_data = JSON.parse(localStorage.getItem(0)).user
 socket.addEventListener('message', (message) => {
     let jsonObj = JSON.parse(message.data);
     if (jsonObj.type == "message")
-        sendMessage(jsonObj.from == user_data.id ? "my-message" :"other-message", jsonObj.message, jsonObj.from);
+        sendMessage(jsonObj.from == user_data.id ? "my-message" : "other-message", jsonObj.message, jsonObj.from);
 })
