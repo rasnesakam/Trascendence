@@ -1,6 +1,3 @@
-// ROUTER START 
-
-
 if (window.location.pathname == "/") main_load();
 else if (window.location.pathname.includes("/users/")) profile_load();
 
@@ -421,7 +418,6 @@ async function loadUserInformation(username, access_token) {
 }
 
 async function saveUserInformation() {
-  //user save is not enough because you have to send it to backend
   var user = JSON.parse(localStorage.getItem("my-profile"));
   var data = JSON.parse(localStorage.getItem(0));
 
@@ -711,36 +707,37 @@ async function requestUnBlock() {
     });
 }
 
-//login.js
 
-document
-  .getElementById("click-search")
-  .addEventListener("click", async function (event) {
-    profile = document.getElementById("input-search").value;
-    event.preventDefault();
-    let users = await fetch(`http://localhost/api/users/search/${profile}`, {
-      headers: {
-        "Content-type": "application/json",
-      },
+
+
+
+// LOGIN
+
+document.getElementById("click-search").addEventListener("click", async function (event) {
+  profile = document.getElementById("input-search").value;
+  event.preventDefault();
+  let users = await fetch(`http://localhost/api/users/search/${profile}`, {
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error("User not found");
+      return response.json();
     })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("User not found");
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    if (users == undefined) {
-      alert("User not found");
-      return;
-    }
-    let newUrl = `/users/${profile}`;
-    window.history.pushState({ path: newUrl }, "", newUrl);
-    console.log("pushState: " + newUrl);
-    await switchPages(newUrl);
-  });
+    .catch((error) => {
+      console.log(error);
+    });
+  if (users == undefined) {
+    alert("User not found");
+    return;
+  }
+  let newUrl = `/users/${profile}`;
+  window.history.pushState({ path: newUrl }, "", newUrl);
+  console.log("pushState: " + newUrl);
+  await switchPages(newUrl);
+});
 
-//back-transition
 window.addEventListener("popstate", async function (event) {
   if (event.state) {
     let currentUrl = window.location.pathname;
@@ -749,6 +746,12 @@ window.addEventListener("popstate", async function (event) {
     await switchPages(currentUrl);
   }
 });
+
+
+
+
+
+// AI and PvP
 
 function gamePage() {
   if (window.location.pathname === "/ai" || window.location.pathname === "/pvp") {
@@ -766,6 +769,31 @@ gamePage();
 
 
 
+// ABOUT
+
+const totalImages = 28;
+let currentSlide = 0;
+
+function updateImageSource(next = true) {
+  currentSlide = next ? (currentSlide + 1) % totalImages : (currentSlide - 1 + totalImages) % totalImages;
+  const newImageNumber = currentSlide + 1;
+  const newImagePath = `/static/assets/slider-photo/${newImageNumber}.jpg`;
+
+  const carouselInner = document.querySelector('.carousel-inner');
+  const currentActive = carouselInner.querySelector('.active');
+
+  const newImage = document.createElement('img');
+  newImage.classList.add('d-block', 'w-100', 'h-50');
+  newImage.src = newImagePath;
+  newImage.alt = `Slide ${newImageNumber}`;
+
+  currentActive.innerHTML = '';
+  currentActive.appendChild(newImage);
+}
+
+
+
+// ROUTER START 
 // SPA
 
 const contentUris = {
@@ -790,7 +818,7 @@ let routes = new Map([
 
 function determinePage(route) {
   let page = 'error-404.html'
-  routes.forEach((v,k) => {
+  routes.forEach((v, k) => {
     let result = k.exec(route)
     if (result != null)
       page = v;
@@ -820,7 +848,7 @@ function renderPage() {
     .then(html => {
       root.innerHTML = html;
     }).catch(err => console.log(err));
-    renderPageWithScripts();
+  renderPageWithScripts();
 }
 
 renderPage();
@@ -831,35 +859,59 @@ renderPage();
 
 function loadScripts(scripts, callback) {
   let loadedScripts = 0;
-  console.log("loadScript1");
+  const head = document.head;
+
+  function scriptLoaded() {
+    loadedScripts++;
+    if (loadedScripts === scripts.length) callback();
+  }
+
   scripts.forEach(script => {
     const scriptTag = document.createElement('script');
     scriptTag.src = script;
-    console.log("loadScript2");
-    scriptTag.onload = () => {
-      loadedScripts++;
-      if (loadedScripts === scripts.length) callback();
-    };
-    console.log("loadScript3");
 
-    document.head.appendChild(scriptTag);
+    scriptTag.onload = scriptLoaded;
+    scriptTag.onerror = scriptLoaded;
+
+    head.appendChild(scriptTag);
   });
 }
 
-function renderPageWithScripts() {
+function renderPageWithComponents() {
   let route = location.pathname;
   let page = determinePage(route);
-  console.log("renderPageScriipt1");
 
-  fetch(`/static/pages/${page}`).then(data => data.text())
+  fetch(`/static/pages/${page}`)
+    .then(data => data.text())
     .then(html => {
       root.innerHTML = html;
       const scripts = [`/static/js/${page}.js`];
-      console.log("renderPageScriipt2");
       loadScripts(scripts, () => {
-        console.log('All scripts loaded');
+        console.log('Tüm scriptler yüklendi.');
+        initializeComponents();
       });
-    }).catch(err => console.log(err));
+    })
+    .catch(err => console.error(err));
 }
 
+
+function initializeComponents() {
+  document.querySelector('.carousel-control-next').addEventListener('click', () => {
+    updateImageSource();
+  });
+
+  document.querySelector('.carousel-control-prev').addEventListener('click', () => {
+    updateImageSource(false);
+  });
+
+  updateImageSource();
+}
+
+initializeComponents();
+
+renderPageWithComponents();
+
+document.addEventListener('DOMContentLoaded', () => {
+  initializeComponents();
+});
 
