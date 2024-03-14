@@ -18,15 +18,12 @@ const routes = new Map([
 ]);
 
 function renderPage() {
-  // ( btekinli is wait )
   const route = location.pathname;
   const page = determinePage(route);
-
-  fetchPage(`/static/pages/${page}`);
+  fetchPage(`/static/pages/${page}`, page);
 }
 
 async function fetchPage(url) {
-  // ( btekinli is wait )
   try {
     const response = await fetch(url, {
       headers: {
@@ -35,52 +32,21 @@ async function fetchPage(url) {
     });
     const html = await response.text();
     root.innerHTML = html;
-    renderPageWithScripts(page);
+    initializeComponents();
   } catch (error) {
     console.error("Page fetching error:", error);
   }
 }
 
 function determinePage(route) {
-  // ( btekinli is wait )
   let page = "error-404.html";
-
   routes.forEach((v, k) => {
     if (k.test(route)) page = v;
   });
-
   return page;
 }
 
-function renderPageWithScripts(page) {
-  // ( btekinli is wait )
-  const scripts = [`/static/js/${page}.js`];
-  loadScripts(scripts, initializeComponents);
-}
-
-function loadScripts(scripts, callback) {
-  // ( btekinli is wait )
-  let loadedScripts = 0;
-  const head = document.head;
-
-  function scriptLoaded() {
-    loadedScripts++;
-    if (loadedScripts === scripts.length) callback();
-  }
-
-  scripts.forEach((script) => {
-    const scriptTag = document.createElement("script");
-    scriptTag.src = script;
-
-    scriptTag.onload = scriptLoaded;
-    scriptTag.onerror = scriptLoaded;
-
-    head.appendChild(scriptTag);
-  });
-}
-
 function initializeComponents() {
-  // ( btekinli is wait )
   document
     .querySelector(".carousel-control-next")
     .addEventListener("click", () => {
@@ -96,23 +62,29 @@ function initializeComponents() {
   aboutSliderScript();
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  renderPage();
+});
+
+window.addEventListener("popstate", () => {
+  renderPage();
+});
+
 document.addEventListener("click", (event) => {
-  // ( btekinli is wait )
   const { target } = event;
 
-  if (target.tagName === "a") {
+  if (target.tagName === "A") {
     event.preventDefault();
 
-    const path = new URL(ttarget.href).pathname;
+    const path = new URL(target.href).pathname;
     history.pushState(null, null, path);
     renderPage();
   }
 });
 
-window.addEventListener("popstate", (_event) => {
-  // ( btekinli is wait )
-  renderPage();
-});
+
+
+
 
 // notification-js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -284,7 +256,6 @@ const totalImages = 28;
 let currentSlide = 0;
 
 function aboutSliderScript(next = true) {
-  // ( btekinli is wait )
   currentSlide = next
     ? (currentSlide + 1) % totalImages
     : (currentSlide - 1 + totalImages) % totalImages;
@@ -306,7 +277,6 @@ function aboutSliderScript(next = true) {
 // ai.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function gamePage() {
-  // ( btekinli is wait )
   if (
     window.location.pathname === "/ai" ||
     window.location.pathname === "/pvp"
