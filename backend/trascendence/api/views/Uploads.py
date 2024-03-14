@@ -14,7 +14,7 @@ UPLOAD_DIR = BASE_DIR / "media"
 
 
 class FileForm(forms.Form):
-    file = forms.FileField()
+    file = forms.ImageField()
 
 
 def save_file_with_user(user: UserModel, file) -> str | None:
@@ -37,7 +37,8 @@ def upload_file(request: HttpRequest):
         saved_name = save_file_with_user(user, request.FILES['file'])
         if saved_name is not None:
             return JsonResponse({"file": f"api/media/{saved_name}"}, status=200)
-    return HttpResponseBadRequest("Invalid data.")
+    
+    return HttpResponseBadRequest("Invalid data. ")
 
 
 @require_http_methods(['DELETE'])
