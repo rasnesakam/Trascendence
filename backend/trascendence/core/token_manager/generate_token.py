@@ -23,7 +23,7 @@ def generate_access_token(user) -> str:
 
 
 def generate_refresh_token(user) -> str:
-    return generate_token({"sub": str(user.id), "typ": TYPE_REFRESH}, timedelta(days==1))
+    return generate_token({"sub": str(user.id), "typ": TYPE_REFRESH}, timedelta(days=2))
 
 
 def generate_match_token(user) -> str:
