@@ -6,6 +6,14 @@ const rightPaddle = document.getElementById('rightPaddle');
 const player1ScoreElement = document.getElementById('player1-score');
 const player2ScoreElement = document.getElementById('player2-score');
 
+
+const player1ScoreLabel = document.getElementById('player1-score');
+const player2ScoreLabel = document.getElementById('player2-score');
+
+let urlSearchParam = new URLSearchParams(window.location.search)
+let matchCode = urlSearchParam.get("match_code")
+//let homeSignature = document.cookie.
+
 let ballX = 620;
 let ballY = 340;
 
@@ -79,6 +87,7 @@ function handleLose() {
     scoreReset();
     resetBall();
     ballColorReset();
+    //TODO: Submit match result here
     window.location.href = "finish-match.html";
   }
 }

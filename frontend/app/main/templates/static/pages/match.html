@@ -6,11 +6,12 @@
         <div class="d-flex align-items-center justify-content-around col">
             <div class="col-1"></div>
             <!--Left-->
-            <div  class="text-center col-3">
+            <div class="text-center col-3">
                 <img src="/static/assets/pp.png" id="left-photo" class="my-4 match-img-circle border border-white">
                 <button id="left-expected" class="btn btn-secondary btn-l match-button" data-bs-toggle="modal"
                     data-bs-target="#left-side">
-                    <p id="left-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
+                    <p id="left-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get
+                        Ready!</p>
                 </button>
             </div>
             <!--Tennis-->
@@ -25,8 +26,9 @@
             <div class="text-center col-3">
                 <img id="right-photo" src="/static/assets/pp.png" class="my-4 match-img-circle border border-white">
                 <button id="right-expected" class="btn btn-warning btn-l match-button" data-bs-toggle="modal"
-                data-bs-target="#right-side">
-                    <p id="right-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get Ready!</p>
+                    data-bs-target="#right-side">
+                    <p id="right-ready-button" class="text-white match-font-size fw-bolder px-3 match-text-size">Get
+                        Ready!</p>
                 </button>
             </div>
             <div class="col-1"></div>
@@ -42,29 +44,22 @@
                     </div>
                     <div class="modal-body bg-dark">
 
-                        <form id="form-away" class="form-away" onsubmit="(e) => {e.preventDefault()}">
+                        <form id="form-away" class="form-away" action="match_making('right')">
                             <div>
                                 <label for="right-match-nickname" class="col-form-label">Your Username:</label>
-                                <input type="text" class="form-control form-away-username" id="right-input">
+                                <input type="text" class="form-control form-away-username" id="right-input" autocomplete="off">
                             </div>
                             <div>
-                                <label for="right-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
+                                <label for="right-match-playcode" class="col-form-label"
+                                    autocomplete="on">PlayCode:</label>
                                 <input type="password" class="form-control" id="right-playcode">
                             </div>
                         </form>
-                        <script>
-                            (function(){
-                                let formAway = document.getElementsByClassName("form-away")[0]
-                                formAway.addEventListener('submit', (e) => {
-                                    e.preventDefault()
-                                })
-                            })()
-                        </script>
 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="form-away" class="btn btn-light" data-bs-dismiss="modal" onclick="match_making('right')" >Ready</button>
+                        <button type="submit" form="form-away" class="btn btn-light" data-bs-dismiss="modal">Ready</button>
                     </div>
                 </div>
             </div>
@@ -81,43 +76,85 @@
                     </div>
                     <div class="modal-body bg-danger">
 
-                        <form id="form-home" class="form-home" >
+                        <form id="form-home" action="javascript:match_making('left')" class="form-home">
                             <div>
                                 <label for="left-match-nickname" class="col-form-label">Your Username:</label>
-                                <input id="left-input" type="text" class="form-control form-home-username" id="left-match-nickname">
+                                <input id="left-input" type="text" class="form-control form-home-username" autocomplete="off"
+                                    id="left-match-nickname">
                             </div>
                             <div>
-                                <label for="left-match-playcode" class="col-form-label" autocomplete="on">PlayCode:</label>
+                                <label for="left-match-playcode" class="col-form-label"
+                                    autocomplete="on">PlayCode:</label>
                                 <input id="left-playcode" type="password" class="form-control" id="left-match-playcode">
                             </div>
                         </form>
-                        
-                    <script>
-                        (function(){
-                            let formHome = document.getElementsByClassName("form-home")[0]
-                            formHome.addEventListener('submit', (e) => {
-                                e.preventDefault()
-                            })
-                            let input_username = formHome.getElementsByClassName("form-home-username")[0]
-                            let left_photo = document.getElementById("left-photo");
-                            let data = JSON.parse(localStorage.getItem(0));
-                            let username = data.user.username
-                            let userphoto = data.user.avatarURI;
-                            
-                            input_username.setAttribute("value", username);
-                            input_username.setAttribute("readonly", true);
-                            left_photo.src =  userphoto;
-                        })()
-                    </script>
+
+                        <script>
+
+                            async function takeMatchForTournament() {
+                                let searchParam = new URLSearchParams(location.search)
+                                if (searchParam.has("match")) {
+                                    let matchCode = searchParam.get("match")
+
+                                    console.log("bendesin");
+                                    let data = await fetch(`http://localhost/api/matches/code/${matchCode}`)
+                                        .then((response) => response.json())
+                                        .catch(() => console.log("error match-code"));
+                                    console.log("takeUrlData response: ", data);
+                                    let formHome = document.getElementsByClassName("form-home")[0]
+                                    let usernameHome = formHome.getElementsByClassName("form-home-username")[0]
+                                    let avatarHome = document.getElementById("left-photo")
+                                    usernameHome.setAttribute("value", data.home.user.username)
+                                    usernameHome.setAttribute("readonly", true)
+                                    avatarHome.src = data.home.user.avatarURI
+
+                                    let formAway = document.getElementsByClassName("form-away")[0]
+                                    let usernameAway = formAway.getElementsByClassName("form-away-username")[0]
+                                    let avatarAway = document.getElementById("right-photo")
+                                    usernameAway.setAttribute("value", data.away.user.username);
+                                    usernameAway.setAttribute("readonly", true);
+                                    avatarAway.src = data.away.user.avatarURI;
+                                }
+                            }
+
+                            (function () {
+                                let searchParam = new URLSearchParams(window.location.search);
+
+                                let formHome = document.getElementsByClassName("form-home")[0]
+                                // formHome.addEventListener('submit', (e) => {
+                                //     e.preventDefault()
+
+                                // })
+                                if (searchParam.has("match"))
+                                {
+                                    console.log("takeMatch girdi");
+                                    takeMatchForTournament();
+                                }   
+                                else {
+                                    console.log("Match girdi");
+                                    let input_username = formHome.getElementsByClassName("form-home-username")[0]
+                                    let left_photo = document.getElementById("left-photo");
+                                    let data = JSON.parse(localStorage.getItem(0));
+                                    let username = data.user.username
+                                    let userphoto = data.user.avatarURI;
+
+                                    input_username.setAttribute("value", username);
+                                    input_username.setAttribute("readonly", true);
+                                    left_photo.src = userphoto;
+                                }
+
+                            })()
+
+                        </script>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="form-home" class="btn btn-light" data-bs-dismiss="modal" onclick="match_making('left')">Ready</button>
+                        <button type="submit" form="form-home" class="btn btn-light" data-bs-dismiss="modal">Ready</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
+
     <script src="/static/js/match.js"></script>
 </body>

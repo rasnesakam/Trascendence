@@ -70,6 +70,7 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
         "name": tournament.tournament_name,
         "tournament_code": tournament.tournament_code,
         "created_by": user_dto(tournament.created_user),
+        "create_date": tournament.created_at.isoformat()
     }
     if players is not None:
         dto["players"] = {
@@ -127,7 +128,7 @@ def match_dto(match: Matches) -> dict:
             "score": match.score_away,
             "signaure": match.away_signature
         },
-        "played_time": match.played_time,
+        "played_time": match.played_time.isoformat() if match.played_time is not None else "",
     }
 
 

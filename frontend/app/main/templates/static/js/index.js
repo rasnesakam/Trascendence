@@ -1,13 +1,13 @@
-if (window.location.pathname == "/") main_load();
-else if (window.location.pathname.includes("/users/")) profile_load();
+// if (window.location.pathname == "/") main_load();
+// else if (window.location.pathname.includes("/users/")) profile_load();
 
-async function error_404() {
-  pageTxt = await fetch(webRoute[404])
-    .then((response) => response.text())
-    .catch((error) => alert(error));
-  document.getElementById("index-navbar").style.display = "none";
-  document.getElementById("index-body").innerHTML = pageTxt;
-}
+// async function error_404() {
+//   pageTxt = await fetch(webRoute[404])
+//     .then((response) => response.text())
+//     .catch((error) => alert(error));
+//   document.getElementById("index-navbar").style.display = "none";
+//   document.getElementById("index-body").innerHTML = pageTxt;
+// }
 
 async function winCount(data, username) {
   var win = 0;
@@ -19,47 +19,47 @@ async function winCount(data, username) {
 }
 
 
-async function whichEvent(id) {
-  const users = id.includes("/users/");
+// async function whichEvent(id) {
+//   const users = id.includes("/users/");
 
-  if (id == "/") {
-    main_load();
-  } else if (id == "/livechat") {
-    disableChat();
-    loadContent();
-  } else if (id == "login") {
-    takeUrl();
-  } else if (users) {
+//   if (id == "/") {
+//     main_load();
+//   } else if (id == "/livechat") {
+//     disableChat();
+//     loadContent();
+//   } else if (id == "login") {
+//     takeUrl();
+//   } else if (users) {
 
-    profile_load();
-  }
-}
+//     profile_load();
+//   }
+// }
 
-function isPassageEvent(eventId) {
-  if (eventId == "/") return true;
-  if (eventId == "/about") return true;
-  if (eventId == "/livechat") return true;
-  if (eventId == "/login") return true;
-  if (eventId == "/ai") return true;
-  return false;
-}
+// function isPassageEvent(eventId) {
+//   if (eventId == "/") return true;
+//   if (eventId == "/about") return true;
+//   if (eventId == "/livechat") return true;
+//   if (eventId == "/login") return true;
+//   if (eventId == "/ai") return true;
+//   return false;
+// }
 
-var isEventListenerAdded = false;
+// var isEventListenerAdded = false;
 
-function router() {
-  if (isEventListenerAdded) return;
-  var body = document.body;
+// function router() {
+//   if (isEventListenerAdded) return;
+//   var body = document.body;
 
-  body.addEventListener("click", function (event) {
-    if (isPassageEvent(event.target.id)) {
-      event.preventDefault();
+//   body.addEventListener("click", function (event) {
+//     if (isPassageEvent(event.target.id)) {
+//       event.preventDefault();
 
-      window.history.pushState({}, "", event.target.href);
-      switchPages(event.target.id);
-    }
-  });
-  isEventListenerAdded = true;
-}
+//       window.history.pushState({}, "", event.target.href);
+//       switchPages(event.target.id);
+//     }
+//   });
+//   isEventListenerAdded = true;
+// }
 
 function addNotify(msg, id, func_name) {
   alert("addNotify: " + msg + " " + id + " " + func_name);
@@ -131,23 +131,23 @@ function responseFriend(response, code) {
   removeNotify(code);
 }
 
-async function switchPages(eventId) {
-  const path = window.location.pathname;
-  if (path.includes("?"))
-    path = path.split("?");
-  var route = webRoute[path[0]] || webRoute[404];
+// async function switchPages(eventId) {
+//   const path = window.location.pathname;
+//   if (path.includes("?"))
+//     path = path.split("?");
+//   var route = webRoute[path[0]] || webRoute[404];
 
-  if (path.includes("/users/")) {
-    route = "/static/pages/profile-detail.html";
-  }
+//   if (path.includes("/users/")) {
+//     route = "/static/pages/profile-detail.html";
+//   }
 
-  const html = await fetch(route)
-    .then((response) => response.text())
-    .catch((error) => alert(error));
+//   const html = await fetch(route)
+//     .then((response) => response.text())
+//     .catch((error) => alert(error));
 
-  document.getElementById("index-body").innerHTML = html;
-  whichEvent(eventId);
-}
+//   document.getElementById("index-body").innerHTML = html;
+//   whichEvent(eventId);
+// }
 
 //main.js
 async function createTournament() {
@@ -768,13 +768,12 @@ gamePage();
 
 
 
-
 // ABOUT
 
 const totalImages = 28;
 let currentSlide = 0;
 
-function updateImageSource(next = true) {
+function aboutSliderScript(next = true) {
   currentSlide = next ? (currentSlide + 1) % totalImages : (currentSlide - 1 + totalImages) % totalImages;
   const newImageNumber = currentSlide + 1;
   const newImagePath = `/static/assets/slider-photo/${newImageNumber}.jpg`;
@@ -796,66 +795,60 @@ function updateImageSource(next = true) {
 // ROUTER START 
 // SPA
 
-const contentUris = {
-  1: { title: 'Page 1', url: "/main" },
-  2: { title: 'Page 2', url: "/livechat" },
-  3: { title: 'Page 3', url: "/about" },
-};
 
-let routes = new Map([
-  [/^\/(\?.*|$)/, 'main.html'],
-  [/^\/game(\/.*$|\?.*|$)/, 'game.html'],
-  [/^\/login(\/.*$|\?.*|$)/, 'login.html'],
-  [/^\/tournament(\/.*$|\?.*|$)/, 'tournament.html'],
-  [/^\/about(\/.*$|\?.*|$)/, 'about.html'],
-  [/^\/users(\/.*$|\?.*|$)/, 'profile-detail.html'],
-  [/^\/livechat(\/.*$|\?.*|$)/, 'livechat.html'],
-  [/^\/match(\/.*$|\?.*|$)/, 'match.html'],
-  [/^\/score(\/.*$|\?.*|$)/, 'score.html'],
-  [/^\/finish-match(\/.*$|\?.*|$)/, 'finish-match.html'],
-  [/^\/ai(\/.*$|\?.*|$)/, 'ai.html'],
-])
+const root = document.getElementById("index-body");
+
+const routes = new Map([
+  [/^\/$/, 'main.html'],
+  [/^\/game/, 'game.html'],
+  [/^\/login/, 'login.html'],
+  [/^\/tournament/, 'tournament.html'],
+  [/^\/about/, 'about.html'],
+  [/^\/users/, 'profile-detail.html'],
+  [/^\/livechat/, 'livechat.html'],
+  [/^\/match/, 'match.html'],
+  [/^\/score/, 'score.html'],
+  [/^\/finish-match/, 'finish-match.html'],
+  [/^\/ai/, 'ai.html'],
+]);
+
+function renderPage() {
+  const route = location.pathname;
+  const page = determinePage(route);
+
+  fetchPage(`/static/pages/${page}`);
+}
+
+async function fetchPage(url) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+    const html = await response.text();
+    root.innerHTML = html;
+    renderPageWithScripts(page);
+  } catch (error) {
+    console.error('Page fetching error:', error);
+  }
+}
 
 function determinePage(route) {
-  let page = 'error-404.html'
+  let page = 'error-404.html';
+
   routes.forEach((v, k) => {
-    let result = k.exec(route)
-    if (result != null)
+    if (k.test(route))
       page = v;
   });
+
   return page;
 }
 
-let root = document.getElementById("index-body");
-
-document.querySelectorAll('a[data-page-id]').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    let path = new URL(e.target.href).pathname;
-    history.pushState(null, "BAŞLIK(TR)", path);
-    renderPage();
-  })
-});
-
-window.addEventListener('popstate', (e) => {
-  renderPage();
-})
-
-function renderPage() {
-  let route = location.pathname
-  let page = determinePage(route);
-  fetch(`/static/pages/${page}`).then(data => data.text())
-    .then(html => {
-      root.innerHTML = html;
-    }).catch(err => console.log(err));
-  renderPageWithScripts();
+function renderPageWithScripts(page) {
+  const scripts = [`/static/js/${page}.js`];
+  loadScripts(scripts, initializeComponents);
 }
-
-renderPage();
-
-
-
-// SPA Loader
 
 function loadScripts(scripts, callback) {
   let loadedScripts = 0;
@@ -877,41 +870,42 @@ function loadScripts(scripts, callback) {
   });
 }
 
-function renderPageWithComponents() {
-  let route = location.pathname;
-  let page = determinePage(route);
-
-  fetch(`/static/pages/${page}`)
-    .then(data => data.text())
-    .then(html => {
-      root.innerHTML = html;
-      const scripts = [`/static/js/${page}.js`];
-      loadScripts(scripts, () => {
-        console.log('Tüm scriptler yüklendi.');
-        initializeComponents();
-      });
-    })
-    .catch(err => console.error(err));
-}
-
-
 function initializeComponents() {
   document.querySelector('.carousel-control-next').addEventListener('click', () => {
-    updateImageSource();
+    aboutSliderScript();
   });
 
   document.querySelector('.carousel-control-prev').addEventListener('click', () => {
-    updateImageSource(false);
+    aboutSliderScript(false);
   });
 
-  updateImageSource();
+  aboutSliderScript();
 }
 
-initializeComponents();
+documne
 
-renderPageWithComponents();
+document.addEventListener('click', (event) => {
+  const { target } = event;
 
-document.addEventListener('DOMContentLoaded', () => {
-  initializeComponents();
+  if (target.tagName === 'a') {
+    event.preventDefault();
+
+    const path = new URL(ttarget.href).pathname;
+    history.pushState(null, null, path);
+    renderPage();
+  }
+})
+
+window.addEventListener('popstate', (_event) => {
+  renderPage();
 });
 
+
+// document.querySelectorAll('a[data-page-id]').forEach(link => {
+//   link.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     const path = new URL(e.target.href).pathname;
+//     history.pushState(null, "Page Title", path);
+//     renderPage();
+//   })
+// });

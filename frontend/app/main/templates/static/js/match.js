@@ -1,4 +1,4 @@
-var user_count = 0;
+var user_count = 0;								
 
 async function match_making(str) {
 	alert(`${str}-girdi`);
@@ -34,8 +34,7 @@ async function match_making(str) {
 }
 
 setInterval(() => {
-	console.log("mycount:", user_count);
-	if (user_count == 2) {
+		if (user_count == 2) {
 		document.getElementById("match-snipped").style = "none";
 		document.getElementById("match-tennis").style = "block";
 		document.getElementById("right-expected").disabled = false;
@@ -43,8 +42,8 @@ setInterval(() => {
 		user_count = 0;
 	}
 	else {
-		documet.getElementById("match-snipped").style = "block";
-		documet.getElementById("match-tennis").style = "none";
+		document.getElementById("match-snipped").style = "block";
+		document.getElementById("match-tennis").style = "none";
 	}
 }, 20000)
 
@@ -83,27 +82,4 @@ async function take_matchurl() {
 	ready_profile("form-away", "right-photo");
 }
 
-(async function () {
-	let searchParam = new URLSearchParams(location.search)
-	if (searchParam.has("match-code")) {
-		let matchCode = searchParam.get("match-code")
 
-		let data = await fetch(`http://localhost/api/matches/code/${matchCode}`)
-			.then((response) => JSON.parse(resonse)).catch(() => console.log("error match-code"));
-
-		let formHome = document.getElementsByClassName("form-home")[0]
-		let usernameHome = formHome.getElementsByClassName("form-home-username")[0]
-		let avatarHome = document.getElementById("left-photo")
-		usernameHome.setAttribute("value", data.home.user.username)
-		usernameHome.setAttribute("readonly", true)
-		avatarHome.src = data.home.user.avatarURI
-
-		let formAway = document.getElementsByClassName("form-away")[0]
-		let usernameAwat = formAway.getElementsByClassName("form-away-username")[0]
-		let avatarAway = document.getElementById("rigth-photo")
-		usernameAway.setAttribute("value", data.away.user.username);
-		usernameAway.setAttribute("readonly", true);
-		avatarAway.src = data.away.user.avatarURI;
-
-	}
-})();

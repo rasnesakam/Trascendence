@@ -18,7 +18,7 @@
 	<header>
 		<nav id="index-navbar" class="navbar bg-dark border-bottom navbar-expand-lg  border-body mb-5" data-bs-theme="dark">
 			<div class="container-fluid">
-				<a id="nav-home" class="navbar-brand" onclick="router()" href="/"><img src="/static/assets/tr-logo.png"></a>
+				<a id="nav-home" class="navbar-brand" href="/" data-page-id="1"><img src="/static/assets/tr-logo.png"></a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
 					aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -26,13 +26,13 @@
 				<div class="collapse navbar-collapse" id="navbarScroll">
 					<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
 						<li class="nav-item">
-							<a id="/" class="nav-link active" aria-current="page" onclick="router()" href="/" data-page-id="1">Home</a>
+							<a id="/" class="nav-link active" aria-current="page"  href="/" data-page-id="1">Home</a>
 						</li>
 						<li class="nav-item">
-							<a id="/livechat" class="nav-link" onclick="router()" href="/livechat" data-page-id="2">Live Chat</a>
+							<a id="/livechat" class="nav-link" href="/livechat" data-page-id="2">Live Chat</a>
 						</li>
 						<li class="nav-item">
-							<a id="/about" class="nav-link" onclick="router()" href="/about" data-page-id="3">About</a>
+							<a id="/about" class="nav-link" href="/about" data-page-id="3">About</a>
 						</li>
 						<li class="nav-item dropdown" style="width: 250px;">
 							<button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
