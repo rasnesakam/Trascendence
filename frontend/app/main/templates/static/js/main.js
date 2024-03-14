@@ -1,7 +1,3 @@
-function removeSubstring(originalString, substringToRemove) {
-  return originalString.replace(substringToRemove, "");
-}
-
 function updateProfile() {
   document.getElementById("close-icon").style.display = "block";
   document.getElementById("setting-icon").style.display = "none";

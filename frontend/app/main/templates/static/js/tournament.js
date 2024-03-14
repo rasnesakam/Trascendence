@@ -108,8 +108,7 @@ var timer = setInterval(function () {
 			document.getElementById("tournament-timer").innerText = "CANCELLED";
 			clearInterval(timer)
 			clearInterval(enter_tournament)
-			window.history.pushState({ path: "/" }, "", "/");
-			switchPages(window.location.href);
+			window.location.href = "/"
 		}
 	}
 	else {
