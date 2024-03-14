@@ -145,11 +145,11 @@ def uploads_dto(upload: Uploads) -> dict:
 
 
 # Auth dto
-def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str) -> dict:
+def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str | None = None) -> dict:
     return {
         "user": user_dto(usermodel),
         "access_token": access_token,
-        "refresh_token": refresh_token
+        "refresh_token": refresh_token if refresh_token is not None else None
     }
 
 
