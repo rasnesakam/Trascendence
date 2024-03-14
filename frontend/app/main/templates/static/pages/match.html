@@ -16,7 +16,7 @@
             </div>
             <!--Tennis-->
             <div id="match-tennis" class="text-center col-4" style="display: none;">
-                <img class="match-img-circle match-tennis-show" src="/static/assets/tennis.png">
+                <img class="match-img-circle match-tennis-show" src="/static/assets/login-rush-42.png">
             </div>
             <!--Snipped-->
             <div id="match-snipped" class="spinner-border text-dark match-spinner-response" role="status">
@@ -44,10 +44,10 @@
                     </div>
                     <div class="modal-body bg-dark">
 
-                        <form id="form-away" class="form-away" action="match_making('right')">
+                        <form id="form-away" class="form-away" action="javascript:match_making('right');">
                             <div>
                                 <label for="right-match-nickname" class="col-form-label">Your Username:</label>
-                                <input type="text" class="form-control form-away-username" id="right-input" autocomplete="off">
+                                <input type="text" class="form-control form-away-username" id="right-input" autocomplete="on">
                             </div>
                             <div>
                                 <label for="right-match-playcode" class="col-form-label"
@@ -79,7 +79,7 @@
                         <form id="form-home" action="javascript:match_making('left')" class="form-home">
                             <div>
                                 <label for="left-match-nickname" class="col-form-label">Your Username:</label>
-                                <input id="left-input" type="text" class="form-control form-home-username" autocomplete="off"
+                                <input id="left-input" type="text" class="form-control form-home-username" autocomplete="on"
                                     id="left-match-nickname">
                             </div>
                             <div>

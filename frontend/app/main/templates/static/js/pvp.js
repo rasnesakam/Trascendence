@@ -11,8 +11,16 @@ const player1ScoreLabel = document.getElementById('player1-score');
 const player2ScoreLabel = document.getElementById('player2-score');
 
 let urlSearchParam = new URLSearchParams(window.location.search)
-let matchCode = urlSearchParam.get("match_code")
-//let homeSignature = document.cookie.
+let matchCode = urlSearchParam.get("match")
+let tournamentCode = urlSearchParam.get("tournament")
+let homeUser = JSON.parse(localStorage.getItem("left-player-token"))
+let awayUser = JSON.parse(localStorage.getItem("right-player-token"))
+
+document.getElementById("player-1").innerText = String(homeUser.username).toLowerCase();
+document.getElementById("player-2").innerText = String(awayUser.username).toLowerCase();
+
+if (homeUser == undefined || awayUser == undefined)
+  window.location.href = "/"
 
 let ballX = 620;
 let ballY = 340;
@@ -34,11 +42,13 @@ let ballInPlay = false;
 let ballColor = { r: 255, g: 153, b: 204 };
 
 var defaultColor = '#efefef';
+var defaultMaxScore = 10
 
-const endScore = parseInt(prompt('How many scores should the game end?'));
+const endScore = urlSearchParam.has("tournament") ? defaultMaxScore : parseInt(prompt('How many scores should the game end?'));
+const leftPaddleColor = urlSearchParam.has("tournament") ? defaultColor : prompt("What color should the left paddle be?");
+const rightPaddleColor = urlSearchParam.has("tournament") ? defaultColor : prompt("What color should the right paddle be?");
 
-const leftPaddleColor = prompt("What color should the left paddle be?");
-const rightPaddleColor = prompt("What color should the right paddle be?");
+
 
 document.addEventListener('keydown', (e) => {
   if ((e.key === 'w' || e.key === 'W') && leftPaddleY > 0) {
@@ -72,23 +82,62 @@ function scoreReset() {
 }
 
 function handleLose() {
-  if (!endScore) {
-    if (player1Score === 10 || player2Score === 10) {
-      console.log(`player1 score: ${player1Score}, player2 score: ${player2Score}`);
-      scoreReset();
-      resetBall();
-      ballColorReset();
-      window.location.href = "finish-match.html";
-    }
-  }
+  // if (!endScore) {
+  //   if (player1Score === 10 || player2Score === 10) {
+  //     console.log(`player1 score: ${player1Score}, player2 score: ${player2Score}`);
+  //     scoreReset();
+  //     resetBall();
+  //     ballColorReset();
+  //     window.location.href = "finish-match.html";
+  //   }
+  // }
 
   if (player1Score === endScore || player2Score === endScore) {
     console.log(`player1 score: ${player1Score}, player2 score: ${player2Score}`);
+    
+    //TODO: Submit match result here
+    let homeToken = homeUser.token;
+    let awayToken = awayUser.token;
+    if (homeToken == undefined || awayToken == undefined){
+      alert("Signatures are invalid!")
+      window.location.href = "/"
+    }
+    let matchResult = {
+      home:{
+        score: player1Score,
+        token: homeToken
+      },
+      away:{
+        score: player2Score,
+        token: awayToken
+      }
+    }
+    
+    let requestOptions = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(matchResult)
+    }
+
     scoreReset();
     resetBall();
     ballColorReset();
-    //TODO: Submit match result here
-    window.location.href = "finish-match.html";
+
+    if (urlSearchParam.has("match"))
+      fetch(`http://localhost/api/matches/submit/${matchCode}`,requestOptions).then( r => {
+        alert(r.status)
+        if (urlSearchParam.has("tournament"))
+          window.location.href = `/tournament?tournament=${tournamentCode}&last_match=${matchCode}`
+        else
+          window.location.href = "finish-match.html";
+    })
+    else
+      fetch("http://localhost/api/matches/submit",requestOptions).then(r => {
+      alert(e.status)
+      window.location.href = "finish-match.html";
+    })
   }
 }
 
@@ -137,7 +186,7 @@ function updateGame() {
 
   requestAnimationFrame(updateGame);
 }
-
+  
 function resetBall() {
   ballX = 620;
   ballY = 340;

@@ -1,45 +1,56 @@
-var user_count = 0;								
+var user_count = 0;
+var users = {
+	"left": undefined,
+	"right": undefined
+}
 
 async function match_making(str) {
-	alert(`${str}-girdi`);
-	let username = document.getElementById(`${str}-input`).value;
-	let playcode = document.getElementById(`${str}-playcode`).value;
-	let url = "http://localhost/api/matches/player/verify"
-	fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-type": "application/json",
-		},
-		body: JSON.stringify({
-			username,
-			playcode
-		}),
-	})
-		.then((response) => {
-			if (response.ok)
-				return response.json()
+	if () {
+		let username = document.getElementById(`${str}-input`).value;
+		let playcode = document.getElementById(`${str}-playcode`).value;
+		let url = "http://localhost/api/matches/player/verify"
+		fetch(url, {
+			method: "POST",
+			headers: {
+				"Content-type": "application/json",
+			},
+			body: JSON.stringify({
+				username,
+				playcode
+			}),
 		})
-		.then(responseData => {
-			user_count += 1;
-			let data = { username, token: responseData.token };
-
-			document.getElementById(`${str}-photo`).src = responseData.user.avatarURI;
-			document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
-			localStorage.setItem(`${str}-player-token`, data);
-			document.getElementById(`${str}-expected`).disabled = true;
-		})
-		.catch(_ => alert("You have to enter your correct information"));
+			.then((response) => {
+				if (response.ok)
+					return response.json()
+			})
+			.then(responseData => {
+				let data = { username, token: responseData.token };
+				users[str] = responseData.user
+				if (users.left != undefined && users.right != undefined && users.right.username == users.left.username) {
+					alert("You need to enter different account")
+					return;
+				}
+				document.getElementById(`${str}-photo`).src = responseData.user.avatarURI;
+				document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
+				localStorage.setItem(`${str}-player-token`, JSON.stringify(data));
+				document.getElementById(`${str}-expected`).disabled = true;
+			})
+			.catch(_ => alert("You have to enter your correct information"));
+	}
 	// matches/player/verify
 
 }
 
 setInterval(() => {
-		if (user_count == 2) {
+	if (user_count == 2) {
 		document.getElementById("match-snipped").style = "none";
 		document.getElementById("match-tennis").style = "block";
 		document.getElementById("right-expected").disabled = false;
 		document.getElementById("left-expected").disabled = false;
 		user_count = 0;
+		setTimeout(() => {
+			window.location.href = "/pvp" + window.location.search;
+		}, 3000);
 	}
 	else {
 		document.getElementById("match-snipped").style = "block";

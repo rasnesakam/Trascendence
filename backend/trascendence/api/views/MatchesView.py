@@ -3,7 +3,7 @@ import jwt
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from trascendence.middleware.auth import authorize
-from trascendence.api.models import Matches, UserModel
+from trascendence.api.models import Matches, UserModel, TournamentPlayers
 from django.db.models import Q
 from trascendence.core import validate_token
 from trascendence.middleware.validators import request_body, str_field, number_field
@@ -12,6 +12,7 @@ from trascendence.core.token_manager import validate_token
 from django.utils.timezone import now
 from trascendence.core.token_manager import token_types, generate_match_token
 from django.contrib.auth.hashers import BCryptPasswordHasher
+import traceback
 
 
 @require_http_methods(['GET'])
@@ -53,8 +54,8 @@ def submit_matches_for_users(request: HttpRequest, content):
     try:
         valid_home = validate_token(token_home)
         valid_away = validate_token(token_away)
-        user_home = UserModel.objects.get(username=valid_home["sub"])
-        user_away = UserModel.objects.get(username=valid_away["sub"])
+        user_home = UserModel.objects.get(id=valid_home["sub"])
+        user_away = UserModel.objects.get(id=valid_away["sub"])
         saved_match = Matches.objects.create(
             home=user_home,
             away=user_away,
@@ -67,6 +68,8 @@ def submit_matches_for_users(request: HttpRequest, content):
         )
         return JsonResponse({"message":"Match saved", "content": match_dto(saved_match)}, status=201)
     except:
+        import traceback
+        traceback.print_exc()
         return HttpResponseForbidden("Not allowed")
 
 
@@ -91,20 +94,36 @@ def submit_planned_match(request: HttpRequest, matchcode, content) -> HttpRespon
         away = planned_match.away
         home_token_verified = validate_token(content["home"]["token"])
         away_token_verified = validate_token(content["away"]["token"])
-        if home_token_verified["sub"] != home.id or away_token_verified["sub"] != away.id:
-            return HttpResponseForbidden(json.dumps({"message": "Invalid tokens provided."}), content_type="application/json")
+        if home_token_verified["sub"] != str(home.id) or away_token_verified["sub"] != str(away.id):    
+            return HttpResponseForbidden()
         score_home = content["home"]["score"]
         score_away = content["away"]["score"]
+        winner = away if score_away > score_home else home
+        loser = home if score_away > score_home else away
         planned_match.score_home = score_home
         planned_match.home_signature = content["home"]["token"]
         planned_match.score_away = score_away
         planned_match.away_signature = content["away"]["token"]
         planned_match.is_played = True
         planned_match.played_time = now()
-        planned_match.winner = home if score_away > score_home else away
+        planned_match.winner = winner
         planned_match.save()
         if planned_match.tournament is not None:
-            pass
+            try:
+                tournament = planned_match.tournament
+                tournament_player_winner = TournamentPlayers.objects.get(tournament=tournament, user=winner)
+                tournament_player_winner.stage += 1
+                tournament_player_winner.has_pair = False
+                tournament_player_winner.pair_user = None
+                tournament_player_winner.save()
+                tournament_player_loser = TournamentPlayers.objects.get(tournament=tournament, user=loser)
+                tournament_player_loser.has_pair = False
+                tournament_player_loser.save()
+            except TournamentPlayers.DoesNotExist:
+                import sys
+                print("TOURNAMENT_PLAYER COULDN'T UPDATED", file=sys.stderr)
+                traceback.print_exc()
+        return JsonResponse({"message": "match saved"}, status=200)
     except Matches.DoesNotExist:
         return HttpResponseNotFound(json.dumps({"message": "No such match"}), content_type="application/json")
 

@@ -235,7 +235,7 @@ def get_next_match(request: HttpRequest, tournamentcode: str):
         for stage in range(1, max_stages + 1):
             binded_players: TournamentPlayers | None = TournamentPlayers.objects.filter(tournament=tournament, stage=stage, has_pair=True).first()
             if binded_players is not None:
-                new_match = Matches.objects.create(home=binded_players.user, away=binded_players.pair_user, is_played=False)
+                new_match = Matches.objects.create(home=binded_players.user, away=binded_players.pair_user, tournament=tournament, is_played=False)
                 return JsonResponse(match_dto(new_match), status=201)
         return HttpResponseNotFound()
     except Tournaments.DoesNotExist:
