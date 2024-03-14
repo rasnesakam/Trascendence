@@ -5,38 +5,37 @@ var users = {
 }
 
 async function match_making(str) {
-	if () {
-		let username = document.getElementById(`${str}-input`).value;
-		let playcode = document.getElementById(`${str}-playcode`).value;
-		let url = "http://localhost/api/matches/player/verify"
-		fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-type": "application/json",
-			},
-			body: JSON.stringify({
-				username,
-				playcode
-			}),
+
+	let username = document.getElementById(`${str}-input`).value;
+	let playcode = document.getElementById(`${str}-playcode`).value;
+	let url = "http://localhost/api/matches/player/verify"
+	fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-type": "application/json",
+		},
+		body: JSON.stringify({
+			username,
+			playcode
+		}),
+	})
+		.then((response) => {
+			if (response.ok)
+				return response.json()
 		})
-			.then((response) => {
-				if (response.ok)
-					return response.json()
-			})
-			.then(responseData => {
-				let data = { username, token: responseData.token };
-				users[str] = responseData.user
-				if (users.left != undefined && users.right != undefined && users.right.username == users.left.username) {
-					alert("You need to enter different account")
-					return;
-				}
-				document.getElementById(`${str}-photo`).src = responseData.user.avatarURI;
-				document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
-				localStorage.setItem(`${str}-player-token`, JSON.stringify(data));
-				document.getElementById(`${str}-expected`).disabled = true;
-			})
-			.catch(_ => alert("You have to enter your correct information"));
-	}
+		.then(responseData => {
+			let data = { username, token: responseData.token };
+			users[str] = responseData.user
+			if (users.left != undefined && users.right != undefined && users.right.username == users.left.username) {
+				alert("You need to enter different account")
+				return;
+			}
+			document.getElementById(`${str}-photo`).src = responseData.user.avatarURI;
+			document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
+			localStorage.setItem(`${str}-player-token`, JSON.stringify(data));
+			document.getElementById(`${str}-expected`).disabled = true;
+		})
+		.catch(_ => alert("You have to enter your correct information"));
 	// matches/player/verify
 
 }
