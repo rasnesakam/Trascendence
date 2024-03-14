@@ -3,27 +3,108 @@
 
 const root = document.getElementById("index-body");
 
-const routes = new Map([
-  [/^\/$/, "main.html"],
-  [/^\/game/, "game.html"],
-  [/^\/login/, "login.html"],
-  [/^\/tournament/, "tournament.html"],
-  [/^\/about/, "about.html"],
-  [/^\/users/, "profile-detail.html"],
-  [/^\/livechat/, "livechat.html"],
-  [/^\/match/, "match.html"],
-  [/^\/score/, "score.html"],
-  [/^\/finish-match/, "finish-match.html"],
-  [/^\/ai/, "ai.html"],
-]);
+const routes = [
+  {
+    pattern: /^\/$/,
+    scripts: ["/static/js/main.js"],
+    html: "main.html"
+  },
+  {
+    pattern: /^\/login/,
+    scripts: ["/static/js/login.js"],
+    html: "login.html"
+  },
+  {
+    pattern: /^\/tournament/,
+    scripts: ["/static/js/tournament.js"],
+    html: "tournament.html"
+  },
+  {
+    pattern: /^\/about/,
+    scripts: [],
+    html: "about.html"
+  },
+  {
+    pattern: /^\/users/,
+    scripts: ["/static/js/users.js"],
+    html: "profile-detail.html"
+  },
+  {
+    pattern: /^\/livechat/,
+    scripts: ["/static/js/livechat.js"],
+    html: "livechat.html"
+  },
+  {
+    pattern: /^\/match/,
+    scripts: ["/static/js/match.js"],
+    html: "match.html"
+  },
+  {
+    pattern: /^\/score/,
+    scripts: ["/static/js/score.js"],
+    html: "score.html"
+  },
+  {
+    pattern: /^\/finish-match/,
+    scripts: ["/static/js/finish-match.js"],
+    html: "finish-match.html"
+  },
+  {
+    pattern: /^\/pvp/,
+    scripts: ["/static/js/pvp.js"],
+    html: "pvp.html"
+  },
+  {
+    pattern: /^\/ai/,
+    scripts: ["/static/js/ai.js"],
+    html: "ai.html"
+  },
+]
 
 function renderPage() {
   const route = location.pathname;
-  const page = determinePage(route);
-  fetchPage(`/static/pages/${page}`, page);
+  const { scripts, html } = determinePage(route);
+  fetchPage(`/static/pages/${html}`, scripts);
 }
 
-async function fetchPage(url) {
+function determinePage(route) {
+  for (const routeConfig of routes) {
+    if (routeConfig.pattern.test(route)) {
+      return routeConfig;
+    }
+  }
+
+  return { scripts: [], html: "error-404.html" };
+}
+
+function loadScripts(scripts, callback) {
+  if (scripts.length === 0) {
+    callback();
+    return;
+  }
+
+  let loadedScripts = 0;
+  const head = document.head;
+
+  function scriptLoaded() {
+    loadScripts++;
+
+    if (loadScripts === scripts.length) callback();
+  }
+
+
+  scripts.forEach(script => {
+    const scriptTag = document.createElement('script');
+    scriptTag.src = script;
+
+    scriptTag.onload = scriptLoaded;
+    scriptTag.onerror = scriptLoaded;
+
+    head.appendChild(scriptTag);
+  });
+}
+
+async function fetchPage(url, scripts) {
   try {
     const response = await fetch(url, {
       headers: {
@@ -32,34 +113,49 @@ async function fetchPage(url) {
     });
     const html = await response.text();
     root.innerHTML = html;
-    initializeComponents();
+    loadScripts(scripts, initializeComponents);
   } catch (error) {
     console.error("Page fetching error:", error);
   }
 }
 
-function determinePage(route) {
-  let page = "error-404.html";
-  routes.forEach((v, k) => {
-    if (k.test(route)) page = v;
-  });
-  return page;
-}
 
 function initializeComponents() {
-  document
-    .querySelector(".carousel-control-next")
-    .addEventListener("click", () => {
-      aboutSliderScript();
-    });
+  // finish-match codes
+  var right_user = JSON.parse(localStorage.getItem("left-player-token")).user;
+  var left_user = JSON.parse(localStorage.getItem("right-player-token")).user;
 
-  document
-    .querySelector(".carousel-control-prev")
-    .addEventListener("click", () => {
-      aboutSliderScript(false);
-    });
+  (function () {
+    console.log("right_user: ", right_user);
+    console.log("left_user: ", left_user);
+    console.log("ben burdayım");
+    document.getElementById("right-player-token").src = right_user.avatarURI;
+    document.getElementById("left-player-token").src = left_user.avatarURI;
+  })();
+
+
+
+  // controller codes
+  (function () {
+    if (!isLogin()) {
+      window.location.href = "/login";
+    }
+  })();
+
+
+
+  // about codes
+  document.querySelector(".carousel-control-next").addEventListener("click", () => {
+    aboutSliderScript();
+  });
+
+  document.querySelector(".carousel-control-prev").addEventListener("click", () => {
+    aboutSliderScript(false);
+  });
 
   aboutSliderScript();
+
+  console.log("Componentler başlatıldı");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -81,6 +177,20 @@ document.addEventListener("click", (event) => {
     renderPage();
   }
 });
+
+
+// function renderPageWithScripts(page) {
+//   const scripts = [`/static/js/${page.replace('.html', '.js')}`];
+
+//   routes.forEach((value, key) => {
+//     if (key.test(page)) {
+//       const scriptName = value.split('.')[0];
+//       scripts.push(`/static/js/${scriptName}.js`);
+//     }
+//   });
+
+//   loadScripts(scripts, initializeComponents);
+// }
 
 
 
@@ -291,7 +401,37 @@ function gamePage() {
 
 gamePage();
 
+
+
+
+
+
 // controller.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(function () {
+  if (isLogin())
+    isLogin();
+})();
+
+function isLogin() {
+  const url = window.location.pathname;
+  let loginStr = localStorage.getItem(0);
+  var login;
+
+  try {
+    if (loginStr != undefined && !url.includes("/login")) {
+      login = JSON.parse(loginStr);
+
+      if (login.access_token == undefined) throw new Error("is not login");
+    }
+  } catch (error) {
+    window.location.href = "login";
+    return false;
+  }
+  return true;
+}
+
+
+
 
 // finish-match.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -473,7 +613,7 @@ async function loadInvateFriend() {
 }
 
 async function saveUserInformation() {
-  //kullanıcı bilgilerini günceller ve dataya gönderir
+  //user save is not enough because you have to send it to backend
   var user = JSON.parse(localStorage.getItem("my-profile"));
   var data = JSON.parse(localStorage.getItem(0));
 
@@ -496,33 +636,38 @@ async function saveUserInformation() {
       surname: user.user.surname,
     };
 
-  localStorage.setItem("my-profile", JSON.stringify(user));
 
-  let userphoto = document.getElementById("profile-photo").src;
+  let user_photo = document.getElementById("profile-photo");
 
-  if (user.user.avatarURI != userphoto) {
+  if (user.user.avatarURI != user_photo) {
+    let file = document.getElementById("fileInput").files[0];
+    let fileData = new FormData();
+    fileData.append("file", file);
+
     let photo = await fetch("http://localhost/api/uploads/upload", {
       method: "POST",
       headers: {
-        "Content-type": "application/json",
         Authorization: `Bearer ${data.access_token}`,
       },
-      body: JSON.stringify({
-        avatarURI: userphoto,
-      }),
+      body: fileData,
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error sending friend request");
+          throw new Error("Error don't image update");
         }
         return response.json();
       })
+      .then((responseData) => {
+        console.log("responseData fetch file: ", responseData);
+        return responseData;
+      })
       .catch((error) => {
-        console.error("Fetch error:", error);
-        throw error;
+        console.error("Fetch error: ", error);
       });
-    response.avatarURI = photo.file;
+    user.user.avatarURI = photo.file;
   }
+
+  localStorage.setItem("my-profile", JSON.stringify(user));
 
   await fetch("http://localhost/api/profile/update", {
     method: "PATCH",
