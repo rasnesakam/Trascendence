@@ -115,6 +115,16 @@ def submit_planned_match(request: HttpRequest, matchcode, content) -> HttpRespon
                 tournament_player_winner.stage += 1
                 tournament_player_winner.has_pair = False
                 tournament_player_winner.pair_user = None
+                next_player = TournamentPlayers.objects.filter(
+                    tournament=tournament, 
+                    stage=tournament_player_winner.stage,
+                    has_pair=False).first()
+                if next_player is not None:
+                    tournament_player_winner.pair_user = next_player.user
+                    tournament_player_winner.has_pair = True
+                    next_player.pair_user = tournament_player_winner.user
+                    next_player.has_pair = True
+                    next_player.save()
                 tournament_player_winner.save()
                 tournament_player_loser = TournamentPlayers.objects.get(tournament=tournament, user=loser)
                 tournament_player_loser.has_pair = False
