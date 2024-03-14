@@ -67,38 +67,32 @@ function selectedPerson(id) {
     let people = JSON.parse(localStorage.getItem("contant"))
     clearMessages();
     fetchMessages(id);
+
+    document.getElementById("contact-selected-profile-photo").style.display = "none";
     document.getElementById("message-input").style.display = "block";
-    // load previous messages
     let formElement = document.getElementsByClassName("livechat-send-message")[0]
     let hiddenInput = formElement.querySelector('input[name="to"]')
     hiddenInput.type = "hidden"
     hiddenInput.setAttribute("name", "to")
     hiddenInput.value = id
+    let user;
     for (i = 0; i < people.length; i++) {
-        if (people[i].id == id) {
-            document.getElementById(people[i].id).classList.add("active");
-            document
-                .getElementById("contact-selected-profile-photo")
-                .setAttribute("src", people[i].avatarURI);
-            document.getElementById("contact-selected-profile-name").textContent =
-                people[i].name;
-            /*for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-                showMessage(
-                    people[i].messages[j].type,
-                    people[i].messages[j].message
-                );
-            }*/
-        } else {
-            document.getElementById(id).classList.remove("active");
-        }
+        document.getElementById(people[i].id).classList.remove("active");
+        if (people[i].id == id)
+            user = people[i]
     }
+    document.getElementById(id).classList.add("active");
+    document
+        .getElementById("contact-selected-profile-photo")
+        .setAttribute("src", user.avatarURI);
+    document.getElementById("contact-selected-profile-name").textContent = user.name;
 
 }
 
 
 
 async function loadContent() {
-    var contact = document.getElementById("add-contacts");
+    let contact = document.getElementById("add-contacts");
 
     contact.innerHTML = " ";
     token = JSON.parse(localStorage.getItem(0)).access_token
@@ -113,25 +107,25 @@ async function loadContent() {
     }).catch((error) => console.log(error));
     console.log(people);
     localStorage.setItem("contant", JSON.stringify(people));
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         let user = people[i]
-        var listItem = document.createElement("li");
+        let listItem = document.createElement("li");
         listItem.id = user.id;
         listItem.classList.add("contact", "clearfix");
         contact.appendChild(listItem);
 
-        var img = document.createElement("img");
+        let img = document.createElement("img");
         img.id = "profile-img";
         img.src = user.avatarURI;
         img.alt = "avatar";
         listItem.appendChild(img);
 
         // <div class="about"> öğesini oluştur
-        var aboutDiv = document.createElement("div");
+        let aboutDiv = document.createElement("div");
         aboutDiv.classList.add("about");
 
         // <div class="name"> öğesini oluştur
-        var nameDiv = document.createElement("div");
+        let nameDiv = document.createElement("div");
         // nameDiv.style.marginTop = 5 + "px";
         // nameDiv.style.marginBottom = 5 + "px";
         nameDiv.classList.add("name");
@@ -139,34 +133,39 @@ async function loadContent() {
         aboutDiv.appendChild(nameDiv);
 
         // <div class="status"> öğesini oluştur
-        var statusDiv = document.createElement("div");
+        let statusDiv = document.createElement("div");
         statusDiv.classList.add("status");
         nameDiv.appendChild(statusDiv);
 
         listItem.onclick = () => selectedPerson(user.id)
         listItem.appendChild(aboutDiv);
         // <i class="fa fa-circle offline"></i> öğesini oluştur
-        var circleIcon = document.createElement("i");
+        let circleIcon = document.createElement("i");
         circleIcon.classList.add("fa", "fa-circle");
         // TODO: Send ping 
+        let lastPing = 0
         setInterval(() => {
-            circleIcon.classList.remove("online");
-            circleIcon.classList.add("offline");
+            if (Date.now() - lastPing > 2000){
+                circleIcon.classList.remove("online");
+                circleIcon.classList.add("offline");
+            }
             socket.send(JSON.stringify({
                 type: "ping",
                 to: user.id
             }))
-        }, 5000)
+        }, 1000)
         socket.addEventListener("message", (message) => {
             jsonObj = JSON.parse(message.data)
             if (jsonObj.type == "pong" && jsonObj.from == user.id) {
                 circleIcon.classList.remove("offline");
                 circleIcon.classList.add("online");
+                lastPing = Date.now()
             }
         });
+        
         circleIcon.classList.add("offline");
         statusDiv.appendChild(circleIcon);
-        console.log("list:", listItem);
+        contact.innerHTML += listItem.outerHTML
     }
 }
 
