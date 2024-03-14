@@ -127,4 +127,5 @@ def refresh_token(request: HttpRequest) -> HttpResponse:
     auth_info = getattr(request, "auth_info")
     user = auth_info.user
     access_token = generate_access_token(user)
-    return JsonResponse(auth_dto(user, access_token, auth_info.token))
+    refresh_token = getattr(auth_info, "token")
+    return JsonResponse(auth_dto(user, access_token, refresh_token), status=200)
