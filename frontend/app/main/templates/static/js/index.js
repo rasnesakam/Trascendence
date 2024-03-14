@@ -1,65 +1,158 @@
-// if (window.location.pathname == "/") main_load();
-// else if (window.location.pathname.includes("/users/")) profile_load();
+// ROUTER START
+// SPA
 
-// async function error_404() {
-//   pageTxt = await fetch(webRoute[404])
-//     .then((response) => response.text())
-//     .catch((error) => alert(error));
-//   document.getElementById("index-navbar").style.display = "none";
-//   document.getElementById("index-body").innerHTML = pageTxt;
-// }
+const root = document.getElementById("index-body");
 
-async function winCount(data, username) {
-  var win = 0;
+const routes = new Map([
+  [/^\/$/, "main.html"],
+  [/^\/game/, "game.html"],
+  [/^\/login/, "login.html"],
+  [/^\/tournament/, "tournament.html"],
+  [/^\/about/, "about.html"],
+  [/^\/users/, "profile-detail.html"],
+  [/^\/livechat/, "livechat.html"],
+  [/^\/match/, "match.html"],
+  [/^\/score/, "score.html"],
+  [/^\/finish-match/, "finish-match.html"],
+  [/^\/ai/, "ai.html"],
+]);
 
-  for (let i = 0; i < data.size(); i++) {
-    if (data.winner.username == username) win++;
-  }
-  return win;
+function renderPage() {
+  // ( btekinli is wait )
+  const route = location.pathname;
+  const page = determinePage(route);
+
+  fetchPage(`/static/pages/${page}`);
 }
 
+async function fetchPage(url) {
+  // ( btekinli is wait )
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
+    const html = await response.text();
+    root.innerHTML = html;
+    renderPageWithScripts(page);
+  } catch (error) {
+    console.error("Page fetching error:", error);
+  }
+}
 
-// async function whichEvent(id) {
-//   const users = id.includes("/users/");
+function determinePage(route) {
+  // ( btekinli is wait )
+  let page = "error-404.html";
 
-//   if (id == "/") {
-//     main_load();
-//   } else if (id == "/livechat") {
-//     disableChat();
-//     loadContent();
-//   } else if (id == "login") {
-//     takeUrl();
-//   } else if (users) {
+  routes.forEach((v, k) => {
+    if (k.test(route)) page = v;
+  });
 
-//     profile_load();
-//   }
-// }
+  return page;
+}
 
-// function isPassageEvent(eventId) {
-//   if (eventId == "/") return true;
-//   if (eventId == "/about") return true;
-//   if (eventId == "/livechat") return true;
-//   if (eventId == "/login") return true;
-//   if (eventId == "/ai") return true;
-//   return false;
-// }
+function renderPageWithScripts(page) {
+  // ( btekinli is wait )
+  const scripts = [`/static/js/${page}.js`];
+  loadScripts(scripts, initializeComponents);
+}
 
-// var isEventListenerAdded = false;
+function loadScripts(scripts, callback) {
+  // ( btekinli is wait )
+  let loadedScripts = 0;
+  const head = document.head;
 
-// function router() {
-//   if (isEventListenerAdded) return;
-//   var body = document.body;
+  function scriptLoaded() {
+    loadedScripts++;
+    if (loadedScripts === scripts.length) callback();
+  }
 
-//   body.addEventListener("click", function (event) {
-//     if (isPassageEvent(event.target.id)) {
-//       event.preventDefault();
+  scripts.forEach((script) => {
+    const scriptTag = document.createElement("script");
+    scriptTag.src = script;
 
-//       window.history.pushState({}, "", event.target.href);
-//       switchPages(event.target.id);
-//     }
-//   });
-//   isEventListenerAdded = true;
-// }
+    scriptTag.onload = scriptLoaded;
+    scriptTag.onerror = scriptLoaded;
+
+    head.appendChild(scriptTag);
+  });
+}
+
+function initializeComponents() {
+  // ( btekinli is wait )
+  document
+    .querySelector(".carousel-control-next")
+    .addEventListener("click", () => {
+      aboutSliderScript();
+    });
+
+  document
+    .querySelector(".carousel-control-prev")
+    .addEventListener("click", () => {
+      aboutSliderScript(false);
+    });
+
+  aboutSliderScript();
+}
+
+document.addEventListener("click", (event) => {
+  // ( btekinli is wait )
+  const { target } = event;
+
+  if (target.tagName === "a") {
+    event.preventDefault();
+
+    const path = new URL(ttarget.href).pathname;
+    history.pushState(null, null, path);
+    renderPage();
+  }
+});
+
+window.addEventListener("popstate", (_event) => {
+  // ( btekinli is wait )
+  renderPage();
+});
+
+// notification-js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function responseTournament(response, code) {
+  //html içerisine turnuva bildirimi atar
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  console.log(response, "....", code);
+  fetch(`http://localhost/api/tournaments/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  removeNotify(code);
+}
+
+function responseFriend(response, code) {
+  //html içerisine arkadaşlık bildirimi atar
+  let method = "POST";
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  if (response == "delete") method = "DELETE";
+
+  fetch(`http://localhost/api/interacts/invitations/${code}/${response}`, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access_token}`,
+    },
+    method: method,
+  }).then((responseCode) => {
+    if (responseCode == 404) alert("Invatation not found");
+  });
+  console.log("removeNotify: ", response, "....", code);
+  removeNotify(code);
+}
 
 function addNotify(msg, id, func_name) {
   alert("addNotify: " + msg + " " + id + " " + func_name);
@@ -88,228 +181,236 @@ function addNotify(msg, id, func_name) {
   div2.appendChild(button2);
 }
 
-function removeNotify(code) {
-  console.log("code", code);
-  let notification = document.getElementById(code);
-  console.log("REMOVE REMOVE NOTIFY: ", notification);
-  notification.remove();
-}
-
-function responseTournament(response, code) {
-  let method = "POST";
+async function requestAddFriend() {
+  //arkadaşlık isteğini kabul eder
+  let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  if (response == "delete") method = "DELETE";
-
-  console.log(response, "....", code);
-  fetch(`http://localhost/api/tournaments/invitations/${code}/${response}`, {
-    headers: {
-      "Content-type": "application/json",
-      Authorization: `Bearer ${access_token}`,
-    },
-    method: method,
-  }).then((responseCode) => {
-    if (responseCode == 404) alert("Invatation not found");
-  });
-  removeNotify(code);
-}
-
-function responseFriend(response, code) {
-  let method = "POST";
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  if (response == "delete") method = "DELETE";
-
-  fetch(`http://localhost/api/interacts/invitations/${code}/${response}`, {
-    headers: {
-      "Content-type": "application/json",
-      Authorization: `Bearer ${access_token}`,
-    },
-    method: method,
-  }).then((responseCode) => {
-    if (responseCode == 404) alert("Invatation not found");
-  });
-  console.log("removeNotify: ", response, "....", code);
-  removeNotify(code);
-}
-
-// async function switchPages(eventId) {
-//   const path = window.location.pathname;
-//   if (path.includes("?"))
-//     path = path.split("?");
-//   var route = webRoute[path[0]] || webRoute[404];
-
-//   if (path.includes("/users/")) {
-//     route = "/static/pages/profile-detail.html";
-//   }
-
-//   const html = await fetch(route)
-//     .then((response) => response.text())
-//     .catch((error) => alert(error));
-
-//   document.getElementById("index-body").innerHTML = html;
-//   whichEvent(eventId);
-// }
-
-//main.js
-async function createTournament() {
-  let listCheckBox = document.querySelectorAll('#friend-for-tournament input[type="checkbox"]');
-  let selectFriends = [];
-  let tournamentName = document.getElementById("tournament-name").value;
-  if (tournamentName == "") {
-    alert("Plese enter tournament name");
-    return;
-  }
-  for (let i = 0; i < listCheckBox.length; i++) {
-    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
-  }
-  if (selectFriends.length < 3) {
-    alert("Please select three friends");
-    return;
-  }
-  else if (selectFriends.length > 3) {
-    alert("Please select at least 4 friends");
-    return;
-  }
-  let item = JSON.parse(localStorage.getItem(0));
-  let access_token = item.access_token;
-  selectFriends.push(item.user.username);
-  let data = await fetch("http://localhost/api/tournaments/create", {
+  console.log("nickname " + profileNickName);
+  await fetch("http://localhost/api/interacts/friends/add", {
     method: "POST",
     headers: {
       "Content-type": "application/json",
       Authorization: `Bearer ${access_token}`,
     },
     body: JSON.stringify({
-      tournamentName,
-      users: selectFriends,
-      capacity: 4
-    })
+      username: profileNickName,
+      message: "would you like to be friends?",
+    }),
   })
-    .then((response) => response.json())
-    .catch((error) => console.log(error));
-
-  let to_tournament = document.getElementById("to_tournament");
-  to_tournament.href = `/tournament?tournament=${data.tournament_code}`;
-  to_tournament.click();
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
 }
 
+async function requestDeleteFriend() {
+  //ardaşlık isteğini kabul etmediğimizde bildirimi reddeder
+  let profileNickName = document.getElementById("nickname").textContent;
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  console.log("nickname " + profileNickName);
+  await fetch(
+    `http://localhost/api/interacts/friends/delete/${profileNickName}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  )
+    .then(async (responseCode) => {
+      if (!responseCode.ok) {
+        throw new Error("Error sending friend request");
+      }
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      return responseCode.json();
+    })
+    .then((data) => {
+      data.invitation_code;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      throw error;
+    });
+}
 
-async function setTournamentList(tournaments) {
-  let added = document.getElementById("tournamentList");
-  added.innerHTML = "";
-  if (tournaments == undefined) return;
-  for (let i = 0; i < tournaments.length; i++) {
-    let code = tournaments[i].tournament_code;
-    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
-      .then((data) => data.json())
+function removeNotify(code) {
+  //html içerisineden bildirim siler
+  console.log("code", code);
+  let notification = document.getElementById(code);
+  console.log("REMOVE REMOVE NOTIFY: ", notification);
+  notification.remove();
+}
+
+async function getNotification() {
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  let listUrl = [
+    "http://localhost/api/interacts/invitations",
+    "http://localhost/api/tournaments/invitations",
+  ];
+  document.getElementById("notify-list").innerHTML = "";
+  let listFunction = ["responseFriend", "responseTournament"];
+
+  for (let i = 0; i < listUrl.length; i++) {
+    let data = await fetch(listUrl[i], {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((response) => response.json())
       .catch((error) => console.log(error));
 
-    let accordionItem = document.createElement("div");
-    accordionItem.classList.add("accordion-item");
-    added.appendChild(accordionItem);
-
-    let accordionHeader = document.createElement("h2");
-    accordionHeader.classList.add("accordion-header");
-    accordionItem.appendChild(accordionHeader);
-
-    let button = document.createElement("button");
-    button.classList.add("accordion-button", "bg-color-purple", "text-white");
-    button.setAttribute("type", "button");
-    button.setAttribute("data-bs-toggle", "collapse");
-    button.setAttribute("data-bs-target", "#tournamentList");
-    button.setAttribute("aria-expanded", "true");
-    button.setAttribute("aria-controls", "tournamentList");
-    accordionHeader.appendChild(button);
-
-    let accordionBody = document.createElement("div");
-    accordionBody.classList.add("accordion-body");
-    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
-    accordionHeader.appendChild(accordionBody);
+    for (let j = 0; j < data.length; j++) {
+      let msg = data.content[j].from.username + ": " + data.content[j].note;
+      addNotify(msg, data.content[j].invite_code, listFunction[i]);
+    }
   }
 }
 
-function setMatches(matches, username) {
-  let added = document.getElementById("matchList");
-  added.innerHTML = "";
-  console.log("matches: ", matches);
-  if (matches == undefined) return;
-  for (let i = 0; i < matches.length; i++) {
-    let li = document.createElement("li");
-    li.classList.add(
-      "list-group-item",
-      "d-flex",
-      "justify-content-between",
-      "align-items-center"
-    );
-    added.appendChild(li);
+// about.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    let span1 = document.createElement("span");
-    span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
-    li.appendChild(span1);
+const totalImages = 28;
+let currentSlide = 0;
 
-    let span2 = document.createElement("span");
-    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
-    li.appendChild(span2);
+function aboutSliderScript(next = true) {
+  // ( btekinli is wait )
+  currentSlide = next
+    ? (currentSlide + 1) % totalImages
+    : (currentSlide - 1 + totalImages) % totalImages;
+  const newImageNumber = currentSlide + 1;
+  const newImagePath = `/static/assets/slider-photo/${newImageNumber}.jpg`;
 
-    if (matches.matches.score_home > matches.score_away)
-      if (matches.home == username) li.classList.add("bg-success");
-      else li.classList.add("bg-danger");
-    else if (matches.away == username) li.classList.add("bg-success");
-    else li.classList.add("bg-danger");
+  const carouselInner = document.querySelector(".carousel-inner");
+  const currentActive = carouselInner.querySelector(".active");
+
+  const newImage = document.createElement("img");
+  newImage.classList.add("d-block", "w-100", "h-50");
+  newImage.src = newImagePath;
+  newImage.alt = `Slide ${newImageNumber}`;
+
+  currentActive.innerHTML = "";
+  currentActive.appendChild(newImage);
+}
+
+// ai.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function gamePage() {
+  // ( btekinli is wait )
+  if (
+    window.location.pathname === "/ai" ||
+    window.location.pathname === "/pvp"
+  ) {
+    const nav = document.getElementById("index-navbar");
+
+    if (nav) {
+      nav.style.display = "none";
+    }
   }
 }
 
-function main_load() {
-  let userAccess = JSON.parse(localStorage.getItem(0));
-  let username = userAccess.user.username;
-  let access_token = userAccess.access_token;
+gamePage();
 
-  console.log("access_token: " + access_token);
-  let data = loadUserInformation(username, access_token);
-  setTournamentList(data.dataTournament);
-  setMatches(data.dataMatches);
+// controller.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// finish-match.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// index.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// livechat.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// login.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// main.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function clickOpcity(section, othSection) {
+  //user change information modunda resmin üzerine gelindiğinde resmin biraz daha açık olmasını sağlıyor
+  let target = document.getElementById(section);
+  let event = document.getElementById("under-" + section);
+  let othTarget = document.getElementById(othSection);
+  let othEvent = document.getElementById("under-" + othSection);
+
+  target.style.cursor = "default";
+  othTarget.style.cursor = "pointer";
+  target.style.opacity = 0.6;
+  othTarget.style.opacity = 1;
+  event.style.display = "block";
+  othEvent.style.display = "none";
 }
 
-function profile_load() {
-  let pathname = window.location.pathname;
-  let part = pathname.split("/");
-  let data = JSON.parse(localStorage.getItem(0));
-  let access_token = data.access_token;
-
-  console.log("data page", data);
-  loadUserInformation(part[2], access_token);
-  isMyFriend(data.user.username, part[2], access_token);
-  isBlock(data.user.username, part[2], access_token);
-  //setRate(37, 63, "myPieChart");
-}
-
-async function loadInvateFriend() {
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  let friends = await fetch(`http://localhost/api/interacts/friends`, { headers: { Authorization: `Bearer ${access_token}` } }).then(data => data.json());
-  let list = document.getElementById("friend-for-tournament");
-
-  console.log("friends", friends);
-  list.innerText = "";
-  for (let i = 0; i < friends.length; i++) {
-    let li = document.createElement("li");
-    li.classList.add("list-group-item");
-
-    let input = document.createElement("input");
-    input.classList.add("form-check-input");
-    input.setAttribute("type", "checkbox");
-    input.setAttribute("value", friends.content[i].username);
-    input.setAttribute("id", friends.content[i].username);
-    li.appendChild(input);
-
-    let label = document.createElement("label");
-    label.classList.add("form-check-label");
-    label.setAttribute("for", friends.content[i].username);
-    label.textContent = friends.content[i].username;
-    li.appendChild(label);
-    list.appendChild(li);
+function changePhoto() {
+  //resme tıklanıldığında resim değiştirmek için ekran açmaya yarar
+  let control = document.getElementById("close-icon").style;
+  if (control.display == "block") {
+    document.getElementById("fileInput").click();
   }
+}
+
+function outLogin() {
+  //çıkış yapmak için kullanılır
+  localStorage.removeItem(0);
+  window.location.href = "/login";
+}
+
+function updateProfile() {
+  //user change information moduna geçmek için kullanılır
+  var user = JSON.parse(localStorage.getItem("my-profile"));
+  document.getElementById("close-icon").style.display = "block";
+  document.getElementById("setting-icon").style.display = "none";
+  document.getElementById("save-icon").style.display = "block";
+  document.getElementById("profile-photo").classList.add("darken-on-hover");
+  document.getElementById("nickname").style.display = "none";
+  document.getElementById("name").style.display = "none";
+  document.getElementById("surname").style.display = "none";
+  document.getElementById("information").style.display = "block";
+  document.getElementById("questions").style.display = "block";
+
+  document.getElementById("nicknameInput").value = user.user.username;
+  document.getElementById("nameInput").value = user.user.name;
+  document.getElementById("surnameInput").value = user.user.surname;
+  if (document.getElementById("playcod").value != "")
+    document.getElementById("playcode-input").value = user.user.playcode;
+  document.getElementById("profile-photo").style.cursor = "pointer";
+}
+
+function closeUpdateProfile() {
+  //user change information modundan çıkmak için kullanılır
+  var profil_photo = document.getElementById("profile-photo");
+
+  document.getElementById("close-icon").style.display = "none";
+  document.getElementById("setting-icon").style.display = "block";
+  document.getElementById("save-icon").style.display = "none";
+  profil_photo.classList.remove("darken-on-hover");
+  document.getElementById("nickname").style.display = "block";
+  document.getElementById("name").style.display = "block";
+  document.getElementById("surname").style.display = "block";
+  document.getElementById("information").style.display = "none";
+  document.getElementById("questions").style.display = "none";
+  profil_photo.style.cursor = "default";
+}
+
+function isPlayCode(data) {
+  //main page kullanıcıların başta karşılaşacakları ekrandır ve bu ekranda playcodeları olup olmadığı sorgulanır ve eğer yoksa playcode ekranı modal olarak çağrılır
+  console.log(data.has_playcode);
+  if (data.has_playcode == undefined || data.has_playcode == false) {
+    document.getElementById("play-code").click();
+    return false;
+  }
+  return true;
 }
 
 async function setPlayCode() {
+  //yeni giriş yapan kullanıcılardna playcodelarının geçerli olup olmadığına bakar ve dataya gönderir
   let playcode = document.getElementById("playcode-input").value;
   let token = JSON.parse(localStorage.getItem(0)).access_token;
   if (playcode != "") {
@@ -332,56 +433,10 @@ async function setPlayCode() {
   }
 }
 
-function isBlock(username, friend, access_token) {
-  let myBlock = fetch(`http://localhost/api/interacts/blacklist`, {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  }).then((data) => data.json());
-
-  for (let i = 0; i < myBlock.length; i++) {
-    if (myBlock[i].username == friend) {
-      document.getElementById("add-friend-button").style.display = "none";
-      document.getElementById("delete-friend-button").style.display = "none";
-      document.getElementById("friend-block-button").style.display = "none";
-      document.getElementById("friend-unblock-button").style.display = "block";
-
-      return;
-    }
-  }
-}
-
-function isMyFriend(username, friend, access_token) {
-  if (username == friend) {
-    document.getElementById("add-friend-button").style.display = "none";
-    return;
-  } else document.getElementById("add-friend-button").style.display = "block";
-
-  let myFriend = fetch(`http://localhost/api/interacts/friends`, {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  }).then((data) => data.json());
-
-  for (let i = 0; i < myFriend.length; i++) {
-    if (myFriend[i].username == friend) {
-      document.getElementById("add-friend-button").style.display = "none";
-      document.getElementById("delete-friend-button").style.display = "block";
-      return;
-    }
-  }
-}
-
-function isPlayCode(data) {
-  console.log(data.has_playcode);
-  if (data.has_playcode == undefined || data.has_playcode == false) {
-    document.getElementById("play-code").click();
-    return false;
-  }
-  return true;
-}
-
+//- ** main.js **
+//- ** profile-detail.js **
 async function loadUserInformation(username, access_token) {
+  //kullanıcı bilgilerini datadan çeker ve html içerisinde gerekli yerlere yerleştirir
   let userIdentity = await fetch(`http://localhost/api/profile/${username}`, {
     headers: {
       Authorization: "Bearer " + access_token,
@@ -417,7 +472,38 @@ async function loadUserInformation(username, access_token) {
   return resultData;
 }
 
+async function loadInvateFriend() {
+  //tournament create buttonun içersiinde yer alan checkbox arkadaş listesinin htmlini oluşturur.
+  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
+  let friends = await fetch(`http://localhost/api/interacts/friends`, {
+    headers: { Authorization: `Bearer ${access_token}` },
+  }).then((data) => data.json());
+  let list = document.getElementById("friend-for-tournament");
+
+  console.log("friends", friends);
+  list.innerText = "";
+  for (let i = 0; i < friends.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+
+    let input = document.createElement("input");
+    input.classList.add("form-check-input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("value", friends.content[i].username);
+    input.setAttribute("id", friends.content[i].username);
+    li.appendChild(input);
+
+    let label = document.createElement("label");
+    label.classList.add("form-check-label");
+    label.setAttribute("for", friends.content[i].username);
+    label.textContent = friends.content[i].username;
+    li.appendChild(label);
+    list.appendChild(li);
+  }
+}
+
 async function saveUserInformation() {
+  //kullanıcı bilgilerini günceller ve dataya gönderir
   var user = JSON.parse(localStorage.getItem("my-profile"));
   var data = JSON.parse(localStorage.getItem(0));
 
@@ -431,7 +517,7 @@ async function saveUserInformation() {
       username: user.user.username,
       name: user.user.name,
       surname: user.user.surname,
-      playcode: code
+      playcode: code,
     };
   else
     var response = {
@@ -453,19 +539,20 @@ async function saveUserInformation() {
       },
       body: JSON.stringify({
         avatarURI: userphoto,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error sending friend request");
+        }
+        return response.json();
       })
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error sending friend request");
-      }
-      return response.json();
-    }).catch((error) => {
-      console.error("Fetch error:", error);
-      throw error;
-    });
+      .catch((error) => {
+        console.error("Fetch error:", error);
+        throw error;
+      });
     response.avatarURI = photo.file;
   }
-
 
   await fetch("http://localhost/api/profile/update", {
     method: "PATCH",
@@ -474,176 +561,148 @@ async function saveUserInformation() {
       Authorization: `Bearer ${data.access_token}`,
     },
     body: JSON.stringify(response),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Error update");
-    }
-    return response.json();
-  }).catch((error) => {
-    console.error("Fetch error:", error);
-  });
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error update");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+    });
 
   loadUserInformation(user.user.username, data.access_token);
   closeUpdateProfile();
 }
 
-function removeSubstring(originalString, substringToRemove) {
-  return originalString.replace(substringToRemove, "");
-}
-
-function updateProfile() {
-  var user = JSON.parse(localStorage.getItem("my-profile"));
-  document.getElementById("close-icon").style.display = "block";
-  document.getElementById("setting-icon").style.display = "none";
-  document.getElementById("save-icon").style.display = "block";
-  document.getElementById("profile-photo").classList.add("darken-on-hover");
-  document.getElementById("nickname").style.display = "none";
-  document.getElementById("name").style.display = "none";
-  document.getElementById("surname").style.display = "none";
-  document.getElementById("information").style.display = "block";
-  document.getElementById("questions").style.display = "block";
-
-  document.getElementById("nicknameInput").value = user.user.username;
-  document.getElementById("nameInput").value = user.user.name;
-  document.getElementById("surnameInput").value = user.user.surname;
-  if (document.getElementById("playcod").value != "")
-    document.getElementById("playcode-input").value = user.user.playcode;
-  document.getElementById("profile-photo").style.cursor = "pointer";
-}
-
-function closeUpdateProfile() {
-  var profil_photo = document.getElementById("profile-photo");
-
-  document.getElementById("close-icon").style.display = "none";
-  document.getElementById("setting-icon").style.display = "block";
-  document.getElementById("save-icon").style.display = "none";
-  profil_photo.classList.remove("darken-on-hover");
-  document.getElementById("nickname").style.display = "block";
-  document.getElementById("name").style.display = "block";
-  document.getElementById("surname").style.display = "block";
-  document.getElementById("information").style.display = "none";
-  document.getElementById("questions").style.display = "none";
-  profil_photo.style.cursor = "default";
-}
-
-function clickOpcity(section, othSection) {
-  let target = document.getElementById(section);
-  let event = document.getElementById("under-" + section);
-  let othTarget = document.getElementById(othSection);
-  let othEvent = document.getElementById("under-" + othSection);
-
-  target.style.cursor = "default";
-  othTarget.style.cursor = "pointer";
-  target.style.opacity = 0.6;
-  othTarget.style.opacity = 1;
-  event.style.display = "block";
-  othEvent.style.display = "none";
-}
-
-function changePhoto() {
-  let control = document.getElementById("close-icon").style;
-  if (control.display == "block") {
-    document.getElementById("fileInput").click();
+async function createTournament() {
+  //yeni bir turnuva oluşturur ve bildirini attırır
+  let listCheckBox = document.querySelectorAll(
+    '#friend-for-tournament input[type="checkbox"]'
+  );
+  let selectFriends = [];
+  let tournamentName = document.getElementById("tournament-name").value;
+  if (tournamentName == "") {
+    alert("Plese enter tournament name");
+    return;
   }
-}
-
-function outLogin() {
-  localStorage.removeItem(0);
-  window.location.href = "/login";
-}
-
-async function getNotification() {
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  let listUrl = [
-    "http://localhost/api/interacts/invitations",
-    "http://localhost/api/tournaments/invitations"
-  ]
-  document.getElementById("notify-list").innerHTML = "";
-  let listFunction = [
-    "responseFriend",
-    "responseTournament"
-  ]
-
-  for (let i = 0; i < listUrl.length; i++) {
-    let data = await fetch(listUrl[i], {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .catch((error) => console.log(error));
-
-    for (let j = 0; j < data.length; j++) {
-      let msg = data.content[j].from.username + ": " + data.content[j].note;
-      addNotify(msg, data.content[j].invite_code, listFunction[i]);
-    }
+  for (let i = 0; i < listCheckBox.length; i++) {
+    if (listCheckBox[i].checked) selectFriends.push(listCheckBox[i].value);
   }
-
-}
-
-async function requestAddFriend() {
-  let profileNickName = document.getElementById("nickname").textContent;
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  console.log("nickname " + profileNickName);
-  await fetch("http://localhost/api/interacts/friends/add", {
+  if (selectFriends.length < 3) {
+    alert("Please select three friends");
+    return;
+  } else if (selectFriends.length > 3) {
+    alert("Please select at least 4 friends");
+    return;
+  }
+  let item = JSON.parse(localStorage.getItem(0));
+  let access_token = item.access_token;
+  selectFriends.push(item.user.username);
+  let data = await fetch("http://localhost/api/tournaments/create", {
     method: "POST",
     headers: {
       "Content-type": "application/json",
       Authorization: `Bearer ${access_token}`,
     },
     body: JSON.stringify({
-      username: profileNickName,
-      message: "would you like to be friends?",
+      tournamentName,
+      users: selectFriends,
+      capacity: 4,
     }),
   })
-    .then(async (responseCode) => {
-      if (!responseCode.ok) {
-        throw new Error("Error sending friend request");
-      }
-      document.getElementById("add-friend-button").style.display = "none";
-      document.getElementById("delete-friend-button").style.display = "block";
-      return responseCode.json();
-    })
-    .then((data) => {
-      data.invitation_code;
-    })
-    .catch((error) => {
-      console.error("Fetch error:", error);
-      throw error;
-    });
+    .then((response) => response.json())
+    .catch((error) => console.log(error));
+
+  window.location.href = `/tournament?tournament=${data.tournament_code}`;
 }
 
-async function requestDeleteFriend() {
-  let profileNickName = document.getElementById("nickname").textContent;
-  let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  console.log("nickname " + profileNickName);
-  await fetch(
-    `http://localhost/api/interacts/friends/delete/${profileNickName}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    }
-  )
-    .then(async (responseCode) => {
-      if (!responseCode.ok) {
-        throw new Error("Error sending friend request");
-      }
-      document.getElementById("add-friend-button").style.display = "block";
-      document.getElementById("delete-friend-button").style.display = "none";
-      return responseCode.json();
-    })
-    .then((data) => {
-      data.invitation_code;
-    })
-    .catch((error) => {
-      console.error("Fetch error:", error);
-      throw error;
-    });
+async function setTournamentList(tournaments) {
+  //yapılan turnuva listesini html içerisine atar
+  let added = document.getElementById("tournamentList");
+  added.innerHTML = "";
+  if (tournaments == undefined) return;
+  for (let i = 0; i < tournaments.length; i++) {
+    let code = tournaments[i].tournament_code;
+    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
+      .then((data) => data.json())
+      .catch((error) => console.log(error));
+
+    let accordionItem = document.createElement("div");
+    accordionItem.classList.add("accordion-item");
+    added.appendChild(accordionItem);
+
+    let accordionHeader = document.createElement("h2");
+    accordionHeader.classList.add("accordion-header");
+    accordionItem.appendChild(accordionHeader);
+
+    let button = document.createElement("button");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white");
+    button.setAttribute("type", "button");
+    button.setAttribute("data-bs-toggle", "collapse");
+    button.setAttribute("data-bs-target", "#tournamentList");
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", "tournamentList");
+    accordionHeader.appendChild(button);
+
+    let accordionBody = document.createElement("div");
+    accordionBody.classList.add("accordion-body");
+    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
+    accordionHeader.appendChild(accordionBody);
+  }
 }
+
+function setMatches(matches, username) {
+  //yapılan maç listesini html içerisine atar
+  let added = document.getElementById("matchList");
+  added.innerHTML = "";
+  console.log("matches: ", matches);
+  if (matches == undefined) return;
+  for (let i = 0; i < matches.length; i++) {
+    let li = document.createElement("li");
+    li.classList.add(
+      "list-group-item",
+      "d-flex",
+      "justify-content-between",
+      "align-items-center"
+    );
+    added.appendChild(li);
+
+    let span1 = document.createElement("span");
+    span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
+    li.appendChild(span1);
+
+    let span2 = document.createElement("span");
+    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
+    li.appendChild(span2);
+
+    if (matches.matches.score_home > matches.score_away)
+      if (matches.home == username) li.classList.add("bg-success");
+      else li.classList.add("bg-danger");
+    else if (matches.away == username) li.classList.add("bg-success");
+    else li.classList.add("bg-danger");
+  }
+}
+
+function main_load() {
+  //main page içerisinde yüklenmesi, fetchlenmesi gereken bilgileri getirmek için kullanılır
+  let userAccess = JSON.parse(localStorage.getItem(0));
+  let username = userAccess.user.username;
+  let access_token = userAccess.access_token;
+
+  console.log("access_token: " + access_token);
+  let data = loadUserInformation(username, access_token);
+  setTournamentList(data.dataTournament);
+  setMatches(data.dataMatches);
+}
+
+// match.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// profile-detail.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 async function requestBlock() {
+  //bir kişiyi engeller
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   await fetch("http://localhost/api/interacts/blacklist/add", {
@@ -677,6 +736,7 @@ async function requestBlock() {
 }
 
 async function requestUnBlock() {
+  //engellenen kişiyi engellemekten çıkartır
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   await fetch(
@@ -707,205 +767,65 @@ async function requestUnBlock() {
     });
 }
 
-
-
-
-
-// LOGIN
-
-document.getElementById("click-search").addEventListener("click", async function (event) {
-  profile = document.getElementById("input-search").value;
-  event.preventDefault();
-  let users = await fetch(`http://localhost/api/users/search/${profile}`, {
-    headers: {
-      "Content-type": "application/json",
-    },
-  })
-    .then(async (response) => {
-      if (!response.ok) throw new Error("User not found");
-      return response.json();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  if (users == undefined) {
-    alert("User not found");
+function isMyFriend(username, friend, access_token) {
+  //profile detail içerisinde kullanıcının arkadaşı olup olmadığı kontrol ediliyor arkadaş olduğumuz kişileri tekrar ekleyememek için tasarlandı
+  if (username == friend) {
+    document.getElementById("add-friend-button").style.display = "none";
     return;
-  }
-  let newUrl = `/users/${profile}`;
-  window.history.pushState({ path: newUrl }, "", newUrl);
-  console.log("pushState: " + newUrl);
-  await switchPages(newUrl);
-});
+  } else document.getElementById("add-friend-button").style.display = "block";
 
-window.addEventListener("popstate", async function (event) {
-  if (event.state) {
-    let currentUrl = window.location.pathname;
-    event.preventDefault();
-    alert("prevent Default knk: " + currentUrl);
-    await switchPages(currentUrl);
-  }
-});
+  let myFriend = fetch(`http://localhost/api/interacts/friends`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  }).then((data) => data.json());
 
-
-
-
-
-// AI and PvP
-
-function gamePage() {
-  if (window.location.pathname === "/ai" || window.location.pathname === "/pvp") {
-    const nav = document.getElementById("index-navbar");
-
-    if (nav) {
-      nav.style.display = "none";
+  for (let i = 0; i < myFriend.length; i++) {
+    if (myFriend[i].username == friend) {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "block";
+      return;
     }
   }
 }
 
-gamePage();
+function isBlock(username, friend, access_token) {
+  //profile detail içerisinde kullanıcının engellenip engellenmediği kontrol ediliyor
+  let myBlock = fetch(`http://localhost/api/interacts/blacklist`, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  }).then((data) => data.json());
 
+  for (let i = 0; i < myBlock.length; i++) {
+    if (myBlock[i].username == friend) {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("friend-unblock-button").style.display = "block";
 
-
-
-// ABOUT
-
-const totalImages = 28;
-let currentSlide = 0;
-
-function aboutSliderScript(next = true) {
-  currentSlide = next ? (currentSlide + 1) % totalImages : (currentSlide - 1 + totalImages) % totalImages;
-  const newImageNumber = currentSlide + 1;
-  const newImagePath = `/static/assets/slider-photo/${newImageNumber}.jpg`;
-
-  const carouselInner = document.querySelector('.carousel-inner');
-  const currentActive = carouselInner.querySelector('.active');
-
-  const newImage = document.createElement('img');
-  newImage.classList.add('d-block', 'w-100', 'h-50');
-  newImage.src = newImagePath;
-  newImage.alt = `Slide ${newImageNumber}`;
-
-  currentActive.innerHTML = '';
-  currentActive.appendChild(newImage);
-}
-
-
-
-// ROUTER START 
-// SPA
-
-
-const root = document.getElementById("index-body");
-
-const routes = new Map([
-  [/^\/$/, 'main.html'],
-  [/^\/game/, 'game.html'],
-  [/^\/login/, 'login.html'],
-  [/^\/tournament/, 'tournament.html'],
-  [/^\/about/, 'about.html'],
-  [/^\/users/, 'profile-detail.html'],
-  [/^\/livechat/, 'livechat.html'],
-  [/^\/match/, 'match.html'],
-  [/^\/score/, 'score.html'],
-  [/^\/finish-match/, 'finish-match.html'],
-  [/^\/ai/, 'ai.html'],
-]);
-
-function renderPage() {
-  const route = location.pathname;
-  const page = determinePage(route);
-
-  fetchPage(`/static/pages/${page}`);
-}
-
-async function fetchPage(url) {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    });
-    const html = await response.text();
-    root.innerHTML = html;
-    renderPageWithScripts(page);
-  } catch (error) {
-    console.error('Page fetching error:', error);
+      return;
+    }
   }
 }
 
-function determinePage(route) {
-  let page = 'error-404.html';
+function profile_load() {
+  //profile-detail page içerisinde yüklenmesi, fetchlenmesi gereken bilgileri getirmek için kullanılır
+  let pathname = window.location.pathname;
+  let part = pathname.split("/");
+  let data = JSON.parse(localStorage.getItem(0));
+  let access_token = data.access_token;
 
-  routes.forEach((v, k) => {
-    if (k.test(route))
-      page = v;
-  });
-
-  return page;
+  console.log("data page", data);
+  loadUserInformation(part[2], access_token);
+  isMyFriend(data.user.username, part[2], access_token);
+  isBlock(data.user.username, part[2], access_token);
 }
 
-function renderPageWithScripts(page) {
-  const scripts = [`/static/js/${page}.js`];
-  loadScripts(scripts, initializeComponents);
-}
+// pvp.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-function loadScripts(scripts, callback) {
-  let loadedScripts = 0;
-  const head = document.head;
+// score.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  function scriptLoaded() {
-    loadedScripts++;
-    if (loadedScripts === scripts.length) callback();
-  }
+// tournament.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  scripts.forEach(script => {
-    const scriptTag = document.createElement('script');
-    scriptTag.src = script;
-
-    scriptTag.onload = scriptLoaded;
-    scriptTag.onerror = scriptLoaded;
-
-    head.appendChild(scriptTag);
-  });
-}
-
-function initializeComponents() {
-  document.querySelector('.carousel-control-next').addEventListener('click', () => {
-    aboutSliderScript();
-  });
-
-  document.querySelector('.carousel-control-prev').addEventListener('click', () => {
-    aboutSliderScript(false);
-  });
-
-  aboutSliderScript();
-}
-
-documne
-
-document.addEventListener('click', (event) => {
-  const { target } = event;
-
-  if (target.tagName === 'a') {
-    event.preventDefault();
-
-    const path = new URL(ttarget.href).pathname;
-    history.pushState(null, null, path);
-    renderPage();
-  }
-})
-
-window.addEventListener('popstate', (_event) => {
-  renderPage();
-});
-
-
-// document.querySelectorAll('a[data-page-id]').forEach(link => {
-//   link.addEventListener('click', (e) => {
-//     e.preventDefault();
-//     const path = new URL(e.target.href).pathname;
-//     history.pushState(null, "Page Title", path);
-//     renderPage();
-//   })
-// });
+// websocket.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
