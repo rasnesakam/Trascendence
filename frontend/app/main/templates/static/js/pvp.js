@@ -131,12 +131,12 @@ function handleLose() {
         if (urlSearchParam.has("tournament"))
           window.location.href = `/tournament?tournament=${tournamentCode}&last_match=${matchCode}`
         else
-          window.location.href = "finish-match.html";
+          window.location.href = "/finish-match";
     })
     else
       fetch("http://localhost/api/matches/submit",requestOptions).then(r => {
-      alert(e.status)
-      window.location.href = "finish-match.html";
+  
+      window.location.href = "/finish-match";
     })
   }
 }
