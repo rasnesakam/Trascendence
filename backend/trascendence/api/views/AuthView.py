@@ -89,7 +89,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     }
 )
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
-    usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
+    usernamecheck = UserModel.objects.filter(username__exact=content.get("username"), email__exact=content.get("email"))
     if usernamecheck.exists():
         return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
     password_hasher = BCryptPasswordHasher()
