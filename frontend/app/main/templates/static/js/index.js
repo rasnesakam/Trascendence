@@ -4,62 +4,83 @@
 const root = document.getElementById("index-body");
 
 const routes = new Map([
-  [/^\/$/, "main.html"],
-  [/^\/login/, "login.html"],
-  [/^\/tournament/, "tournament.html"],
-  [/^\/about/, "about.html"],
-  [/^\/users/, "profile-detail.html"],
-  [/^\/livechat/, "livechat.html"],
-  [/^\/match/, "match.html"],
-  [/^\/score/, "score.html"],
-  [/^\/finish-match/, "finish-match.html"],
-  [/^\/ai/, "ai.html"],
-  [/^\/pvp/, "pvp.html"],
+  [/^\/$/, { page: "main.html", script: "main.js" }],
+  [/^\/login/, { page: "login.html", script: "login.js" }],
+  [/^\/tournament/, { page: "tournament.html", script: "tournament.js" }],
+  [/^\/about/, { page: "about.html", script: "about.js" }],
+  [/^\/users/, { page: "profile-detail.html", script: "profile-detail.js" }],
+  [/^\/livechat/, { page: "livechat.html", script: "livechat.js" }],
+  [/^\/match/, { page: "match.html", script: "match.js" }],
+  [/^\/score/, { page: "score.html", script: "score.js" }],
+  [/^\/finish-match/, { page: "finish-match.html", script: "finish-match.js" }],
+  [/^\/ai/, { page: "ai.html", script: "ai.js" }],
+  [/^\/pvp/, { page: "pvp.html", script: "pvp.js" }],
 ]);
 
 function renderPage() {
   const route = location.pathname;
-  const page = determinePage(route);
-  fetchPage(`/static/pages/${page}`, page);
+  fetchPage(`/static/pages/${determinePage(route)}`, route);
 }
 
-async function fetchPage(url) {
+async function fetchPage(url, route) {
   try {
     const response = await fetch(url, {
       headers: {
         "Cache-Control": "no-cache",
       },
     });
+
     const html = await response.text();
     root.innerHTML = html;
-    initializeComponents();
+
+    await initializeComponents(route);
+
   } catch (error) {
     console.error("Page fetching error:", error);
   }
 }
 
 function determinePage(route) {
-  let page = "error-404.html";
-  routes.forEach((v, k) => {
-    if (k.test(route)) page = v;
-  });
-  return page;
+  for (let [regex, routeInfo] of routes) {
+    if (regex.test(route)) {
+      return routeInfo.page;
+    }
+  }
+
+  return "error-404.html";
 }
 
-function initializeComponents() {
-  document
-    .querySelector(".carousel-control-next")
-    .addEventListener("click", () => {
-      aboutSliderScript();
-    });
+async function initializeComponents(route) {
+  let scriptInfo;
 
-  document
-    .querySelector(".carousel-control-prev")
-    .addEventListener("click", () => {
-      aboutSliderScript(false);
-    });
+  for (let [regex, routeInfo] of routes) {
+    if (regex.test(route)) {
+      scriptInfo = routeInfo;
+      break;
+    }
+  }
 
-  aboutSliderScript();
+  if (scriptInfo && scriptInfo.script) {
+    const scriptUrl = `/static/js/${scriptInfo.script}`;
+    try {
+      await loadScript(scriptUrl);
+    } catch (error) {
+      console.error("Script fetching error: ", error);
+    }
+  }
+}
+
+function loadScript(scriptUrl) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.type = "module";
+    script.src = scriptUrl;
+
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.head.appendChild(script);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -78,10 +99,10 @@ document.addEventListener("click", (event) => {
 
     const path = new URL(target.href).pathname;
     history.pushState(null, null, path);
+
     renderPage();
   }
 });
-
 
 
 
