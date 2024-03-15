@@ -9,3 +9,5 @@ function updateChart(win, lose) {
 }
 
 updateChart(winPercentage, losePercentage);
+
+profile_load();

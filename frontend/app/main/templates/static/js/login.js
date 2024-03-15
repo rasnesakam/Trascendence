@@ -133,3 +133,10 @@ async function signInUser() {
       alert(error);
     });
 }
+
+const formSignIn = document.getElementById("form-sign-in");
+
+formSignIn.addEventListener("submit", (e) => {
+  e.preventDefault();
+  signInUser();
+});
