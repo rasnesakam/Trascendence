@@ -89,3 +89,5 @@ var refresh_token = setInterval(async () => {
       alert(error);
     });
 }, 240000);
+
+main_load();
