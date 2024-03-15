@@ -305,7 +305,8 @@ function aboutSliderScript(next = true) {
 function gamePage() {
   if (
     window.location.pathname === "/ai" ||
-    window.location.pathname === "/pvp"
+    window.location.pathname === "/pvp" ||
+    window.location.pathname === "/login"
   ) {
     const nav = document.getElementById("index-navbar");
 
