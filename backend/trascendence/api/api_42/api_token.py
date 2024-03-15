@@ -18,6 +18,9 @@ def get_42_token(code: str) -> dict:
     if response.ok:
         return_dict["ok"] = True
     else:
+        import sys
+        print("input code:", code, file=sys.stderr)
+        print("Token couldnt fetched. Reason is:\n" + response.text, file=sys.stderr)
         return_dict["ok"] = False
     return_dict["content"] = response.json()
     return return_dict

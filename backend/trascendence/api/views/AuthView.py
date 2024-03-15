@@ -1,8 +1,8 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, JsonResponse,  HttpResponseBadRequest, \
-    HttpResponseForbidden
+    HttpResponseForbidden, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
-import requests
+import traceback
 import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
@@ -47,10 +47,9 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     print(code)
     try:
         response = get_42_token(code)
-    except Exception as e:
-        import sys
-        print(str(e), file=sys.stderr)
-        return JsonResponse({"error": str(e)}, status=500)
+    except Exception:
+        traceback.print_exc()
+        return HttpResponseServerError
     if response["ok"]:
         created_new = False
         token = response["content"]["access_token"]
