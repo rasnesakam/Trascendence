@@ -148,7 +148,6 @@ function responseFriend(response, code) {
 }
 
 function addNotify(msg, id, func_name) {
-  alert("addNotify: " + msg + " " + id + " " + func_name);
   let notification = document.getElementById("notify-list");
 
   let div = document.createElement("div");
@@ -159,6 +158,7 @@ function addNotify(msg, id, func_name) {
 
   let div2 = document.createElement("div");
   div2.classList.add("mt-2", "pt-2");
+  div2.setAttribute("onclick", "event.stopPropagation();")
   div.appendChild(div2);
 
   let button = document.createElement("button");
@@ -176,6 +176,7 @@ function addNotify(msg, id, func_name) {
 
 async function requestAddFriend() {
   //arkadaşlık isteğini kabul eder
+  console.log("requestAddFriend")
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
   console.log("nickname " + profileNickName);
@@ -208,6 +209,8 @@ async function requestAddFriend() {
 }
 
 async function requestDeleteFriend() {
+  console.log("requestDeleteFriend")
+
   //ardaşlık isteğini kabul etmediğimizde bildirimi reddeder
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
@@ -239,6 +242,8 @@ async function requestDeleteFriend() {
 }
 
 function removeNotify(code) {
+  console.log("removeNotify")
+
   //html içerisineden bildirim siler
   console.log("code", code);
   let notification = document.getElementById(code);
