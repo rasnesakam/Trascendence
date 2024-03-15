@@ -64,10 +64,16 @@
     background-color: white;
 }
 
-.ws-gif {
-    position: fixed;
-    top: 70px;
-    left: 10px;
-    width: 250px;
-    z-index: 1;
+.w-gif, .s-gif {
+    max-width: 100px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    transform: translateY(-50%);
+    margin-top: 48vh;
+}
+
+.s-gif {
+    margin-top: calc(50vh + 250px);
 }
