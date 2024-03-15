@@ -63,3 +63,11 @@
     height: 100px;
     background-color: white;
 }
+
+.arrow-gif {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 50px;
+    z-index: 9999;
+}
