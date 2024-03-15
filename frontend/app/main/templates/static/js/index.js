@@ -5,7 +5,6 @@ const root = document.getElementById("index-body");
 
 const routes = new Map([
   [/^\/$/, "main.html"],
-  [/^\/game/, "game.html"],
   [/^\/login/, "login.html"],
   [/^\/tournament/, "tournament.html"],
   [/^\/about/, "about.html"],
@@ -15,6 +14,7 @@ const routes = new Map([
   [/^\/score/, "score.html"],
   [/^\/finish-match/, "finish-match.html"],
   [/^\/ai/, "ai.html"],
+  [/^\/pvp/, "pvp.html"],
 ]);
 
 function renderPage() {
