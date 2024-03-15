@@ -62,3 +62,19 @@
   height: 100px;
   background-color: white;
 }
+
+.ws-gif {
+  position: fixed;
+  top: 70px;
+  left: 10px;
+  width: 250px;
+  z-index: 1;
+}
+
+.arrow-gif {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 250px;
+  z-index: 1;
+}
