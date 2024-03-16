@@ -154,7 +154,7 @@ def get_blacklist(request: HttpRequest) -> JsonResponse | HttpResponseNotFound:
 @request_body(
     content_type="application/json",
     fields={
-        "username": str_field(required=True, max_length=8)
+        "username": str_field(required=True)
     }
 )
 def add_blacklist(request: HttpRequest, content) -> JsonResponse | HttpResponseNotFound | HttpResponseServerError:
