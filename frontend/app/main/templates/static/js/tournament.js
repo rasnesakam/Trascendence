@@ -40,7 +40,9 @@ async function startTournament(tournament_code) {
 	console.log("fetchMatch: ", match);
 	let myHref = `/match?tournament=${tournament_code}&match=${match.match_code}`;
 	console.log("myHref ", myHref);
-	window.location.href = myHref;
+	setTimeout(() => {
+		window.location.href = myHref;
+	}, 5000);
 }
 
 //tournament kodunu url içerisine al
@@ -58,7 +60,7 @@ function putPhotoTournament() {
 
 			console.log("putPhotoTournament:", user);
 			document.querySelectorAll(`.state-${user.stage}-${rank}`)[0].src = user.user.avatarURI;
-			if (rank > 1)
+			if (rank > 1 && user.pair_user != null)
 				document.querySelectorAll(`.state-${user.stage}-${rank - 1}`)[0].src = user.pair_user.avatarURI;
 			rank -= 1;
 		}
@@ -71,13 +73,12 @@ async function loadTournament() {
 	let allUser = new Map();
 	let index = 0;
 
-	takeUsers(urlSearchParam.get("tournament"));
+	await takeUsers(urlSearchParam.get("tournament"));
 	for (let i = 0; i < users.length; i++) {
 		let user_one = users.content[i].user.id;
 		for (let j = 0; j < users.length; j++) {
-			if (user_one == ((users.content[j].pair_user != null &&
-				users.content[j].pair_user.id == user_one) || 
-					users.content[j].has_pair == false))
+			// if (user_one == ((users.content[j].pair_user != null && users.content[j].pair_user.id == user_one) || users.content[j].has_pair == false))
+			if ((users.content[j].pair_user != null && user_one == users.content[j].pair_user.id )|| users.content[j].has_pair == false)
 			{
 				allUser.set(index, users.content[j]);
 				index++;
@@ -122,7 +123,7 @@ var enter_tournament = setInterval(async () => {
 	if (!urlSearchParam.has("match")) {
 		let tournament_code = urlSearchParam.get("tournament");
 
-		takeUsers(tournament_code);
+		await takeUsers(tournament_code);
 		//for (let i = 0; i < users.length; i++)
 		//{
 
