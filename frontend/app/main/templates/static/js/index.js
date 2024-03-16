@@ -1,111 +1,3 @@
-// ROUTER START
-// SPA
-
-const root = document.getElementById("index-body");
-
-const routes = new Map([
-  [/^\/$/, { page: "main.html", script: "main.js" }],
-  [/^\/login/, { page: "login.html", script: "login.js" }],
-  [/^\/tournament/, { page: "tournament.html", script: "tournament.js" }],
-  [/^\/about/, { page: "about.html", script: "about.js" }],
-  [/^\/users/, { page: "profile-detail.html", script: "profile-detail.js" }],
-  [/^\/livechat/, { page: "livechat.html", script: "livechat.js" }],
-  [/^\/match/, { page: "match.html", script: "match.js" }],
-  [/^\/score/, { page: "score.html", script: "score.js" }],
-  [/^\/finish-match/, { page: "finish-match.html", script: "finish-match.js" }],
-  [/^\/ai/, { page: "ai.html", script: "ai.js" }],
-  [/^\/pvp/, { page: "pvp.html", script: "pvp.js" }],
-]);
-
-function renderPage() {
-  const route = location.pathname;
-  fetchPage(`/static/pages/${determinePage(route)}`, route);
-}
-
-async function fetchPage(url, route) {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
-
-    const html = await response.text();
-    root.innerHTML = html;
-
-    await initializeComponents(route);
-
-  } catch (error) {
-    console.error("Page fetching error:", error);
-  }
-}
-
-function determinePage(route) {
-  for (let [regex, routeInfo] of routes) {
-    if (regex.test(route)) {
-      return routeInfo.page;
-    }
-  }
-
-  return "error-404.html";
-}
-
-async function initializeComponents(route) {
-  let scriptInfo;
-
-  for (let [regex, routeInfo] of routes) {
-    if (regex.test(route)) {
-      scriptInfo = routeInfo;
-      break;
-    }
-  }
-
-  if (scriptInfo && scriptInfo.script) {
-    const scriptUrl = `/static/js/${scriptInfo.script}`;
-    try {
-      await loadScript(scriptUrl);
-    } catch (error) {
-      console.error("Script fetching error: ", error);
-    }
-  }
-}
-
-
-
-function loadScript(scriptUrl) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.id = scriptUrl;
-    script.type = "module";
-    script.src = scriptUrl;
-
-    script.onload = resolve;
-    script.onerror = reject;
-
-    document.body.appendChild(script);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  renderPage();
-});
-
-window.addEventListener("popstate", () => {
-  renderPage();
-});
-
-document.addEventListener("click", (event) => {
-  const { target } = event;
-
-  if (target.tagName === "A") {
-    event.preventDefault();
-
-    const path = new URL(target.href).pathname;
-    history.pushState(null, null, path);
-
-    renderPage();
-  }
-});
 
 
 
@@ -905,7 +797,7 @@ function updateChart() {
     var chart = document.getElementById('chart');
 
     chart.style.setProperty('--win-percentage', winPercentage + '%');
-    chart.style.setProperty('--lose-percentage', losePercentage + '%');
+    chart.style.setProperty('--lose-percentage', 0 + '%');
 }
 
 async function profile_load() {
@@ -932,3 +824,147 @@ async function profile_load() {
 // tournament.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // websocket.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//Router
+
+const root = document.getElementById("index-body");
+
+const routes = new Map([
+  [/^\/$/, { page: "main.html", script: "main.js" }],
+  [/^\/login/, { page: "login.html", script: "login.js" }],
+  [/^\/tournament/, { page: "tournament.html", script: "tournament.js" }],
+  [/^\/about/, { page: "about.html", script: "about.js" }],
+  [/^\/users/, { page: "profile-detail.html", script: "profile-detail.js" }],
+  [/^\/livechat/, { page: "livechat.html", script: "livechat.js" }],
+  [/^\/match/, { page: "match.html", script: "match.js" }],
+  [/^\/score/, { page: "score.html", script: "score.js" }],
+  [/^\/finish-match/, { page: "finish-match.html", script: "finish-match.js" }],
+  [/^\/ai/, { page: "ai.html", script: "ai.js" }],
+  [/^\/pvp/, { page: "pvp.html", script: "pvp.js" }],
+]);
+
+function renderPage() {
+  const route = location.pathname;
+  fetchPage(`/static/pages/${determinePage(route)}`, route);
+}
+
+async function fetchPage(url, route) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    const html = await response.text();
+    root.innerHTML = html;
+
+    await initializeComponents(route);
+
+  } catch (error) {
+    console.error("Page fetching error:", error);
+  }
+}
+
+function determinePage(route) {
+  for (let [regex, routeInfo] of routes) {
+    if (regex.test(route)) {
+      return routeInfo.page;
+    }
+  }
+
+  return "error-404.html";
+}
+
+async function initializeComponents(route) {
+  let scriptInfo;
+
+  for (let [regex, routeInfo] of routes) {
+    if (regex.test(route)) {
+      scriptInfo = routeInfo;
+      break;
+    }
+  }
+
+  if (scriptInfo && scriptInfo.script) {
+    const scriptUrl = `/static/js/${scriptInfo.script}`;
+    if (scriptInfo.script.includes("ai.js"))
+    {
+        let root_body = document.getElementById("root-body");
+        document.getElementById("index-navbar").style.display = "none";
+        root_body.classList.add("ai-body");
+    }
+    try {
+      await loadScript(scriptUrl);
+    } catch (error) {
+      console.error("Script fetching error: ", error);
+    }
+  }
+}
+
+
+const functions = {
+  main: main_load(),
+  profile_detail: profile_load()
+}
+
+
+function loadScript(scriptUrl) {
+  let scriptArray = document.getElementsByTagName("script");
+
+  for (let i = 0; i < scriptArray.length; i++)
+  {
+    if (scriptArray[i].src.includes("/static/") &&
+       !scriptArray[i].src.includes("index.js"))
+    {
+      console.log("scriptArray[i]");
+      scriptArray[i].remove();
+    }
+  }
+  if (scriptUrl.includes("main"))
+    main_load()
+    if (scriptUrl.includes("profile"))
+    profile_load()
+  
+
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.id = scriptUrl;
+    script.type = "module";
+    script.src = scriptUrl;
+
+    script.onload = resolve;
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+
+    let scriptArray2 = document.getElementsByTagName("script")
+    for (let i = 0; i < scriptArray2.length; i++)
+    {
+      console.log("Scriptsrc2: ", scriptArray2[i]);
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderPage();
+});
+
+window.addEventListener("popstate", () => {
+  renderPage();
+});
+
+document.addEventListener("click", (event) => {
+  const { target } = event;
+
+  if (target.tagName === "A") {
+    event.preventDefault();
+
+    const path = new URL(target.href).pathname;
+    history.pushState(null, null, path);
+
+    renderPage();
+  }
+});
