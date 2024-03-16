@@ -1,5 +1,4 @@
 import json
-import jwt
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from trascendence.middleware.auth import authorize
