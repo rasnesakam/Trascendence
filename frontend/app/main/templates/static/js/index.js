@@ -79,8 +79,7 @@ function loadScript(scriptUrl) {
     script.onload = resolve;
     script.onerror = reject;
 
-    document.head.appendChild(script);
-  });
+     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -325,6 +324,30 @@ gamePage();
 
 // index.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+document.getElementById("click-search").addEventListener("click", async function (event) {
+  profile = document.getElementById("input-search").value;
+  event.preventDefault();
+  let users = await fetch(`http://localhost/api/users/search/${profile}`, {
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error("User not found");
+      return response.json();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  if (users == undefined) {
+    alert("User not found");
+    return;
+  }
+  let newUrl = `/users/${profile}`;
+  window.history.pushState({ path: newUrl }, "", newUrl);
+  renderPage();
+});
+
 // livechat.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // login.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -463,8 +486,7 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("profile-photo").src = userIdentity.user.avatarURI;
   document.getElementById("total_tournament").innerHTML = dataTournament.length; //Torunament add html
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
-  document.getElementById("enemy").innerHTML = userIdentity.rival.username;
-
+  document.getElementById("enemy").innerHTML = userIdentity.rival != null ? userIdentity.rival.username : "No Rival";
   console.log("dataTournament (loadUserInformation): ", dataTournament);
   let resultData = { userIdentity, dataTournament, dataMatches };
   isPlayCode(userIdentity.user);
