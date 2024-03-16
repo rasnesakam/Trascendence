@@ -26,14 +26,17 @@ APP_NAME = "localhost"
 
 class ChatConsumer(WebsocketConsumer):
 
-    def send_chat_message(self, message, sendto): 
+    def send_chat_message(self, message, sendto):
+        new_message = Message.objects.create(author=self.room_group_name, audience=sendto, content=message)
         async_to_sync(self.channel_layer.group_send)(
             sendto,
             {
                 'type':'chat_message',
                 'message':{
+                    "type": "message",
                     "message": message,
-                    "from": self.room_group_name
+                    "from": self.room_group_name,
+                    "timestamp": new_message.timestamp.isoformat()
                 }
             }
         )
@@ -68,17 +71,24 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-    def pong(self, event):
-        pong_message = event['message']
-        print(f"Recieved pong: {pong_message}")
-    
-    def ping(self):
+    def pong(self, target):
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
+            target,
             {
                 "type": "chat_message",
                 "message": {
-                    "message": "pong",
+                    "type": "pong",
+                    "from": self.room_group_name,
+                }
+            }
+        )
+    def ping(self, target):
+        async_to_sync(self.channel_layer.group_send)(
+            target,
+            {
+                "type": "chat_message",
+                "message": {
+                    "type": "ping",
                     "from": self.room_group_name,
                 }
             }
@@ -87,18 +97,18 @@ class ChatConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
         user_id = self.room_group_name
         target_user_id = data.get("target")
-        fetch_amount = data.get("amount")
+        fetch_amount = int(data.get("amount"))
         messages = Message.last_n_messages(user_id, target_user_id, fetch_amount)
-
-        message_list = []
+        import sys
+        print("len of messages", len(messages), file=sys.stderr)
         for message in messages:
-            message_list.append({
+            msg_json = {
+                "type": "message",
                 "message": message.content,
-                "sender": message.author,
-                "reciever": message.audience,
+                "from": message.author,
                 "timestamp": message.timestamp.isoformat()
-            })
-        self.send(json.dumps({"message": message_list}))
+            }
+            self.send(json.dumps(msg_json))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -110,9 +120,9 @@ class ChatConsumer(WebsocketConsumer):
         authorize_token(token)
         message_type = data.get("type", None)
         if message_type == "ping":
-            self.ping(self)
+            self.ping(data.get("to"))
         elif message_type == "pong":
-            self.pong(data)
+            self.pong(data.get("to"))
         elif message_type == "message":
             self.send_chat_message(data.get("message"), data.get("to"))
         elif message_type == "fetch-message":

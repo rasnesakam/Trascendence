@@ -6,7 +6,7 @@ def authorize_token(token):
     if not token:
         return {"error": "Token is required"}
     
-    response = requests.post(AUTHORIZER_URL, data={"token": token})
+    response = requests.get(AUTHORIZER_URL, data={"token": token})
 
     if response.status_code == 200:
         #token okki, kullanıcı bilgilerini döndürür

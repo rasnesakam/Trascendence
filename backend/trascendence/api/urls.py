@@ -21,14 +21,16 @@ urlpatterns = [
 
     # Interactions
     path('interacts/friends', InteractionsView.get_friends),
+    path('interacts/friends/status/<username>', InteractionsView.check_friendship_status),
     path('interacts/friends/add', InteractionsView.add_friend),
-    path('interacts/friends/delete/<user>', InteractionsView.delete_friend),
-    path('interacts/invitations/', InteractionsView.get_invitations),
+    path('interacts/friends/delete/<username>', InteractionsView.delete_friend),
+    path('interacts/invitations', InteractionsView.get_invitations),
     path('interacts/invitations/<invite_code>/accept', InteractionsView.accept_invitation),
     path('interacts/invitations/<invite_code>/delete', InteractionsView.decline_invitation),
     path('interacts/blacklist', InteractionsView.get_blacklist),
     path('interacts/blacklist/add', InteractionsView.add_blacklist),
     path('interacts/blacklist/<target_username>/delete', InteractionsView.remove_blacklist),
+    path('interacts/blacklist/search/<username>', InteractionsView.check_in_blacklist),
 
     # Tournaments
     path('tournaments/create', TorunamentsView.create_tournament),

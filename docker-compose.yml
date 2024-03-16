@@ -11,8 +11,10 @@ volumes:
   db:
 
 services:
-  gateway:
-    image: nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: gateway
     volumes:
       - ./dotfiles/nginx/conf:/etc/nginx/conf.d:ro
@@ -45,6 +47,8 @@ services:
   #  networks:
   #    - my_network
   websocket:
+    env_file:
+    - ./.env
     build:
       context: ./websocket
       dockerfile: Dockerfile
@@ -53,6 +57,8 @@ services:
     expose:
       - 8000
   backend:
+    env_file:
+    - ./.env
     build:
       context: ./backend
       dockerfile: Dockerfile

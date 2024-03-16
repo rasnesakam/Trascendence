@@ -1,8 +1,8 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, JsonResponse,  HttpResponseBadRequest, \
-    HttpResponseForbidden
+    HttpResponseForbidden, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
 from trascendence.middleware.auth import authorize
-import requests
+import traceback
 import json
 from trascendence.api.models.User import UserModel
 from ..api_42 import get_42_token
@@ -47,10 +47,9 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     print(code)
     try:
         response = get_42_token(code)
-    except Exception as e:
-        import sys
-        print(str(e), file=sys.stderr)
-        return JsonResponse({"error": str(e)}, status=500)
+    except Exception:
+        traceback.print_exc()
+        return HttpResponseServerError
     if response["ok"]:
         created_new = False
         token = response["content"]["access_token"]
@@ -89,7 +88,7 @@ def sign_in_42(request: HttpRequest, content: dict) -> JsonResponse:
     }
 )
 def sign_up(request: HttpRequest, content: dict) -> HttpResponse:
-    usernamecheck = UserModel.objects.filter(username__exact=content.get("username"))
+    usernamecheck = UserModel.objects.filter(username__exact=content.get("username"), email__exact=content.get("email"))
     if usernamecheck.exists():
         return HttpResponseBadRequest(json.dumps({"message": "Username has already taken."}), content_type="application/json")
     password_hasher = BCryptPasswordHasher()
@@ -127,4 +126,5 @@ def refresh_token(request: HttpRequest) -> HttpResponse:
     auth_info = getattr(request, "auth_info")
     user = auth_info.user
     access_token = generate_access_token(user)
-    return JsonResponse(auth_dto(user, access_token, auth_info.token))
+    refresh_token = getattr(auth_info, "token")
+    return JsonResponse(auth_dto(user, access_token, refresh_token), status=200)
