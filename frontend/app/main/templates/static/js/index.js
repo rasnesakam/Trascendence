@@ -464,6 +464,7 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
   document.getElementById("enemy").innerHTML = userIdentity.user.rival;
 
+  console.log("dataTournament (loadUserInformation): ", dataTournament);
   let resultData = { userIdentity, dataTournament, dataMatches };
   isPlayCode(userIdentity.user);
   return resultData;
@@ -615,17 +616,25 @@ async function createTournament() {
   window.location.href = `/tournament?tournament=${data.tournament_code}`;
 }
 
-async function setTournamentList(tournaments) {
+async function setTournamentList(tournaments, access_token) {
   //yapılan turnuva listesini html içerisine atar
   let added = document.getElementById("tournamentList");
   added.innerHTML = "";
   if (tournaments == undefined) return;
   for (let i = 0; i < tournaments.length; i++) {
-    let code = tournaments[i].tournament_code;
-    let whos = await fetch(`http://localhost/api/tournaments/${code}`)
+    console.log("[i] : ", tournaments.length);
+    let code = tournaments.content[i].tournament_code;
+    let whos = await fetch(`http://localhost/api/tournaments/${code}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
       .then((data) => data.json())
       .catch((error) => console.log(error));
 
+      console.log("whos: ", whos);
     let accordionItem = document.createElement("div");
     accordionItem.classList.add("accordion-item");
     added.appendChild(accordionItem);
@@ -635,18 +644,28 @@ async function setTournamentList(tournaments) {
     accordionItem.appendChild(accordionHeader);
 
     let button = document.createElement("button");
-    button.classList.add("accordion-button", "bg-color-purple", "text-white");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white", "collapsed");
     button.setAttribute("type", "button");
     button.setAttribute("data-bs-toggle", "collapse");
-    button.setAttribute("data-bs-target", "#tournamentList");
-    button.setAttribute("aria-expanded", "true");
-    button.setAttribute("aria-controls", "tournamentList");
+    button.setAttribute("data-bs-target", "#tournamentList-" + i);
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", "tournamentList-" + i);
+    button.textContent = whos.players.content[0].tournament.name;
     accordionHeader.appendChild(button);
+
+    let accordionDiv = document.createElement("div");
+    accordionDiv.classList.add("accordion-collapse", "collapse");
+    accordionDiv.setAttribute("id", "tournamentList-" + i);
+    accordionDiv.setAttribute("data-bs-parent", "#tournamentList-" + i);
+    accordionItem.appendChild(accordionDiv);
 
     let accordionBody = document.createElement("div");
     accordionBody.classList.add("accordion-body");
-    accordionBody.textContent = `1. ${whos[0]} (🥇)\n2. ${whos[1]} (🥈)\n3. ${whos[2]} (🥉)\n4. ${whos[3]} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
-    accordionHeader.appendChild(accordionBody);
+    accordionBody.textContent = `1. ${whos.players.content[0].user.username} (🥇)\n` +
+                              `2. ${whos.players.content[1].user.username} (🥈)\n` +
+                            `3. ${whos.players.content[2].user.username} (🥉)\n` +
+                          `4. ${whos.players.content[3].user.username} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
+    accordionDiv.appendChild(accordionBody);
   }
 }
 
@@ -682,16 +701,17 @@ function setMatches(matches, username) {
   }
 }
 
-function main_load() {
+async function main_load() {
   //main page içerisinde yüklenmesi, fetchlenmesi gereken bilgileri getirmek için kullanılır
   let userAccess = JSON.parse(localStorage.getItem(0));
   let username = userAccess.user.username;
   let access_token = userAccess.access_token;
 
   console.log("access_token: " + access_token);
-  let data = loadUserInformation(username, access_token);
-  setTournamentList(data.dataTournament);
-  setMatches(data.dataMatches);
+  let data = await loadUserInformation(username, access_token);
+  console.log("main data: ", data);
+  setTournamentList(data.dataTournament, access_token);
+  setMatches(data.dataMatches, username);
 }
 
 // match.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -810,13 +830,15 @@ function profile_load() {
   //profile-detail page içerisinde yüklenmesi, fetchlenmesi gereken bilgileri getirmek için kullanılır
   let pathname = window.location.pathname;
   let part = pathname.split("/");
-  let data = JSON.parse(localStorage.getItem(0));
-  let access_token = data.access_token;
+  let myData = JSON.parse(localStorage.getItem(0));
+  let access_token = myData.access_token;
 
-  console.log("data page", data);
-  loadUserInformation(part[2], access_token);
-  isMyFriend(data.user.username, part[2], access_token);
-  isBlock(data.user.username, part[2], access_token);
+  console.log("myData page", myData);
+  let userData = loadUserInformation(part[2], access_token);
+  isMyFriend(myData.user.username, part[2], access_token);
+  isBlock(myData.user.username, part[2], access_token);
+  setMatches(userData.dataMatches, userData.username);
+  setTournamentList(userData.dataTournament);
 }
 
 // pvp.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
