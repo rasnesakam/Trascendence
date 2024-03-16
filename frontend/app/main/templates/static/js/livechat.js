@@ -68,7 +68,7 @@ function selectedPerson(id) {
     clearMessages();
     fetchMessages(id);
 
-    document.getElementById(jsonObj.from).classList.remove("bg-secondary")
+    document.getElementById(id).classList.remove("bg-secondary")
     document.getElementById("message-input").style.display = "block";
     let formElement = document.getElementsByClassName("livechat-send-message")[0]
     let hiddenInput = formElement.querySelector('input[name="to"]')
