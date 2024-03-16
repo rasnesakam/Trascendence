@@ -22,8 +22,8 @@ def get_most_played(user_id_list):
 def get_user_profile(request: HttpRequest, username: str):
     try:
         user = UserModel.objects.get(Q(username__exact=username))
-        matches = Matches.objects.filter(Q(home=user) | Q(away=user))
-        tournament_matches = TournamentMatches.objects.filter(Q(match__home__exact=user.id) | Q(match__away__exact=user.id))
+        matches = Matches.objects.filter((Q(home=user) | Q(away=user)) & Q(is_played=True))
+        tournament_matches = Matches.objects.filter((Q(home=user) | Q(away=user)) & Q(is_played=True)).exclude(tournament=None)
         tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id)
         played_users = [match.home.id for match in matches] + [match.away.id for match in matches]
         rival = None
