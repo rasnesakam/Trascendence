@@ -59,7 +59,7 @@ function handleLose() {
         ballInPlay = false;
 
         if (!ballInPlay) {
-            window.location.href = '/finish-match';
+            window.location.href = '/';
         }
     }
 }
