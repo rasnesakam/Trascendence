@@ -70,16 +70,20 @@ async function initializeComponents(route) {
   }
 }
 
+
+
 function loadScript(scriptUrl) {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
+    script.id = scriptUrl;
     script.type = "module";
     script.src = scriptUrl;
 
     script.onload = resolve;
     script.onerror = reject;
 
-     });
+    document.body.appendChild(script);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -750,6 +754,8 @@ async function main_load() {
 
 // profile-detail.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
 async function requestBlock() {
   //bir kişiyi engeller
   let profileNickName = document.getElementById("nickname").textContent;
@@ -871,6 +877,35 @@ async function isBlock(friend, access_token) {
       document.getElementById("friend-unblock-button").style.display = "block";
     }
   })
+}
+
+var winPercentage = 0;
+var losePercentage = 0;
+
+function calculateWinLosePercentage(matches, username) {
+    winPercentage = 0;
+    losePercentage = 0;
+
+    for (var i = 0; i < matches.length; i++) {
+        let home_score = matches.matches[i].home.score;
+        let away_score = matches.matches[i].away.score;
+
+        if (home_score > away_score)
+            if (matches.matches[i].home.user.username == username) winPercentage++;
+            else losePercentage++;
+        else if (matches.matches[i].away.user.username == username) winPercentage++;
+        else losePercentage++;
+    }
+    winPercentage = (winPercentage / (winPercentage + losePercentage)) * 100;
+    losePercentage = 100 - winPercentage;
+}
+
+
+function updateChart() {
+    var chart = document.getElementById('chart');
+
+    chart.style.setProperty('--win-percentage', winPercentage + '%');
+    chart.style.setProperty('--lose-percentage', losePercentage + '%');
 }
 
 async function profile_load() {
