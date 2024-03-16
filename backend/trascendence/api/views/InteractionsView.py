@@ -209,5 +209,6 @@ def check_in_blacklist(request, username):
     try:
         user = request.auth_info.user
         BlackList.objects.get(issuer=user, user__username=username)
+        return HttpResponse(status=200)
     except BlackList.DoesNotExist:
         return HttpResponseNotFound()
