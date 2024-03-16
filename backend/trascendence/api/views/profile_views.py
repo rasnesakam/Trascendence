@@ -12,6 +12,7 @@ from trascendence.api.models.tournament_models import TournamentMatches
 from django.contrib.auth.hashers import BCryptPasswordHasher
 from trascendence.api.dto import user_dto, profile_dto
 
+#TODO: Look at get most played matches. there is a possibility that causes a bug
 def get_most_played(user_id_list):
     from collections import Counter
     most_played_with = Counter(user_id_list)
