@@ -187,7 +187,7 @@ def remove_blacklist(request: HttpRequest, target_username) -> JsonResponse | Ht
 
 
 @require_http_methods(['GET'])
-#@authorize()
+@authorize()
 def check_friendship_status(request, username):
     user = request.auth_info.user
     try:
@@ -202,3 +202,12 @@ def check_friendship_status(request, username):
             return JsonResponse({"status": "penging"}, 200)
         except FriendInvitation.DoesNotExist:
             return HttpResponseNotFound()
+        
+@require_http_methods(['GET'])
+@authorize()
+def check_in_blacklist(request, username):
+    try:
+        user = request.auth_info.user
+        BlackList.objects.get(issuer=user, user__username=username)
+    except BlackList.DoesNotExist:
+        return HttpResponseNotFound()

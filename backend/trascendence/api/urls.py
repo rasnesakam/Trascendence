@@ -30,6 +30,7 @@ urlpatterns = [
     path('interacts/blacklist', InteractionsView.get_blacklist),
     path('interacts/blacklist/add', InteractionsView.add_blacklist),
     path('interacts/blacklist/<target_username>/delete', InteractionsView.remove_blacklist),
+    path('interacts/blacklist/search/<username>', InteractionsView.check_in_blacklist),
 
     # Tournaments
     path('tournaments/create', TorunamentsView.create_tournament),
