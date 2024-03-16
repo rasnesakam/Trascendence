@@ -34,11 +34,23 @@ async function match_making(str) {
 			document.getElementById(`${str}-ready-button`).innerText = String(responseData.user.username).toUpperCase();
 			localStorage.setItem(`${str}-player-token`, JSON.stringify(data));
 			document.getElementById(`${str}-expected`).disabled = true;
+			user_count++
 		})
 		.catch(_ => alert("You have to enter your correct information"));
 	// matches/player/verify
 
 }
+
+(function(){
+	let formHome = document.getElementById("form-home")
+	if (formHome != undefined)
+	formHome.addEventListener('submit', (e) =>{e.preventDefault();match_making('left')} )
+
+	let formAway = document.getElementById("form-away")
+	if (formAway != undefined)
+	formAway.addEventListener('submit', (e) =>{e.preventDefault();match_making('right')} )
+	alert('Formlara listenerlar eklendi')
+})()
 
 setInterval(() => {
 	if (user_count == 2) {
@@ -55,7 +67,7 @@ setInterval(() => {
 		document.getElementById("match-snipped").style = "block";
 		document.getElementById("match-tennis").style = "none";
 	}
-}, 20000)
+}, 10000)
 
 /*
 function ready_profile(side, where_photo)
