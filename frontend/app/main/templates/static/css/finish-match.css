@@ -47,3 +47,21 @@
 	height: 65%;
 	transform: translate(0%, 23%);
 }
+
+@media (max-width: 768px) {
+
+	.winner-profile-render,
+	.king-photo-render,
+	.loser-profile-render,
+	.flower-photo-render,
+	.rip-photo-render {
+		width: 100%;
+		height: auto;
+		transform: translate(0, 0);
+	}
+
+	.text-winner-head-render,
+	.text-loser-head-render {
+		font-size: 5vw;
+	}
+}
