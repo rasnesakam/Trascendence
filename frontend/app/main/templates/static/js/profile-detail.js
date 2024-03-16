@@ -1,13 +1,30 @@
-var winPercentage = 70;
-var losePercentage = 30;
+var winPercentage = 0;
+var losePercentage = 0;
 
-function updateChart(win, lose) {
-    var chart = document.getElementById('chart');
+function calculateWinLosePercentage(matches, username) {
+    winPercentage = 0;
+    losePercentage = 0;
 
-    chart.style.setProperty('--win-percentage', win + '%');
-    chart.style.setProperty('--lose-percentage', lose + '%');
+    for (var i = 0; i < matches.length; i++) {
+        let home_score = matches.matches[i].home.score;
+        let away_score = matches.matches[i].away.score;
+
+        if (home_score > away_score)
+            if (matches.matches[i].home.user.username == username) winPercentage++;
+            else losePercentage++;
+        else if (matches.matches[i].away.user.username == username) winPercentage++;
+        else losePercentage++;
+    }
+    winPercentage = (winPercentage / (winPercentage + losePercentage)) * 100;
+    losePercentage = 100 - winPercentage;
 }
 
-updateChart(winPercentage, losePercentage);
+
+function updateChart() {
+    var chart = document.getElementById('chart');
+
+    chart.style.setProperty('--win-percentage', winPercentage + '%');
+    chart.style.setProperty('--lose-percentage', losePercentage + '%');
+}
 
 profile_load();
