@@ -74,7 +74,7 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
     }
     if players is not None:
         dto["players"] = {
-            "length": len(list),
+            "length": len(players),
             "content": [tournament_player_dto(player) for player in players]
         }
     return dto
