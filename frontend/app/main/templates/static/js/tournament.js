@@ -21,7 +21,7 @@ async function takeUsers(tournament_code) {
 }
 
 async function startTournament(tournament_code) {
-	match = await fetch(`http://localhost/api/tournaments/${tournament_code}/next-match`,
+	let match = await fetch(`http://localhost/api/tournaments/${tournament_code}/next-match`,
 		{
 			method: "GET",
 			headers: {
