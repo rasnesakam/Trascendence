@@ -16,7 +16,6 @@ function isLogin() {
         }
     } catch (error) {
         window.location.href = "login";
-        router();
         return false;
     }
     return true;

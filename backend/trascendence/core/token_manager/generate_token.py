@@ -19,11 +19,11 @@ def generate_token(extended_payload: dict, expiration_time = timedelta(minutes=1
 
 
 def generate_access_token(user) -> str:
-    return generate_token({"sub": str(user.id), "typ": TYPE_ACCESS})
+    return generate_token({"sub": str(user.id), "typ": TYPE_ACCESS}, timedelta(hours=2))
 
 
 def generate_refresh_token(user) -> str:
-    return generate_token({"sub": str(user.id), "typ": TYPE_REFRESH}, timedelta(minutes=45))
+    return generate_token({"sub": str(user.id), "typ": TYPE_REFRESH}, timedelta(days=2))
 
 
 def generate_match_token(user) -> str:

@@ -6,8 +6,9 @@ html,
 .score-img {
     width: 50px;
     height: auto;
+    margin: 10px;
 
-    @median (min-width: 370px) {
+    @media (min-width: 370px) {
         width: 100px;
     }
 
@@ -31,7 +32,6 @@ html,
 .score-rush {
     top: 5%;
     right: 5%;
-
 }
 
 div.animate {

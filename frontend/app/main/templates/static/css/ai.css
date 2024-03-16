@@ -63,3 +63,17 @@
     height: 100px;
     background-color: white;
 }
+
+.w-gif, .s-gif {
+    max-width: 100px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    transform: translateY(-50%);
+    margin-top: 48vh;
+}
+
+.s-gif {
+    margin-top: calc(50vh + 250px);
+}

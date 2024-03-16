@@ -70,10 +70,11 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
         "name": tournament.tournament_name,
         "tournament_code": tournament.tournament_code,
         "created_by": user_dto(tournament.created_user),
+        "create_date": tournament.created_at.isoformat()
     }
     if players is not None:
         dto["players"] = {
-            "length": len(list),
+            "length": len(players),
             "content": [tournament_player_dto(player) for player in players]
         }
     return dto
@@ -83,8 +84,8 @@ def tournament_dto(tournament: Tournaments, players: list[TournamentPlayers] | N
 def tournament_invitation_dto(invitation: TournamentInvitations) -> dict:
     return {
         "id": str(invitation.id),
-        "to": invitation.target_user,
-        "from": invitation.tournament.created_user,
+        "to": user_dto(invitation.target_user),
+        "from": user_dto(invitation.tournament.created_user),
         "invite_code": invitation.invite_code,
         "note": invitation.message
     }
@@ -116,6 +117,7 @@ def match_dto(match: Matches) -> dict:
     return {
         "id": str(match.id),
         "tournament": tournament_dto(match.tournament) if match.tournament is not None else None,
+        "match_code": match.match_code,
         "home": {
             "user": user_dto(match.home),
             "score": match.score_home,
@@ -126,7 +128,7 @@ def match_dto(match: Matches) -> dict:
             "score": match.score_away,
             "signaure": match.away_signature
         },
-        "played_time": match.played_time,
+        "played_time": match.played_time.isoformat() if match.played_time is not None else "",
     }
 
 
@@ -143,20 +145,20 @@ def uploads_dto(upload: Uploads) -> dict:
 
 
 # Auth dto
-def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str) -> dict:
+def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str | None = None) -> dict:
     return {
         "user": user_dto(usermodel),
         "access_token": access_token,
-        "refresh_token": refresh_token
+        "refresh_token": refresh_token if refresh_token is not None else None
     }
 
 
 # Profile dto
-def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
+def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[Matches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
     return {
         "user": user_dto(user),
         "matches": list_dto([match_dto(match) for match in matches]),
-        "tournament_matches": list_dto([match_dto(match.match) for match in tournament_matches]),
+        "tournament_matches": list_dto([match_dto(match) for match in tournament_matches]),
         "tournaments": list_dto([tournament_dto(tournament) for tournament in tournaments]),
         "rival": user_dto(rival) if rival is not None else None
     }

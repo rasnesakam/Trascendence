@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models import Q
 
 class Message(models.Model):
 
@@ -18,4 +18,4 @@ class Message(models.Model):
 
     @staticmethod
     def last_n_messages(author, audience, n):
-        return Message.objects.filter(author=author, audience=audience).order_by('-timestamp').all()[:n]
+        return Message.objects.filter(Q(author=author, audience=audience) | Q(author=audience, audience=author)).order_by('-timestamp').all()[:n:-1]

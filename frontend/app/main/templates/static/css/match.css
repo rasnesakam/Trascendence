@@ -1,3 +1,9 @@
+#left-photo,
+#right-photo {
+    max-width: 600px;
+    max-height: auto;
+}
+
 .match-font-size {
     font-size: 140%;
 }
@@ -62,7 +68,6 @@
     }
 }
 
-.match-tennis-show
-{
+.match-tennis-show {
     display: none;
 }

@@ -8,6 +8,7 @@ routes = {
     '^about(\/.*$|\?.*|$)': 'about.html',
     '^users(\/.*$|\?.*|$)': 'profile-detail.html',
     '^livechat(\/.*$|\?.*|$)': 'livechat.html',
+    '^pvp(\/.*$|\?.*|$)': 'pvp.html',
     '^match(\/.*$|\?.*|$)': 'match.html',
     '^score(\/.*$|\?.*|$)': 'score.html',
     '^finish-match(\/.*$|\?.*|$)': 'finish-match.html',

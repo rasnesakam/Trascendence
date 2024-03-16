@@ -1,8 +1,6 @@
 @import url('/static/css/about.css');
 @import url('/static/css/ai.css');
 @import url('/static/css/error-404.css');
-@import url('/static/css/finish-match.css');
-@import url('/static/css/game.css');
 @import url('/static/css/livechat.css');
 @import url('/static/css/login.css');
 @import url('/static/css/main.css');
@@ -18,7 +16,7 @@
     --hue: 200;
     --saturation: 70%;
     --foreground-color: #e2e2e2;
-    --background-color: #242424;
+    --background-color: #222223;
 }
 
 body {

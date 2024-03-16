@@ -1,8 +1,9 @@
-<body class="bg-dark">
+<body class="bg-dark" id="content">
   <!-- MAIN START -->
   <title>Home</title>
+
   <main class="container col">
-    <div class="col-md-12 d-lg-flex justify-content-around">
+    <section class="col-md-12 d-lg-flex justify-content-around">
       <div class="col col-1"></div>
       <div class="col col-10 col-md-6 col-lg-4 card card-size rounded-5 bg-outline-dark mx-auto">
         <div>
@@ -61,13 +62,13 @@
             <!-- under rate -->
             <div id="under-rate" style="display: block;">
               <div class="d-lg-flex flex-lg-wrap row-md mt-4">
-                <div class="col-lg-6 col-md-8 my-4">
-                  <div class="icon-item d-flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" class height="15%" width="23%" viewBox="0 0 512 512">
+                <div class="col-lg-6 col-md-8">
+                  <div class="icon-item d-flex my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25%" width="25%" viewBox="0 0 640 512">
                       <path
-                        d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" />
+                        d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L353.3 251.6C407.9 237 448 187.2 448 128C448 57.3 390.7 0 320 0C250.2 0 193.5 55.8 192 125.2L38.8 5.1zM264.3 304.3C170.5 309.4 96 387.2 96 482.3c0 16.4 13.3 29.7 29.7 29.7H514.3c3.9 0 7.6-.7 11-2.1l-261-205.6z" />
                     </svg>
-                    <p id="total_time" class="ms-2 fs-5 mt-3 text-dark"></p>
+                    <p id="enemy" class="ms-2 mt-3 fs-5 text-dark"></p>
                   </div>
                 </div>
                 <div class="col-lg-6 col-md-8">
@@ -88,15 +89,7 @@
                     <p id="total_match" class="m-2 mb-5 mt-3 fs-5 text-dark"></p>
                   </div>
                 </div>
-                <div class="col-lg-6 col-md-8">
-                  <div class="icon-item d-flex my-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="25%" width="25%" viewBox="0 0 640 512">
-                      <path
-                        d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L353.3 251.6C407.9 237 448 187.2 448 128C448 57.3 390.7 0 320 0C250.2 0 193.5 55.8 192 125.2L38.8 5.1zM264.3 304.3C170.5 309.4 96 387.2 96 482.3c0 16.4 13.3 29.7 29.7 29.7H514.3c3.9 0 7.6-.7 11-2.1l-261-205.6z" />
-                    </svg>
-                    <p id="enemy" class="ms-2 mt-3 fs-5 text-dark"></p>
-                  </div>
-                </div>
+
               </div>
             </div>
 
@@ -135,18 +128,19 @@
             <img src="/static/assets/ai.png" style="padding-left: 20px; width: 75px; height: 70px;">
           </span>
           <div class="slice-left slice-twice">
-            <a href="/match" class="pvp-link slice-twice-link" onclick="router()">PvP</a>
+            <a href="/match" class="pvp-link slice-twice-link">PvP</a>
           </div>
           <div class="slice-right slice-twice">
-            <a id="/ai" href="/ai" class="ai-link slice-twice-link" onclick="router()">AI</a>
+            <a id="/ai" href="/ai" class="ai-link slice-twice-link">AI</a>
           </div>
         </div>
 
 
         <!-- Tournament Button -->
-        <a type="button" class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg"
-          data-bs-toggle="modal" data-bs-target="#createPage" href="/static/pages/tournament.html">
-          <img src="/static/assets/tournament.png" onclick="loadInvateFriend()" class="me-4" />
+        <a onclick="loadInvateFriend()" type="button"
+          class="col-lg-0 col-12 big-text px-5 py-4 text-center bg-warning rounded-4 big-text-lg" data-bs-toggle="modal"
+          data-bs-target="#createPage">
+          <img src="/static/assets/tournament.png" class="me-4" />
           Tournament
         </a>
       </div>
@@ -196,7 +190,7 @@
         </div>
       </div>
 
-      <a id="to_tournament" onclick="router()" style="display: none;"></a>
+      <a id="to_tournament" style="display: none;"></a>
 
 
       <!-- Play Code Button -->
@@ -205,7 +199,7 @@
         data-bs-target="#playcode-modal" style="display: none;">
         playCode
       </a>
-    </div>
+    </section>
 
 
     <!-- Play Code Modal-->
@@ -235,11 +229,7 @@
         </div>
       </div>
     </div>
-
-
-
     </div>
   </main>
   <!-- MAIN END -->
-  <script src="/static/js/main.js"></script>
 </body>

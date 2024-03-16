@@ -35,11 +35,6 @@
 .profile-detail-photo {
     width: 150px;
     height: 150px;
-
-    @media (min-width: 1200px) {
-        width: 300px;
-        height: 300px;
-    }
 }
 
 .profile-detail-scrollspy {
@@ -60,8 +55,6 @@
 }
 
 .chart {
-    display: flex;
-    justify-content: center;
     margin: 20px 50px;
 }
 
@@ -71,5 +64,36 @@
     height: 400px;
     border-radius: 50%;
     background: conic-gradient(#00BFFF 0% var(--win-percentage),
-            #FF0000 var(--lose-percentage) 100%);
+            #FF0000 var(--lose-percentage) 0%);
+}
+
+@media (min-width: 576px) {
+    .profile-detail-photo {
+        width: 300px;
+        height: 300px;
+    }
+
+    .flexible-box {
+        width: 95%;
+        height: 110%;
+    }
+}
+
+@media (min-width: 768px) {
+    .flexible-box {
+        width: 98%;
+        height: 110%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .profile-detail-photo {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+.slytherin-bg
+{
+    background-image: url(https://cdn.intra.42.fr/coalition/cover/365/Slytherin.png);
 }

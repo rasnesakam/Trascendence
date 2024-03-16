@@ -39,6 +39,7 @@ body {
   padding: 10px 15px;
   list-style: none;
   border-radius: 3px;
+  margin: 15px 0px;
 }
 
 .people-list .chat-list li:hover {
