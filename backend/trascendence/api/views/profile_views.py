@@ -1,7 +1,7 @@
-
+import traceback
 import json
 from django.views.decorators.http import require_http_methods
-from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse
+from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseServerError
 from django.db.models import Q
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.middleware.auth import authorize
@@ -32,8 +32,11 @@ def get_user_profile(request: HttpRequest, username: str):
             rival = UserModel.objects.get(id=rival_id)
         profile = profile_dto(user, matches, tournament_matches, tournaments, rival)
         return JsonResponse(profile, status=200)
+    except UserModel.DoesNotExist:
+        return HttpResponseNotFound("User not found")
     except Exception as e:
-        return HttpResponseNotFound(json.dumps({"message":f"user '{username}' not found", "exception": str(e)}), content_type="application/json")
+        traceback.print_exc()
+        return HttpResponseServerError(str(e))
     
 @require_http_methods(['PATCH'])
 @authorize()

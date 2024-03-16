@@ -158,7 +158,7 @@ def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: lis
     return {
         "user": user_dto(user),
         "matches": list_dto([match_dto(match) for match in matches]),
-        "tournament_matches": list_dto([match_dto(match.match) for match in tournament_matches]),
+        "tournament_matches": list_dto([match_dto(match) for match in tournament_matches]),
         "tournaments": list_dto([tournament_dto(tournament) for tournament in tournaments]),
         "rival": user_dto(rival) if rival is not None else None
     }
