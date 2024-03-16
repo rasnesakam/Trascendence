@@ -11,10 +11,8 @@ volumes:
   db:
 
 services:
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+  gateway:
+    image: nginx
     container_name: gateway
     volumes:
       - ./dotfiles/nginx/conf:/etc/nginx/conf.d:ro
