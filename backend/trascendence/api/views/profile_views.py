@@ -1,7 +1,7 @@
-
+import traceback
 import json
 from django.views.decorators.http import require_http_methods
-from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse
+from django.http import HttpRequest, HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseServerError
 from django.db.models import Q
 from trascendence.middleware.validators import request_body, str_field
 from trascendence.middleware.auth import authorize
@@ -22,8 +22,8 @@ def get_most_played(user_id_list):
 def get_user_profile(request: HttpRequest, username: str):
     try:
         user = UserModel.objects.get(Q(username__exact=username))
-        matches = Matches.objects.filter(Q(home=user) | Q(away=user))
-        tournament_matches = TournamentMatches.objects.filter(Q(match__home__exact=user.id) | Q(match__away__exact=user.id))
+        matches = Matches.objects.filter((Q(home=user) | Q(away=user)) & Q(is_played=True))
+        tournament_matches = Matches.objects.filter((Q(home=user) | Q(away=user)) & Q(is_played=True)).exclude(tournament=None)
         tournaments = Tournaments.objects.filter(tournamentplayers_tournament_id__user=user.id)
         played_users = [match.home.id for match in matches] + [match.away.id for match in matches]
         rival = None
@@ -32,8 +32,11 @@ def get_user_profile(request: HttpRequest, username: str):
             rival = UserModel.objects.get(id=rival_id)
         profile = profile_dto(user, matches, tournament_matches, tournaments, rival)
         return JsonResponse(profile, status=200)
+    except UserModel.DoesNotExist:
+        return HttpResponseNotFound("User not found")
     except Exception as e:
-        return HttpResponseNotFound(json.dumps({"message":f"user '{username}' not found", "exception": str(e)}), content_type="application/json")
+        traceback.print_exc()
+        return HttpResponseServerError(str(e))
     
 @require_http_methods(['PATCH'])
 @authorize()

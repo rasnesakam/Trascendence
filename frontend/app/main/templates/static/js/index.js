@@ -306,7 +306,8 @@ function gamePage() {
   if (
     window.location.pathname === "/ai" ||
     window.location.pathname === "/pvp" ||
-    window.location.pathname === "/login"
+    window.location.pathname === "/login" ||
+    window.location.pathname === "/finish-match"
   ) {
     const nav = document.getElementById("index-navbar");
 
@@ -618,6 +619,12 @@ async function createTournament() {
 
 async function setTournamentList(tournaments, access_token) {
   //yapılan turnuva listesini html içerisine atar
+  let mini_icon = {
+    0: "(🥇)",
+    1: "(🥈)",
+    2: "(🥉)",
+    3: "(GG!)",
+  }
   let added = document.getElementById("tournamentList");
   added.innerHTML = "";
   if (tournaments == undefined) return;
@@ -644,7 +651,7 @@ async function setTournamentList(tournaments, access_token) {
     accordionItem.appendChild(accordionHeader);
 
     let button = document.createElement("button");
-    button.classList.add("accordion-button", "bg-color-purple", "text-white", "collapsed");
+    button.classList.add("accordion-button", "bg-color-purple", "text-white", "collapsed", "p-4");
     button.setAttribute("type", "button");
     button.setAttribute("data-bs-toggle", "collapse");
     button.setAttribute("data-bs-target", "#tournamentList-" + i);
@@ -659,13 +666,14 @@ async function setTournamentList(tournaments, access_token) {
     accordionDiv.setAttribute("data-bs-parent", "#tournamentList-" + i);
     accordionItem.appendChild(accordionDiv);
 
-    let accordionBody = document.createElement("div");
-    accordionBody.classList.add("accordion-body");
-    accordionBody.textContent = `1. ${whos.players.content[0].user.username} (🥇)\n` +
-                              `2. ${whos.players.content[1].user.username} (🥈)\n` +
-                            `3. ${whos.players.content[2].user.username} (🥉)\n` +
-                          `4. ${whos.players.content[3].user.username} (GG!)`; //1. 2. 3. 4. bilgilerini içerecek
+    let accordionBody = document.createElement("div")
+    accordionBody.classList.add("accordion-body", "text-white");
+    accordionBody.textContent = "";
     accordionDiv.appendChild(accordionBody);
+    for (let j = 0; j < whos.players.length; j++) {
+      accordionBody.textContent += `${j + 1}. ${whos.players.content[j].user.username} ${mini_icon[j]}\n`;                  
+    } 
+
   }
 }
 
@@ -686,17 +694,19 @@ function setMatches(matches, username) {
     added.appendChild(li);
 
     let span1 = document.createElement("span");
-    span1.textContent = matches.home + " - " + matches.score; //maçta oynayan kişiler
+    span1.textContent = matches.matches[i].home.user.username + " - " + matches.matches[i].away.user.username; //maçta oynayan kişiler
     li.appendChild(span1);
 
     let span2 = document.createElement("span");
-    span2.textContent = matches.score_home + " - " + matches.score_away; //maç scorları
+    let home_score = matches.matches[i].home.score;
+    let away_score = matches.matches[i].away.score;
+    span2.textContent = home_score + " - " + away_score;
     li.appendChild(span2);
 
-    if (matches.matches.score_home > matches.score_away)
-      if (matches.home == username) li.classList.add("bg-success");
+    if (home_score > away_score)
+      if (matches.matches[i].home.user.username == username) li.classList.add("bg-success");
       else li.classList.add("bg-danger");
-    else if (matches.away == username) li.classList.add("bg-success");
+    else if (matches.matches[i].away.user.username == username) li.classList.add("bg-success");
     else li.classList.add("bg-danger");
   }
 }
@@ -826,7 +836,7 @@ function isBlock(username, friend, access_token) {
   }
 }
 
-function profile_load() {
+async function profile_load() {
   //profile-detail page içerisinde yüklenmesi, fetchlenmesi gereken bilgileri getirmek için kullanılır
   let pathname = window.location.pathname;
   let part = pathname.split("/");
@@ -834,11 +844,13 @@ function profile_load() {
   let access_token = myData.access_token;
 
   console.log("myData page", myData);
-  let userData = loadUserInformation(part[2], access_token);
+  let userData = await loadUserInformation(part[2], access_token);
   isMyFriend(myData.user.username, part[2], access_token);
   isBlock(myData.user.username, part[2], access_token);
-  setMatches(userData.dataMatches, userData.username);
-  setTournamentList(userData.dataTournament);
+  setMatches(userData.dataMatches, userData.userIdentity.user.username);
+  setTournamentList(userData.dataTournament, access_token);
+  calculateWinLosePercentage(userData.dataMatches, userData.userIdentity.user.username);
+  updateChart();
 }
 
 // pvp.js-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

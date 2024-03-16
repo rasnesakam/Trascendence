@@ -49,7 +49,7 @@ async function match_making(str) {
 	let formAway = document.getElementById("form-away")
 	if (formAway != undefined)
 	formAway.addEventListener('submit', (e) =>{e.preventDefault();match_making('right')} )
-	alert('Formlara listenerlar eklendi')
+
 })()
 
 setInterval(() => {

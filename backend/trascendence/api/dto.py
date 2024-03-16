@@ -154,11 +154,11 @@ def auth_dto(usermodel: UserModel, access_token: str, refresh_token: str | None 
 
 
 # Profile dto
-def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[TournamentMatches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
+def profile_dto(user: UserModel, matches: list[Matches], tournament_matches: list[Matches], tournaments: list[Tournaments], rival: UserModel | None) -> dict:
     return {
         "user": user_dto(user),
         "matches": list_dto([match_dto(match) for match in matches]),
-        "tournament_matches": list_dto([match_dto(match.match) for match in tournament_matches]),
+        "tournament_matches": list_dto([match_dto(match) for match in tournament_matches]),
         "tournaments": list_dto([tournament_dto(tournament) for tournament in tournaments]),
         "rival": user_dto(rival) if rival is not None else None
     }

@@ -1,5 +1,4 @@
 import json
-import jwt
 from django.views.decorators.http import require_http_methods
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from trascendence.middleware.auth import authorize
@@ -18,7 +17,7 @@ import traceback
 @require_http_methods(['GET'])
 @authorize()
 def get_matches_for_user(request: HttpRequest, username: str):
-    matches = Matches.objects.filter(Q(home__username=username) | Q(away__username=username))
+    matches = Matches.objects.filter((Q(home__username=username) | Q(away__username=username)) & Q(is_played=True))
     matches_list = [match_dto(match) for match in matches]
     return JsonResponse({"length": len(matches_list), "matches": matches_list}, status=200)
 
@@ -27,7 +26,7 @@ def get_matches_for_user(request: HttpRequest, username: str):
 @authorize()
 def get_matches_for_users(request: HttpRequest, user1: str, user2: str):
     matches = Matches.objects.filter((Q(home__username=user1) & Q(away__username=user2)) |
-                                     (Q(home__username=user2) & Q(away__username=user1)))
+                                     (Q(home__username=user2) & Q(away__username=user1))).filter(is_played=True)
     matches_list = [match_dto(match) for match in matches]
     return JsonResponse({"length": len(matches_list), "matches": matches_list}, status=200)
 
