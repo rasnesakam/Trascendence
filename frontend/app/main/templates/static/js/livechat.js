@@ -67,41 +67,90 @@ function selectedPerson(id) {
     let people = JSON.parse(localStorage.getItem("contant"))
     clearMessages();
     fetchMessages(id);
+
+    document.getElementById(jsonObj.from).classList.remove("bg-secondary")
     document.getElementById("message-input").style.display = "block";
-    // load previous messages
     let formElement = document.getElementsByClassName("livechat-send-message")[0]
     let hiddenInput = formElement.querySelector('input[name="to"]')
     hiddenInput.type = "hidden"
     hiddenInput.setAttribute("name", "to")
     hiddenInput.value = id
-    for (i = 0; i < people.length; i++) {
-        if (people[i].id == id) {
-            document.getElementById(people[i].id).classList.add("active");
-            document
-                .getElementById("contact-selected-profile-photo")
-                .setAttribute("src", people[i].avatarURI);
-            document.getElementById("contact-selected-profile-name").textContent =
-                people[i].name;
-            /*for (j = 0; j < Object.keys(people[i].messages).length; j++) {
-                showMessage(
-                    people[i].messages[j].type,
-                    people[i].messages[j].message
-                );
-            }*/
-        } else {
-            document.getElementById(id).classList.remove("active");
-        }
+    let user;
+    for (let i = 0; i < people.length; i++) {
+        document.getElementById(people[i].id).classList.remove("active");
+        if (people[i].id == id)
+            user = people[i]
     }
+    document.getElementById(id).classList.add("active");
+    document
+        .getElementById("contact-selected-profile-photo")
+        .setAttribute("src", user.avatarURI);
+    document.getElementById("contact-selected-profile-name").textContent = user.name;
 
 }
 
+function createContactListItem(user, rootElement){
+    let listItem = document.createElement("li");
+    listItem.id = user.id;
+    listItem.classList.add("contact", "clearfix");
+
+    
+    let img = document.createElement("img");
+    img.id = "profile-img";
+    img.src = user.avatarURI;
+    img.alt = "avatar";
+
+    listItem.appendChild(img);
+
+    let aboutDiv = document.createElement("div");
+    aboutDiv.classList.add("about");
+
+    let nameDiv = document.createElement("div");
+    nameDiv.classList.add("name");
+    nameDiv.textContent = user.username;
+
+    let statusDiv = document.createElement("div");
+    statusDiv.classList.add("status");
+
+    let circleIcon = document.createElement("i");
+    circleIcon.classList.add("fa", "fa-circle");
+
+    let lastPing = 0
+    setInterval(() => {
+        if (Date.now() - lastPing > 2000){
+            circleIcon.classList.remove("online");
+            circleIcon.classList.add("offline");
+        }
+        socket.send(JSON.stringify({
+            type: "ping",
+            to: user.id
+        }))
+    }, 1000)
+    socket.addEventListener("message", (message) => {
+        jsonObj = JSON.parse(message.data)
+        if (jsonObj.type == "pong" && jsonObj.from == user.id) {
+            circleIcon.classList.remove("offline");
+            circleIcon.classList.add("online");
+            lastPing = Date.now()
+        }
+    });
+    
+    circleIcon.classList.add("offline");
+
+    statusDiv.appendChild(circleIcon);
+    nameDiv.appendChild(statusDiv);
+    aboutDiv.appendChild(nameDiv);
+    listItem.appendChild(aboutDiv);
+    listItem.addEventListener('click', () => selectedPerson(user.id))
+    rootElement.appendChild(listItem)
+}
 
 
 async function loadContent() {
-    var contact = document.getElementById("add-contacts");
+    let contact = document.getElementById("add-contacts");
 
     contact.innerHTML = " ";
-    token = JSON.parse(localStorage.getItem(0)).access_token
+    let token = JSON.parse(localStorage.getItem(0)).access_token
     console.log(token);
     const { length, content: people } = await fetch("http://localhost/api/interacts/friends", {
         method: "GET",
@@ -113,60 +162,9 @@ async function loadContent() {
     }).catch((error) => console.log(error));
     console.log(people);
     localStorage.setItem("contant", JSON.stringify(people));
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         let user = people[i]
-        var listItem = document.createElement("li");
-        listItem.id = user.id;
-        listItem.classList.add("contact", "clearfix");
-        contact.appendChild(listItem);
-
-        var img = document.createElement("img");
-        img.id = "profile-img";
-        img.src = user.avatarURI;
-        img.alt = "avatar";
-        listItem.appendChild(img);
-
-        // <div class="about"> öğesini oluştur
-        var aboutDiv = document.createElement("div");
-        aboutDiv.classList.add("about");
-
-        // <div class="name"> öğesini oluştur
-        var nameDiv = document.createElement("div");
-        // nameDiv.style.marginTop = 5 + "px";
-        // nameDiv.style.marginBottom = 5 + "px";
-        nameDiv.classList.add("name");
-        nameDiv.textContent = user.username;
-        aboutDiv.appendChild(nameDiv);
-
-        // <div class="status"> öğesini oluştur
-        var statusDiv = document.createElement("div");
-        statusDiv.classList.add("status");
-        nameDiv.appendChild(statusDiv);
-
-        listItem.onclick = () => selectedPerson(user.id)
-        listItem.appendChild(aboutDiv);
-        // <i class="fa fa-circle offline"></i> öğesini oluştur
-        var circleIcon = document.createElement("i");
-        circleIcon.classList.add("fa", "fa-circle");
-        // TODO: Send ping 
-        setInterval(() => {
-            circleIcon.classList.remove("online");
-            circleIcon.classList.add("offline");
-            socket.send(JSON.stringify({
-                type: "ping",
-                to: user.id
-            }))
-        }, 5000)
-        socket.addEventListener("message", (message) => {
-            jsonObj = JSON.parse(message.data)
-            if (jsonObj.type == "pong" && jsonObj.from == user.id) {
-                circleIcon.classList.remove("offline");
-                circleIcon.classList.add("online");
-            }
-        });
-        circleIcon.classList.add("offline");
-        statusDiv.appendChild(circleIcon);
-        console.log("list:", listItem);
+        createContactListItem(user, contact)
     }
 }
 
@@ -227,8 +225,7 @@ Array.from(document.querySelectorAll("#status-options   i")).forEach(
     }
 );
 
-const searchAlgorithm = () => {
-    var search = document.querySelector("#search input").value;
+function searchAlgorithm(search){
     fetch(`http://localhost/api/users/search/${search}`)
         .then(data => data.json())
         .then(datas => {
@@ -237,41 +234,44 @@ const searchAlgorithm = () => {
             contacts.innerHTML = ""
             for (let i = 0; i < datas.length; i++) {
                 let user = datas.content[i];
-                let element = `
-            <li id="${user.id}" class="clearfix" onclick="selectedPerson('${user.id}')">
-                <img id="profile-img" src="${user.avatarURI}" alt="avatar" />
-                <div class="about">
-                <div class="name">${user.name}</div>
-                <div class="status">
-                    <i class="fa fa-circle online"></i> offline
-                </div>
-                </div>
-            </li>
-            `;
-                contacts.innerHTML += element
+                createContactListItem(user, contacts)
             }
         });
 };
 
 
 (function () {
+    let liveChatSearch = document.getElementById("livechat-search")
+    liveChatSearch.addEventListener('input', (e) =>{
+        if (String(e.target.value).length > 0)
+            searchAlgorithm(e.target.value)
+        else
+            loadContent()
+    })
+
     console.log("adding event listener to form");
     let form = document.getElementsByClassName("livechat-send-message")[0];
     form.addEventListener("submit", function (e) {
         e.preventDefault();
-        let formData = new FormData(e.target);
+        let formData = new FormData(form);
         let targetUser = formData.get("to");
-        console.log(targetUser);
-
         console.log("target: ", targetUser.id);
         sendMessage("my-message", formData.get("content"), targetUser);
         socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser }))
     })
-})();
 
-let user_data = JSON.parse(localStorage.getItem(0)).user
-socket.addEventListener('message', (message) => {
-    let jsonObj = JSON.parse(message.data);
-    if (jsonObj.type == "message")
-        sendMessage(jsonObj.from == user_data.id ? "my-message" : "other-message", jsonObj.message, jsonObj.from);
-})
+
+    let user_data = JSON.parse(localStorage.getItem(0)).user
+    socket.addEventListener('message', (message) => {
+        let formElement = document.getElementsByClassName("livechat-send-message")[0]
+        let hiddenInput = formElement.querySelector('input[name="to"]')
+        let selectedUser = hiddenInput.value
+        let jsonObj = JSON.parse(message.data);
+        if (jsonObj.type == "message")
+            if (jsonObj.from == selectedUser)
+                sendMessage(jsonObj.from == user_data.id ? "my-message" : "other-message", jsonObj.message, jsonObj.from);
+            else
+                document.getElementById(jsonObj.from).classList.add("bg-secondary")
+    })
+
+})();
