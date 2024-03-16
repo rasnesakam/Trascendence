@@ -184,4 +184,21 @@ def remove_blacklist(request: HttpRequest, target_username) -> JsonResponse | Ht
         return HttpResponseNotFound(json.dumps({"message": "User not found"}), content_type="application/json")
     except UserModel.DoesNotExist:
         return HttpResponseNotFound(json.dumps({"message": "User not found"}), content_type="application/json")
-    
+
+
+@require_http_methods(['GET'])
+#@authorize()
+def check_friendship_status(request, username):
+    user = request.auth_info.user
+    try:
+        Friends.objects.get(
+            (Q(user_pair_1=user) & Q(user_pair_2__username=username)) |
+            (Q(user_pair_2=user) & Q(user_pair_1__username=username))
+        )
+        return JsonResponse({"status": "friend"}, status=200)
+    except Friends.DoesNotExist:
+        try:
+            FriendInvitation.objects.get(origin=user, target__username=username)
+            return JsonResponse({"status": "penging"}, 200)
+        except FriendInvitation.DoesNotExist:
+            return HttpResponseNotFound()

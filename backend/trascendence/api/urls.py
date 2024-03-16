@@ -21,6 +21,7 @@ urlpatterns = [
 
     # Interactions
     path('interacts/friends', InteractionsView.get_friends),
+    path('interacts/friends/status/<username>', InteractionsView.check_friendship_status),
     path('interacts/friends/add', InteractionsView.add_friend),
     path('interacts/friends/delete/<username>', InteractionsView.delete_friend),
     path('interacts/invitations', InteractionsView.get_invitations),
