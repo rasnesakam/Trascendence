@@ -176,10 +176,9 @@ function addNotify(msg, id, func_name) {
 
 async function requestAddFriend() {
   //arkadaşlık isteğini kabul eder
-  console.log("requestAddFriend")
   let profileNickName = document.getElementById("nickname").textContent;
   let access_token = JSON.parse(localStorage.getItem(0)).access_token;
-  console.log("nickname " + profileNickName);
+
   await fetch("http://localhost/api/interacts/friends/add", {
     method: "POST",
     headers: {
@@ -195,8 +194,9 @@ async function requestAddFriend() {
       if (!responseCode.ok) {
         throw new Error("Error sending friend request");
       }
-      document.getElementById("add-friend-button").style.display = "none";
-      document.getElementById("delete-friend-button").style.display = "block";
+      document.getElementById("pedding-friend").style.display = "block";
+      document.getElementById("pedding-friend").disabled = true;
+
       return responseCode.json();
     })
     .then((data) => {
@@ -356,7 +356,7 @@ function changePhoto() {
 
 function outLogin() {
   //çıkış yapmak için kullanılır
-  localStorage.removeItem(0);
+  localStorage.clear();
   window.location.href = "/login";
 }
 
@@ -463,7 +463,7 @@ async function loadUserInformation(username, access_token) {
   document.getElementById("profile-photo").src = userIdentity.user.avatarURI;
   document.getElementById("total_tournament").innerHTML = dataTournament.length; //Torunament add html
   document.getElementById("total_match").innerHTML = dataMatches.length; //match added html
-  document.getElementById("enemy").innerHTML = userIdentity.user.rival;
+  document.getElementById("enemy").innerHTML = userIdentity.rival.username;
 
   console.log("dataTournament (loadUserInformation): ", dataTournament);
   let resultData = { userIdentity, dataTournament, dataMatches };
@@ -749,6 +749,7 @@ async function requestBlock() {
       document.getElementById("add-friend-button").style.display = "none";
       document.getElementById("delete-friend-button").style.display = "none";
       document.getElementById("friend-block-button").style.display = "none";
+      document.getElementById("pedding-friend").style.display = "none";
       document.getElementById("friend-unblock-button").style.display = "block";
 
       return responseCode.json();
@@ -779,10 +780,9 @@ async function requestUnBlock() {
       if (!responseCode.ok) {
         throw new Error("Error sending friend request");
       }
-      document.getElementById("add-friend-button").style.display = "block";
-      document.getElementById("delete-friend-button").style.display = "none";
       document.getElementById("friend-block-button").style.display = "block";
       document.getElementById("friend-unblock-button").style.display = "none";
+      isMyFriend(profileNickName, access_token);
       return responseCode.json();
     })
     .then((data) => {
@@ -794,46 +794,61 @@ async function requestUnBlock() {
     });
 }
 
-function isMyFriend(username, friend, access_token) {
+async function isMyFriend(friend, access_token) {
   //profile detail içerisinde kullanıcının arkadaşı olup olmadığı kontrol ediliyor arkadaş olduğumuz kişileri tekrar ekleyememek için tasarlandı
-  if (username == friend) {
-    document.getElementById("add-friend-button").style.display = "none";
-    return;
-  } else document.getElementById("add-friend-button").style.display = "block";
-
-  let myFriend = fetch(`http://localhost/api/interacts/friends`, {
+  await fetch(`http://localhost/api/interacts/friends/status/${friend}`, {
     headers: {
+      "Content-type": "application/json",
       Authorization: `Bearer ${access_token}`,
-    },
-  }).then((data) => data.json());
-
-  for (let i = 0; i < myFriend.length; i++) {
-    if (myFriend[i].username == friend) {
+    }
+  }).then((data) => data.json()).then((data) => {
+    if (data.status == "pedding")
+    {
+      document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("pedding-friend").style.display = "block";
+      document.getElementById("pedding-friend").disabled = true;
+    }
+    else if (data.status == "friend") {
+      document.getElementById("pedding-friend").style.display = "none";
       document.getElementById("add-friend-button").style.display = "none";
       document.getElementById("delete-friend-button").style.display = "block";
-      return;
+      document.getElementById("pedding-friend").disabled = false;
     }
-  }
+    else
+    {
+      document.getElementById("pedding-friend").style.display = "none";
+      document.getElementById("add-friend-button").style.display = "block";
+      document.getElementById("delete-friend-button").style.display = "none";
+      document.getElementById("pedding-friend").disabled = false;
+    }
+  }).catch((error) => console.log(error));
+
 }
 
-function isBlock(username, friend, access_token) {
-  //profile detail içerisinde kullanıcının engellenip engellenmediği kontrol ediliyor
-  let myBlock = fetch(`http://localhost/api/interacts/blacklist`, {
+async function isBlock(friend, access_token) {
+  //profile detail içerisinde kullanıcının engellenip engellenmediği kontrol ediliyo
+  await fetch(`http://localhost/api/interacts/blacklist/search/${friend}`, {
     headers: {
+      "Content-type": "application/json",
       Authorization: `Bearer ${access_token}`,
-    },
-  }).then((data) => data.json());
-
-  for (let i = 0; i < myBlock.length; i++) {
-    if (myBlock[i].username == friend) {
+    }
+  }).then((response) => {
+    if (response.status == 404)
+    {
+      document.getElementById("friend-block-button").style.display = "block";
+      document.getElementById("friend-unblock-button").style.display = "none";
+      isMyFriend(friend, access_token);
+    }
+    else
+    {
       document.getElementById("add-friend-button").style.display = "none";
+      document.getElementById("pedding-friend").style.display = "none";
       document.getElementById("delete-friend-button").style.display = "none";
       document.getElementById("friend-block-button").style.display = "none";
       document.getElementById("friend-unblock-button").style.display = "block";
-
-      return;
     }
-  }
+  })
 }
 
 async function profile_load() {
@@ -845,8 +860,8 @@ async function profile_load() {
 
   console.log("myData page", myData);
   let userData = await loadUserInformation(part[2], access_token);
-  isMyFriend(myData.user.username, part[2], access_token);
-  isBlock(myData.user.username, part[2], access_token);
+  isMyFriend(part[2], access_token);
+  isBlock(part[2], access_token);
   setMatches(userData.dataMatches, userData.userIdentity.user.username);
   setTournamentList(userData.dataTournament, access_token);
   calculateWinLosePercentage(userData.dataMatches, userData.userIdentity.user.username);
