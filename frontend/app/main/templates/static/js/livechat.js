@@ -255,23 +255,62 @@ function searchAlgorithm(search){
         e.preventDefault();
         let formData = new FormData(form);
         let targetUser = formData.get("to");
-        console.log("target: ", targetUser.id);
         sendMessage("my-message", formData.get("content"), targetUser);
         socket.send(JSON.stringify({ type: "message", message: formData.get("content"), to: targetUser }))
     })
 
 
     let user_data = JSON.parse(localStorage.getItem(0)).user
-    socket.addEventListener('message', (message) => {
-        let formElement = document.getElementsByClassName("livechat-send-message")[0]
-        let hiddenInput = formElement.querySelector('input[name="to"]')
-        let selectedUser = hiddenInput.value
+    socket.addEventListener('message', async (message) => {
+        let formElement = document.getElementsByClassName("livechat-send-message")[0];
+        let hiddenInput = formElement.querySelector('input[name="to"]');
+        let selectedUser = hiddenInput.value;
         let jsonObj = JSON.parse(message.data);
-        if (jsonObj.type == "message")
-            if (jsonObj.from == selectedUser)
+        if (jsonObj.type == "message" && !(await checkBlacklist(jsonObj.from)))
+            if (jsonObj.from == selectedUser || jsonObj.from == user_data.id)
                 sendMessage(jsonObj.from == user_data.id ? "my-message" : "other-message", jsonObj.message, jsonObj.from);
-            else
-                document.getElementById(jsonObj.from).classList.add("bg-secondary")
+            else{
+                let newMessage = document.getElementById(jsonObj.from)
+                if (newMessage != undefined)
+                    newMessage.classList.add("bg-secondary");
+            }
     })
 
 })();
+
+async function checkBlacklist(user_id_to_check) {
+    let access_token = JSON.parse(localStorage.getItem(0)).access_token
+    const blacklistUrl = 'http://localhost/api/interacts/blacklist';
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}`
+        }
+    }
+    return await fetch(blacklistUrl, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to fetch blacklist');
+            }
+        })
+        .then(data => {
+            const blacklist = data.content;
+
+            for (let i = 0; i < blacklist.length; i++) {
+                if (blacklist[i].id == user_id_to_check)
+                    return true
+            }
+
+            return false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            return false;
+        });
+    return false
+}
+
+checkBlacklist();
