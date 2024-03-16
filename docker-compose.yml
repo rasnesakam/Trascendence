@@ -44,6 +44,8 @@ services:
   #  networks:
   #    - my_network
   websocket:
+    env_file:
+    - ./.env
     build:
       context: ./websocket
       dockerfile: Dockerfile
@@ -52,6 +54,8 @@ services:
     expose:
       - 8000
   backend:
+    env_file:
+    - ./.env
     build:
       context: ./backend
       dockerfile: Dockerfile
