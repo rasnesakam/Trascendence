@@ -559,7 +559,7 @@ async function setTournamentList(tournaments, access_token) {
       .then((data) => data.json())
       .catch((error) => console.log(error));
 
-      console.log("whos: ", whos);
+    console.log("whos: ", whos);
     let accordionItem = document.createElement("div");
     accordionItem.classList.add("accordion-item");
     added.appendChild(accordionItem);
@@ -589,8 +589,8 @@ async function setTournamentList(tournaments, access_token) {
     accordionBody.textContent = "";
     accordionDiv.appendChild(accordionBody);
     for (let j = 0; j < whos.players.length; j++) {
-      accordionBody.textContent += `${j + 1}. ${whos.players.content[j].user.username} ${mini_icon[j]}\n`;                  
-    } 
+      accordionBody.textContent += `${j + 1}. ${whos.players.content[j].user.username} ${mini_icon[j]}\n`;
+    }
 
   }
 }
@@ -722,8 +722,7 @@ async function isMyFriend(friend, access_token) {
       Authorization: `Bearer ${access_token}`,
     }
   }).then((data) => data.json()).then((data) => {
-    if (data.status == "pedding")
-    {
+    if (data.status == "pedding") {
       document.getElementById("add-friend-button").style.display = "none";
       document.getElementById("delete-friend-button").style.display = "none";
       document.getElementById("pedding-friend").style.display = "block";
@@ -735,8 +734,7 @@ async function isMyFriend(friend, access_token) {
       document.getElementById("delete-friend-button").style.display = "block";
       document.getElementById("pedding-friend").disabled = false;
     }
-    else
-    {
+    else {
       document.getElementById("pedding-friend").style.display = "none";
       document.getElementById("add-friend-button").style.display = "block";
       document.getElementById("delete-friend-button").style.display = "none";
@@ -754,14 +752,12 @@ async function isBlock(friend, access_token) {
       Authorization: `Bearer ${access_token}`,
     }
   }).then((response) => {
-    if (response.status == 404)
-    {
+    if (response.status == 404) {
       document.getElementById("friend-block-button").style.display = "block";
       document.getElementById("friend-unblock-button").style.display = "none";
       isMyFriend(friend, access_token);
     }
-    else
-    {
+    else {
       document.getElementById("add-friend-button").style.display = "none";
       document.getElementById("pedding-friend").style.display = "none";
       document.getElementById("delete-friend-button").style.display = "none";
